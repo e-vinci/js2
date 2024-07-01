@@ -23,15 +23,16 @@ description: 'Introduction au langage JavaScript, apprentissage de la syntaxe'
   <InternalPageMenuItem> Les objets </InternalPageMenuItem>
   <InternalPageMenuItem> Les exceptions </InternalPageMenuItem>
   <InternalPageMenuItem> Le destructuring assignment </InternalPageMenuItem>
+  <InternalPageMenuItem> Les modules </InternalPageMenuItem>
 </InternalPageMenu>
 
 Le JS s'écrit tant dans un browser que dans un environnement serveur.
 
 Quand on écrit du JS au niveau client, on écrira du JS conforme au standard **`ECMAScript`**.
 
-Quand on écrit du JS au niveau serveur, on écrira du Node.js, du JS conforme au standard **`CommonJS`**.
+Quand on écrit du JS au niveau serveur, on écrira du Node.js, du JS qui autrefois était conforme au standard **`CommonJS`**. Néanmoins, on peut écrire des applications Node.js conforme à **`ECMAScript`**, ce qui devient de plus en plus la norme en entreprise.
 
-Il existe des différences lorsqu'on écrit du JS pour un browser ou lorsqu'on écrit du JS pour une application serveur. Néanmoins, il existe une syntaxe commune que nous allons voir dans ce chapitre.
+Nous avons ainsi un code compatible entre le client et le serveur.
 
 # <InternalPageTitle> Les instructions </InternalPageTitle>
 
@@ -784,3 +785,97 @@ const iat = decodedToken.iat;
 const exp = decodedToken.exp;
 ```
 Pour en savoir plus sur la puissance du **`destructuring assignement`**, vous pouvez consulter la [documentation de MDN](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Operators/Destructuring_assignment) [[R.64]](/references/#r64).
+
+# <InternalPageTitle> Les modules </InternalPageTitle>
+## Les modules
+En JavaScript / TypeScript, les modules sont définis en utilisant des fichiers séparés. Chaque fichier `.js` ou `.jsx` ou `.ts` ou `.tsx` est considéré comme un module. Vous pouvez exporter et importer des fonctionnalités (fonctions, classes, variables, interfaces, etc.) entre ces fichiers.
+
+## Exporter et Importer par défaut
+### Exporter par défaut
+Vous pouvez avoir un seul export par défaut par fichier. L'export par défaut peut être une fonction, une classe, une variable, etc.
+
+```js
+// math.js
+const multiply = (a: number, b: number): number => {
+  return a * b;
+};
+
+export default multiply;
+```
+
+### Importer un Export par défaut
+Lorsqu'un objet a été exporté via un "default export", on l'importe en lui donnant le nom que l'on souhaite à l'import et en indiquant le chemin vers le module à utiliser.
+
+👍 Néanmoins, afin de ne pas créer la confusion, nous recommandons d'utiliser le même nom que celui utilisé lors de l'export.
+
+```js
+import multiply from './math';
+
+console.log(multiply(2, 3)); // 6
+```
+
+👍 Il est recommandé, lorsqu'on indique le chemin du module que l'on importe, de ne pas indiquer l'extension du nom de fichier (`.ts` ou `.tsx` ou `.js` ou `.jsx`, on évite donc `import multiply from './math.js';`). Cela rend le code plus lisible. D'ailleurs, votre linter va vous forcer à ne pas indiquer les extensions de vos modules.
+
+🤝 Il est possible d'utiliser l'autocompletion pour générer le chemin vers un "default export module". Il suffit de taper ici `import multiply` et d'appuyer sur `Enter` et VS Code générera automatiquement le chemin (path) du module.
+
+Notons qu'ici nous aurions pu donner n'importe quel nom à la fonction `multiply` lors de l'import, par exemple :
+```js
+import times from './math';
+
+console.log(times(2, 3)); // 6
+```
+
+Il est aussi possible d'importer des objets de packages offerts par la communauté via votre gestionnaire de package.
+Pour ce faire, il est juste nécessaire d'indiquer le nom du package lors de l'import.
+
+Pour un "default import", il faut trouver un package qui met à disposition un seul objet, ce qui est peu commun.
+
+En voici un exemple, l'import d'une librairie permettant de réaliser des animations :
+```js
+import anime from 'animejs/lib/anime.es.js';
+```
+
+Bien sûr, avant d'importer un objet d'un package, il faut l'avoir préalablement installé 😉.
+
+## Exporter et Importer via des noms
+### Exporter via des noms ("named export")
+Lorsque l'on souhaite exporter plusieurs objets (fonctions, constantes, objets, classes, interfaces...), nous allons généralement le faire via une "named export", à la fin du script.
+
+```js
+// ... some code to define three functions
+
+export { setPageTitle, setHeaderTitle, setFooterTitle };
+```
+
+Il est aussi possible de faire des "named export" à la volée en utilisant export à différents endroits d'un script :
+```js
+export function setPageTitle(title:string){
+  // Definition of function
+}
+
+export function setHeaderTitle(title:string){
+  // Definition of function
+}
+
+export function setFooterTitle(title:string){
+  // Definition of function
+}
+```
+
+👎 Bien que cette façon se retrouve régulièrement dans des exemples sur le web, nous déconseillons les exports à la volée. 
+
+👍 En effet, il est bien plus clair de trouver tous les exports à la fin d'un script. Ainsi, nous ne perdons pas de temps à les chercher dans le corps du script.
+
+### Importer un named export
+Lorsqu'un objet a été exporté via un "Named export", on l'importe en utilisant des accolades et en indiquant le chemin vers le module à utiliser.
+
+Par exemple, pour importer les fonctions `setPageTitle` et `setHeaderTitle` définies ci-dessus, il suffit de faire :
+```js
+import { setPageTitle, setHeaderTitle } from './utils/render';;
+```
+
+Si l'on souhaitait changer le nom, on pourrait le faire via le mot-clé `as` :
+
+```js
+import { setPageTitle as renderPageTitle, setHeaderTitle as renderHeaderTitle} from './utils/render';;
+```

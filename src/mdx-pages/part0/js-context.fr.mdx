@@ -1,9 +1,9 @@
 ---
-title: "Contexte d'utilisation du JS"
-description: "Contexte d'utilisation du JS & choix des outils"
+title: "Contexte d'utilisation du TS/JS"
+description: "Contexte d'utilisation du TS/JS & choix des outils"
 ---
 
-# b) Contexte d'utilisation du JS & choix des outils
+# b) Contexte d'utilisation du TS/JS & choix des outils
 
 <InternalPageMenu>
   <PathViewer>
@@ -11,52 +11,55 @@ description: "Contexte d'utilisation du JS & choix des outils"
     <PathViewerItem to="/part0" > Partie 0 </PathViewerItem>
     <PathViewerItem selected> b) Contexte </PathViewerItem>
   </PathViewer>
-  <InternalPageMenuItem> Contexte d'utilisation du JS </InternalPageMenuItem>
-  <InternalPageMenuItem> Librairies & frameworks JS sélectionnés pour ce cours </InternalPageMenuItem>
 </InternalPageMenu>
 
-# <InternalPageTitle> Contexte d'utilisation du JS </InternalPageTitle>
-## Utilisation de JS
+# <InternalPageTitle> Contexte d'utilisation du TS/JS </InternalPageTitle>
+## Utilisation de TS/JS
+TypeScript, c'est JavaScript avec une syntaxe pour les types. 
+TS offre une meilleure expérience de développement que JS, notamment en permettant :
+- de détecter beaucoup d'erreurs avant l'exécution au sein de son éditeur de code
+- d'améliorer la productivité grâce à une meilleure autocomplétion et refactorisation,
+- d'organiser le code de manière plus structurée et maintenable. 
 
-En 2021, suite au grand sondage annuel de StackOverflow, le JS est le langage le plus utilisé depuis plus de 9 ans !
+TypeScript est compatible avec JavaScript et transpile le code pour différents environnements, offrant ainsi une meilleure gestion des erreurs et une expérience de développement améliorée.
+
+Il n'y a plus beaucoup d'entreprises qui utilisent du JS pur, TypeScript est devenu un standard pour le développement d'applications web modernes.
+
+En 2023, suite au grand sondage annuel de StackOverflow, le JS est le langage le plus utilisé depuis plus de 11 ans !
 
 <ScrollableImage
   name="most-pop-programming.png"
-  minWidth="400px"
-  maxWidth="600px"
+  minWidth="715px"
+  maxWidth="582px"
 />
 
 [Programming, scripting, and markup languages [R.1]](/references/#r1)
 
-## (Sur)Diversité de JS
+En apprenant le TS, vous apprenez à la fois le JS : vous pourrez donc travailler dans de nombreuses entreprises et sur de nombreux projets.
+
+## (Sur)Diversité de TS/JS
 
 ### Applications frontend web classiques
 
-Il existe une multitude de librairies & frameworks JS pour aider à réaliser des d'Interfaces Homme-Machine (IHM) : JQuery, Phaser, Anime.js, AngularJS, React…
+Il existe une multitude de librairies & frameworks TS/JS pour aider à réaliser des d'Interfaces Homme-Machine (IHM) : React, Vue, AngularJS, JQuery, Phaser, Anime.js,…
 
-Voici quelques librairies et frameworks JS utilisés en 2021 côté client :
+En 2023, suite au grand sondage annuel de StackOverflow, voici les principaux frameworks web !
 
 <ScrollableImage
-  name="frontend-technos.jpg"
-  minWidth="400px"
-  maxWidth="600px"
+  name="web-frameworks.png"
+  minWidth="715px"
+  maxWidth="582px"
 />
 
-[Best JavaScript Frameworks, Libraries and Tools to Use in 2021 [R.2]](/references/#r2)
+[Web frameworks and technologies [R.1]](/references/#r1)
+
+React est la librairie la plus utilisée actuellement pour le développement de frontend ! C'est pourquoi elle est utilisée dans ce cours.
 
 ### Applications backend
 
 Il existe aussi un nombre incroyable de librairies & frameworks JS permettant de réaliser des applications côté serveur, aussi appelées applications backend : Node.js, Express, Next.js...
 
-Voici quelques frameworks JS utilisés en 2020 côté serveur :
-
-<ScrollableImage
-  name="backend-frameworks.png"
-  minWidth="400px"
-  maxWidth="600px"
-/>
-
-[Top 10 JavaScript Frameworks for Server Side Development in 2020 [R.3]](/references/#r3)
+Express reste actuellement le framework le plus utilisé pour le développement de services web côté serveur. C'est pourquoi il est utilisé dans ce cours.
 
 ### Communication de données
 
@@ -64,23 +67,15 @@ Le JavaScript Object Notation (JSON) est notamment utilisé dans le cadre de com
 
 ### Applications mobiles clientes / Cross Platform applications
 
-Le JS est utilisé pour réaliser des applications multi-plateformes. Il existe beaucoup de types d'architecture et de librairies & framework JS pour écrire une base de code commune en JS et permettre de générer des application qui s'exécuteront sous différentes plateformes (Android, iOS, Windows, Mac, Linux, Web...) :
+Le TS/JS est utilisé pour réaliser des applications multi-plateformes. Il existe beaucoup de types d'architecture et de librairies & framework TS/JS pour écrire une base de code commune en TS/JS et permettre de générer des application qui s'exécuteront sous différentes plateformes (Android, iOS, Windows, Mac, Linux, Web...) :
 
 - Progressive Web Applications (PWA).
 - Hybrid Applications : Cordova, Ionic…
 - Real Native Applications : React Native, NativeScript…
 
-### Sur-ensemble de JS / langage transpilant vers JS
-
-Certaines applications peuvent être écrites dans un langage qui se base sur le JS :
-
-- TypeScript
-- CoffeeScript
-- ...
-
 ### Embedded scripts
 
-Le JS sert aussi à intégrer des fonctionnalités, des plugins, à certains logiciels très connus.
+Le TS/JS sert aussi à intégrer des fonctionnalités, des plugins, à certains logiciels très connus.
 Par exemple :
 
 - Chrome extensions
@@ -89,21 +84,4 @@ Par exemple :
 
 ### Autres
 
-Il existe encore d'autres contextes où le JS est utilisé. C'est une belle motivation pour apprendre ce langage, il permet aux programmeurs de faire de nombreuses choses.
-
-Pour ce cours, nous avons donc du faire des choix afin de sélectionner les technologies les plus appropriées.
-
-# <InternalPageTitle> Librairies & frameworks JS sélectionnés pour ce cours </InternalPageTitle>
-## Côté serveur / backend
-
-Par contre, côté serveur, nous utiliserons le framework **Express** afin de faciliter le développement de web services.
-
-## Côté client / frontend
-
-Côté client, pour le développement d'IHM, la priorité est mise sur l'apprentissage de Vanilla JS [[R.3]](/references/#r3), ou JS pure, sans utilisation de framework.
-
-En effet, comme le JS est devenu interopérable grâce à des standards (les normes **ECMAScript**) qui doivent être implémentés par tous les browsers modernes, il n'est plus nécessaires d'utiliser des librairies comme **jQuery**.
-
-<ScrollableImage name="js-evolution.png" minWidth="400px" maxWidth="600px" />
-
-[Evolution du JS [R.4.]](/references/#r4)
+Il existe encore d'autres contextes où le TS/JS est utilisé. C'est une belle motivation pour apprendre ce langage, il permet aux programmeurs de faire de nombreuses choses.

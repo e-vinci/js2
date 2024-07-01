@@ -24,8 +24,9 @@ const Footer = ({ siteMetaData, ...otherProps }) => {
       >
         <div className="footer__logo">
           <h3 className="footer__logo__text">{siteMetaData.title}</h3>
-          <div className="footer__logo__image"></div>
+          <div className="footer__logo__image1"></div>
           <div className="footer__logo__image2"></div>
+          <div className="footer__logo__image3"></div>
         </div>
         <div className="footer__version text--hand-written">
           v{siteMetaData.version}

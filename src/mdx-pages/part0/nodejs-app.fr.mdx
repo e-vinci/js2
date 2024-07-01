@@ -3,18 +3,18 @@ title: "Node.js app"
 description: "Introduction aux applications backend Nodes.js & Express"
 ---
 
-# e) Introduction aux applications backend en Nodes.js & Express
+# f) Introduction aux applications backend en Nodes.js & Express
 
 <InternalPageMenu>
   <PathViewer>
     <PathViewerItem to="/"> web2course </PathViewerItem>
     <PathViewerItem to="/part1"> Partie 0 </PathViewerItem>
-    <PathViewerItem selected> e) Node.js </PathViewerItem>
+    <PathViewerItem selected> f) Node.js </PathViewerItem>
   </PathViewer>
   <InternalPageMenuItem> C'est quoi une application backend ? </InternalPageMenuItem>
   <InternalPageMenuItem> Node.js c'est quoi ? </InternalPageMenuItem>
   <InternalPageMenuItem> Où mettre du code Node.js ? </InternalPageMenuItem>
-  <InternalPageMenuItem> Les modules CommonJS </InternalPageMenuItem>
+  <InternalPageMenuItem> 🍬 Les modules CommonJS </InternalPageMenuItem>
   <InternalPageMenuItem> Introduction aux packages Node.js & npm </InternalPageMenuItem>
   <InternalPageMenuItem> Express c'est quoi ? </InternalPageMenuItem>
   <InternalPageMenuItem> Créer une application Express "from scratch" </InternalPageMenuItem>
@@ -22,14 +22,14 @@ description: "Introduction aux applications backend Nodes.js & Express"
   <InternalPageMenuItem> Exercice 0.2 : mise à disposition d'une page HTML via une app Express </InternalPageMenuItem>
 </InternalPageMenu>
 
-Si vous n'avez jamais développé d'application via Express, ou que vous avez oublié comment faire, nous vous recommandons de suivre cette introduction. Sinon, vous pouvez passer à la suite : [a) Introduction aux RESTful API Node.js & Express](/part1/express-api).
+Si vous n'avez jamais développé d'application backend en TS, nous vous recommandons de réaliser cette partie du cours attentivement.
 
 # <InternalPageTitle> C'est quoi une application backend ? </InternalPageTitle>
 ## Frontend, backend, c'est quoi ?
 Un **frontend**, c'est une application :
 - qui s'exécute côté client, une IHM (Interface Homme-Machine), qu'on pourrait aussi appeler UI (User Interface) ;
 - qui est en direct interaction avec l'utilisateur ;
-- implémenté, dans ce cours-ci, en HTML / CSS / JS.
+- implémenté, dans ce cours-ci, en HTML / CSS / TS.
 
 Un **backend**, c'est une application :
 - qui s'exécute côté serveur ; 
@@ -71,7 +71,7 @@ Voici un exemple de technologies qui pourrait être mises en oeuvre pour dévelo
 
 ### Technologies backend sélectionnées pour ce cours
 
-Voici les technologies qui ont été choisies pour être mises en oeuvre pour développer une application backend en JS :
+Voici les technologies qui ont été choisies pour être mises en oeuvre pour développer une application backend en TS :
 
 <ScrollableImage name="techno-course.png" minWidth="721px" maxWidth="721px" />
 
@@ -86,8 +86,8 @@ Node.js offre une utilisation optimale des ressources des serveurs sans dépenda
 
 Pour le développement d'IHM de façon modernes, vous avez déjà installé l'environnement Node.js. Mais si ce n'est pas installé, il est important que vous installiez l'environnement [Node.js en version LTS](https://nodejs.org/en/) [[R.34]](/references/#r34).
 
-Vous ne devez pas apprendre un nouveau langage pour développer des applications backend, Node.js, c'est du JS.  
-Si vous avez besoin d'un rappel du langage, vous pouvez le faire ici : [Introduction au langage JS](/part0/js-language).
+💭 Mais je souhaite développer des applications en TS. Comment vais-je utiliser l'environnement Node.js pour faire du TS ?  
+Lors de notre développement, nous allons utiliser un outil permettant de transpiler du TS en JS, c'est à dire de transformer du TS en JS.
 
 # <InternalPageTitle> Où mettre du code Node.js ? </InternalPageTitle>
 ## Directement dans un terminal
@@ -120,38 +120,79 @@ Quand vous souhaitez sortir de l'interpréteur de commandes de Nodes, il faut ta
 ## Dans un script
 Nous écrivons généralement le code Node.js au sein d'un script externe.
 
-Dans votre repo **web2**, veuillez créer un répertoire **/tutorials/node-start** et y ajouter le fichier **start.js** contenant ce code-ci :
+Nous allons utiliser `ts-node` pour exécuter directement des fichiers TypeScript sans les compiler manuellement en JavaScript au préalable. 
 
-```js
-class Car {
-  constructor(brand, model) {
-    this.brand = brand;
-    this.model = model;
-    this.id = Math.random();
-  }
+`ts-node` :
+- utilise le compilateur TypeScript pour transpiler le code TypeScript en JavaScript.
+- une fois le code transpilé, `ts-node` utilise Node.js pour exécuter le JavaScript résultant.
 
-  getDescription() {
-    return `Car's description : ${this.brand}, ${this.model} , ID:${this.id}`;
-  }
-}
+Pour lancer un script en TS à l'aide de `ts-node` (et de Node.js indirectement), il suffit de taper dans un terminal : **`npx ts-node nomScript`**.
 
-const dacia = new Car('Dacia', 'Sandero');
 
-console.log( dacia.getDescription() );
+`npx` est un outil de Node.js qui permet d'exécuter des paquets npm sans les installer globalement, en les installant temporairement si nécessaire, simplifiant ainsi l'exécution de scripts et commandes de projets.
+
+
+Dans votre repo **web2**, veuillez créer un répertoire **/tutorials/ts-node-start** et y ajouter le fichier **index.ts** contenant ce code-ci :
+
+```ts
+const dacia= {
+  brand: "Dacia",
+  model: "Sandero",
+  id: undefined,
+  getDescription: function () {
+    return `${this.id} ${this.brand} ${this.model}`;
+  },
+};
+
+console.log(dacia.getDescription());
+
+dacia.id = Math.random();
+
+console.log(dacia.getDescription());
 ```
 
-Pour lancer une application Node.js, il suffit de taper dans un terminal : **`node nomScript`** (**`.js`** est optionnel).
-
-Donc pour lancer le script créé ci-dessus, veuillez ouvrir un terminal au bon endroit.  
-Pour rappel, Il est possible de faire un clic droit dans l'Explorer de VS Code sur le répertoire **node-start**, **Open in Integrated Terminal** pour ouvrir un terminal à l'endroit souhaité.
+Pour lancer le script créé ci-dessus, veuillez ouvrir un terminal au bon endroit.  
+Pour rappel, Il est possible de faire un clic droit dans l'Explorer de VS Code sur le répertoire `ts-node-start`, `Open in Integrated Terminal` pour ouvrir un terminal à l'endroit souhaité.
 
 Il ne vous reste plus qu'à taper :
 
 ```bash
-node start # or node start.js
+npx ts-node ./index # or node ./index.ts
 ```
 
-Voilà, c'est une simple application Node.js qui affiche un message dans le terminal.
+Nous avons une erreur à l'exécution du script. En effet, l'inférence automatique de type de TS a défini `id` comme étant de type `undefined`, on ne peut donc lui réassigner un `Number`.
+
+Il est intéressant de se rendre compte qu'en JS, on peut réassigner un type à une variable, ce qui n'est pas possible en TS. N'hésitez donc pas à exécuter ce script à l'aide de `node ./index.ts` pour voir le résultat.
+
+Revenons au TS. Nous allons donc définir un type `Car` pour notre objet `dacia`, en indiquant que l'attribut `id` est de type `number | undefined` (soit un nombre, soit `undefined`). Voici le code modifié :
+
+```ts
+interface Car {
+  brand: string;
+  model: string;
+  id: number | undefined;
+  getDescription: () => string;
+}
+
+const dacia: Car = {
+  brand: "Dacia",
+  model: "Sandero",
+  id: undefined,
+  getDescription: function () {
+    return `${this.id} ${this.brand} ${this.model}`;
+  },
+};
+
+console.log(dacia.getDescription());
+
+dacia.id = Math.random();
+
+console.log(dacia.getDescription());
+```
+
+Exécutez le script à l'aide de `npx ts-node ./index` pour voir le résultat.
+
+Voilà, c'est une simple application Node.js en TS qui affiche deux messages dans le terminal.
 
 # <InternalPageTitle> Les modules CommonJS </InternalPageTitle>
 ## Introduction
