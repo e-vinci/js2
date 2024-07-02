@@ -8,18 +8,17 @@ description: "Introduction aux applications backend Nodes.js & Express"
 <InternalPageMenu>
   <PathViewer>
     <PathViewerItem to="/"> web2course </PathViewerItem>
-    <PathViewerItem to="/part1"> Partie 0 </PathViewerItem>
+    <PathViewerItem to="/part0"> Partie 0 </PathViewerItem>
     <PathViewerItem selected> f) Node.js </PathViewerItem>
   </PathViewer>
   <InternalPageMenuItem> C'est quoi une application backend ? </InternalPageMenuItem>
   <InternalPageMenuItem> Node.js c'est quoi ? </InternalPageMenuItem>
-  <InternalPageMenuItem> Où mettre du code Node.js ? </InternalPageMenuItem>
-  <InternalPageMenuItem> 🍬 Les modules CommonJS </InternalPageMenuItem>
+  <InternalPageMenuItem> Où mettre du code TS dans une application Node.js ? </InternalPageMenuItem>
   <InternalPageMenuItem> Introduction aux packages Node.js & npm </InternalPageMenuItem>
   <InternalPageMenuItem> Express c'est quoi ? </InternalPageMenuItem>
   <InternalPageMenuItem> Créer une application Express "from scratch" </InternalPageMenuItem>
   <InternalPageMenuItem> Créer une application Express via un générateur </InternalPageMenuItem>
-  <InternalPageMenuItem> Exercice 0.2 : mise à disposition d'une page HTML via une app Express </InternalPageMenuItem>
+  <InternalPageMenuItem> 🍬 Les modules CommonJS </InternalPageMenuItem>
 </InternalPageMenu>
 
 Si vous n'avez jamais développé d'application backend en TS, nous vous recommandons de réaliser cette partie du cours attentivement.
@@ -61,24 +60,6 @@ Un backend peut offrir d'autres services, comme :
 - **serveur d'emails** ;
 - ...
 
-### Technologies backend possibles
-
-Voici un exemple de technologies qui pourrait être mises en oeuvre pour développer une application backend :
-
-<ScrollableImage name="techno.png" minWidth="586px" maxWidth="586px" />
-
-  <figcaption>Technologies backend possibles</figcaption>
-
-### Technologies backend sélectionnées pour ce cours
-
-Voici les technologies qui ont été choisies pour être mises en oeuvre pour développer une application backend en TS :
-
-<ScrollableImage name="techno-course.png" minWidth="721px" maxWidth="721px" />
-
-  <figcaption>Technologies backend en JS choisies pour ce cours</figcaption>
-
-Nous allons utiliser Express comme framework pour rapidement développer des applications Node.js.
-
 # <InternalPageTitle> Node.js c'est quoi ? </InternalPageTitle>
 
 Node.js est un environnement serveur open source permettant la création d'outils et applications côté serveur en JS.  
@@ -89,7 +70,7 @@ Pour le développement d'IHM de façon modernes, vous avez déjà installé l'en
 💭 Mais je souhaite développer des applications en TS. Comment vais-je utiliser l'environnement Node.js pour faire du TS ?  
 Lors de notre développement, nous allons utiliser un outil permettant de transpiler du TS en JS, c'est à dire de transformer du TS en JS.
 
-# <InternalPageTitle> Où mettre du code Node.js ? </InternalPageTitle>
+# <InternalPageTitle> Où mettre du code TS dans une application Node.js ? </InternalPageTitle>
 ## Directement dans un terminal
 Il est possible d'écrire du code Node.js directement dans un terminal.
 
@@ -126,13 +107,13 @@ Nous allons utiliser `ts-node` pour exécuter directement des fichiers TypeScrip
 - utilise le compilateur TypeScript pour transpiler le code TypeScript en JavaScript.
 - une fois le code transpilé, `ts-node` utilise Node.js pour exécuter le JavaScript résultant.
 
-Pour lancer un script en TS à l'aide de `ts-node` (et de Node.js indirectement), il suffit de taper dans un terminal : **`npx ts-node nomScript`**.
+Pour lancer un script en TS à l'aide de `ts-node` (et de Node.js indirectement), il suffit de taper dans un terminal : `npx ts-node nomScript`.
 
 
 `npx` est un outil de Node.js qui permet d'exécuter des paquets npm sans les installer globalement, en les installant temporairement si nécessaire, simplifiant ainsi l'exécution de scripts et commandes de projets.
 
 
-Dans votre repo **web2**, veuillez créer un répertoire **/tutorials/ts-node-start** et y ajouter le fichier **index.ts** contenant ce code-ci :
+Dans votre repo **web2**, veuillez créer un répertoire **`/tutorials/ts-node-start`** et y ajouter le fichier **index.ts** contenant ce code-ci :
 
 ```ts
 const dacia= {
@@ -194,15 +175,264 @@ Exécutez le script à l'aide de `npx ts-node ./index` pour voir le résultat.
 
 Voilà, c'est une simple application Node.js en TS qui affiche deux messages dans le terminal.
 
-# <InternalPageTitle> Les modules CommonJS </InternalPageTitle>
+# <InternalPageTitle> Introduction aux packages Node.js & npm </InternalPageTitle>
 ## Introduction
-Un module est une librairie JS fournissant des objets.  
-Comme en JS tout est objet, un module met donc à disposition des fonctions, des constantes, des variables...
+Les concepts importants du gestionnaire de packages de Node.js sont résumés ci-dessous.
 
-Très souvent, Node.js est codé en JS conforme au standard **`CommonJS`**.  
-La gestion des modules en **`CommonJS`** est différente de celle du JS conforme au standard **`ECMAScript`**, le JS utilisé dans les browsers.
+## Gestionnaire de packages
+**npm** est le gestionnaire de packages de Node.js. 
 
-Même s'il est possible d'écrire du Node.js conforme au standard **`ECMAScript`**, la majorité du code que vous trouverez sur le web sera conforme à **`CommonJS`**.
+On peut faire des recherches de packages qui seraient utiles à nos application web sur [npmjs.com](https://www.npmjs.com/) [[R.48]](/references/#r48).
+
+## Fichier de configuration d'un projet
+Tous les packages associés à une app, ses dépendances, sont données dans le fichier : **`package.json`**.
+
+C'est le fichier qui décrit la configuration d'un projet JS.
+
+On peut manuellement créer ce fichier à l'aide de la commande **`npm init`** si l'on souhaite quelque chose de plus interactif ou **`npm init -y`** si l'on souhaite un fichier avec le minimum autogénéré.
+
+Voici un exemple de fichier **`package.json`** :
+
+```json
+{
+  "name": "api2",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "debug": "npm run dev",
+    "dev": "nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "lint": "eslint **/*.js",
+    "lint:fix": "npm run lint -- --fix"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "data/*"
+    ],
+    "exec": "npm run lint && node"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "morgan": "~1.9.1"
+  },
+  "devDependencies": {
+    "eslint": "^8.19.0",
+    "eslint-config-airbnb-base": "^15.0.0",
+    "nodemon": "^2.0.19",
+    "prettier-airbnb-config": "^1.0.0"
+  },
+  "author": "e-Baron"
+}
+```
+
+Lors de l'installation d'un package, celui-ci s'ajoute à la liste des dépendances.  
+Ainsi, si des développeurs trouvent votre projet sur Git, ils n'auront qu'à exécuter **`npm i`** afin d'installer toutes les dépendances.
+
+C'est dans le répertoire **`node_modules`** que toutes les dépendances seront installées.  
+Ces dépendances peuvent être très volumineuses. C'est donc important de ne jamais mettre ce dossier sur vos web repository, via Git.  
+Pour ce faire, n'oubliez pas d'inclure un fichier **`.gitignore`** dans vos repos pour ignore **`node_modules`**.
+
+**`package.json`** indique les scripts de démarrage, en fonction de la façon dont nous souhaitons démarrer l'application.
+
+```json
+  "scripts": {
+    "debug": "npm run dev",
+    "dev": "nodemon ./bin/www",
+    "start": "node ./bin/www",
+    "lint": "eslint **/*.js",
+    "lint:fix": "npm run lint -- --fix"
+  },  
+```
+
+Au regard de cette configuration, on peut démarrer l'application à l'aide de **`npm start`** ou **`npm run start`**, ce qui exécutera le script **`./bin/www`** à l'aide de **node**.  
+On pourrait aussi démarrer l'application à l'aide de **`npm run dev`**, ce qui démarrerait l'application à l'aide de **`nodemon`**, un outil permettant de monitorer les changements de fichiers et de redémarrer automatiquement le serveur en cas de changement.
+
+## Installer un package
+Pour installer un package (ou une dépendance), il suffit de faire : **`npm i nomDuPackage`** ou **`npm install nomDuPackage`**.
+
+Pour installer une dépendance de développement, qui ne sera pas installée lorsque nous déploierons une version de production de notre application, tapez : **`npm i nomDuPackage -D`**.
+
+Par exemple, **`nodemon`** est un package qui permet de rédémarrer le serveur à chaque modification de fichier par les développeurs. En production, l'application n'a pas besoin de ce package !
+
+## Dépendances installées
+On a vu que **`npm i`** permet d'installer toutes les dépendances se trouvant dans **`package.json`**, ainsi que toutes les dépendances de ces dépendances...
+
+L'arbre exact des dépendances installées, numéros de version..., se trouve dans **`package-lock.json`**. Ce fichier est généré automatiquement pour chaque opération modifiant **`node_modules`** ou **`package.json`**.
+
+Le fichier **`package-lock.json`** est utilisé pour verrouiller les versions des dépendances dans un projet Node.js, garantissant que les installations futures produisent exactement le même arbre de dépendances, ce qui assure la consistance et la reproductibilité des builds.
+
+⚡ Si un fichier **`package-lock.json`** est compris dans un repo, lorsque vous introduirez **`npm i`** pour installer toutes les dépendances, npm installera les mêmes versions que celles se trouvant dans **`package-lock.json`**. Cela peut poser des problèmes si votre environnement Node.js est en version différente. En cas de souci, pensez à effacer le répertoire **`node_modules`** et le fichier **`package-lock.json`** avant de relancer l'installation de toutes les dépendances.
+
+## Localisation d'un module ou package par Node
+Node va chercher dans tous les chemins spécifiés dans la variable **`module.paths`** lorsque **`required()`** est appelé. Les chemins cherchés sont par exemple : **`node_modules`**, **./**, ...
+
+## Mise à jour des packages vers leur dernière version
+La mise à jour de toutes les dépendances peut parfois amener à des gros soucis.
+
+Sans prendre trop de risques, vous pouvez tenter de mettre à jour tous vos packages en suivant la documentation de npm :
+[Updating packages downloaded from the registry](https://docs.npmjs.com/updating-packages-downloaded-from-the-registry) [[R.49]](/references/#r49).
+
+Cela vous permettra de mettre à jour vos packages, sans devoir changer la liste de vos dépendances qui est donnée dans **`package.json`**. S'il y a des dépendances qui ont des "breaking changes", ces versions ne seront pas installées.
+
+Si vous souhaitez tous mettre à jour d'un coup, vers la toute dernière version de chaque package, vous pouvez tentez le coup en utilisant la commande **`ncu`** du package [npm-check-updates](https://www.npmjs.com/package/npm-check-updates).  
+Mais attention, certains packages subissent parfois des "breaking changes", ce qui impose que vous deviez faire migrer votre code avant que celui-ci soit fonctionnel.
+
+Nous vous recommandons donc, si vous rencontrez un problème lors de la mise à jour de tous vos packages d'un coup à l'aide de **`ncu`**, de revenir à la situation initiale, et de faire l'upgrade de chaque package listé dans **`package.json`** individuellement. Pour installer la dernière version d'un package, utilisez **`@latest`** :
+
+```bash
+npm i nomPackage@latest
+```
+# <InternalPageTitle> Express c'est quoi ? </InternalPageTitle>
+
+Voici le moto du framework Express: "**Fast, unopinionated, minimalist web framework for Node.js**" [Express](https://expressjs.com/) [[R.50]](/references/#r50).
+
+Express est un framework qui permet de rapidement créer des applications en Node.js. 
+
+Il est possible de créer une application Express soit "from scratch", soit à partir d'un boilerplate.
+
+Dans le cadre de ce cours, nous allons plutôt utiliser des boilerplates pour générer des applications. Néanmoins, il est intéressant de voir comment créer une application "from scratch".
+
+# <InternalPageTitle> Créer une application Express "from scratch" </InternalPageTitle>
+
+Il faut d'abord créer un répertoire pour votre application.
+
+Au sein de votre repo **web2**, veuillez créer le répertoire **`/tutorials/back/express-static-file-server`**.
+
+Veuillez, via le terminal, entrer dans ce répertoire. Vous pouvez par exemple faire un clic droit sur sur le répertoire **`/tutorials/back/express-static-file-server`** dans l'Explorer de VS Code, **`Open in Integrated Terminal`**.
+
+Dans ce répertoire, veuillez générer le fichier de configuration du projet (**`package.json`**) : **`npm init`**.  
+Veuillez répondre aux questions pour configurer le point d'entrée de l'application comme étant le script **`index.ts`**.
+
+Veuillez configurer le script de démarrage de votre application en ajoutant cette ligne au sein de **`package.json`** :
+
+```json highlighting="2"
+  "scripts": {
+    "start": "ts-node index.ts",
+    //...
+  }
+```
+
+Ainsi, notre application pourra démarrer à l'aide de la commande **`npm start`**.
+
+Néanmoins, pour que cela fonctionne, il faut installer **`ts-node`**.
+Veuillez installer **`ts-node`**, comme dépendance de développement, à l'aide de la commande suivante :
+```bash
+npm i ts-node -D
+```
+
+Il est à noter que nous aurions pu installer **`ts-node`** de façon globale (**`npm i ts-node -g`**), mais nous préférons l'installer localement pour que les autres développeurs qui travailleront sur ce projet puissent avoir la même version de **`ts-node`**.
+
+Il aurait aussi été possible de créer une installation temporaire de **`ts-node`** à l'aide de **`npx`** : **`npx ts-node index.ts`**.
+
+A ce stade-ci, voilà à quoi devrait ressembler votre **`package.json`** :
+
+```json
+{
+  "name": "express-static-file-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "yourName",
+  "license": "ISC",
+  "devDependencies": {
+    "ts-node": "^10.9.2"
+  }
+}
+```
+
+Veuillez installer le package **`express`** : 
+
+```bash
+npm i express
+```
+
+Nous allons créer un simple serveur de fichiers statiques à l'aide du middleware **`express.static`**, afin de servir tous les fichiers qui se trouveront dans le répertoire **`public`**.
+
+Tout d'abord, téléchargez ce zip : <LinkFile name="public.zip" target="_blank" download>fichiers statiques</LinkFile>.
+
+Veuillez désarchiver ce répertoire dans votre projet afin d'avoir les fichiers statiques qui seront partagés par votre serveur au sein de **`/public`**.   
+Vérifiez bien que vous n'avez qu'un seul répertoire **`/public`** et pas un **`/public/public`**.
+
+Nous allons créer le serveur via un nouveau fichier **`/index.ts`** et y ajouter ce code :
+
+```ts
+import express from "express";
+
+const app = express();
+
+app.use(express.static("public"));
+
+const PORT: number = 7777;
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+Veuillez tenter de lancer l'application en tapant cela dans votre terminal au sein du répertoire du projet :
+
+```bash
+npm start
+```
+
+Vous rencontrerez l'erreur `"Could not find a declaration file for module 'express'"` parce que TypeScript ne peut pas trouver les définitions de type nécessaires pour Express. Cela empêche TypeScript de connaître les types et les signatures des fonctions d'Express, ce qui invalide les bénéfices du typage statique et de l'autocomplétion dans l'IDE. Ainsi, la compilation échoue.
+
+Pour résoudre ce problème, nous devons simplement installer les définitions de type pour Express : 
+
+```bash
+npm i @types/express -D
+```
+
+Veuillez lancer l'application en tapant cela dans votre terminal au sein du répertoire du projet :
+
+```bash
+npm start
+```
+
+Pour accéder au serveur de fichiers, vous pouvez le faire via un browser : [http://localhost:7777](http://localhost:7777)
+
+Si tout se passe bien, vous devriez avoir accès au site de la pizzeria que nous découvrirons plus tard dans ce cours.
+
+On voit que juste cette ligne permet la mise en place d'un serveur de fichier statique, via le middleware **`express.static`** :
+
+```js
+app.use(express.static('public'));
+```
+
+Et pour démarrer un serveur web qui écoute sur le port **7777**, ces lignes sont suffisantes :
+```js
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});
+```
+
+En cas de souci, vous pouvez accéder au code de ce tutoriel ici :
+[express-static-file-server](https://github.com/e-vinci/ts-demos/tree/main/back/express-static-file-server/).
+
+
+# <InternalPageTitle> Créer une application Express via un générateur </InternalPageTitle>
+
+Le générateur d'applications **`express-generator`** permet de générer le boilerplate d'une application Express de base. 
+
+Malheureusement, ce générateur ne permet pas de générer une application en TypeScript. Nous avons donc choisi pour ce cours de créer pour vous un boilerplate de base d'une application Express en TypeScript et de ne pas utiliser le générateur **`express-generator`**.
+
+Si vous le souhaitez, vous pouvez passer à la [Partie 1 : Création de services web](../../part1).
+
+ # <InternalPageTitle> 🍬 Les modules CommonJS </InternalPageTitle>
+## Introduction
+Un module est une librairie TS ou JS fournissant des objets.  
+Comme en TS/JS tout est objet, un module met donc à disposition des fonctions, des constantes, des variables...
+
+Très souvent, Node.js est codé en JS conforme au standard **`CommonJS`**. La majorité des exemples que vous trouverez sur le web pour des applications Express seront en **`CommonJS`**.
+C'est pourquoi, même si ce cours se veut plus moderne en utilisant du TS, nous vous proposons optionnellement de voir comment fonctionne les modules en **`CommonJS`** dans ce chapître. Si vous préférez, vous pouvez passer directement à la section suivante : [Introduction aux packages Node.js & npm](#introduction_aux_packages_node_js_npm).
+
+Nous vous rappelons que pour ce cours-ci, nous utiliserons du TS et les modules **`ES6`** comme vu dans l'[introduction au modules](../js-language/#les_modules_es_6); les modules en **`CommonJS`** ne seront pas utilisés dans ce cours-ci.
 
 ## Création d'un module
 Pour créer un module, il suffit de créer un script JS **nomModule.js** et d'exporter des objets au sein de ce module via **module.exports** ou **exports**.
@@ -294,279 +524,3 @@ const http = require('http');
 // module used after package installation
 const shortid = require('shortid');
 ```
-
-# <InternalPageTitle> Introduction aux packages Node.js & npm </InternalPageTitle>
-## Introduction
-Les concepts importants du gestionnaire de packages de Node.js sont résumés ci-dessous.
-
-## Gestionnaire de packages
-**npm** est le gestionnaire de packages de Node.js. 
-
-On peut faire des recherches de packages qui seraient utiles à nos application web sur [npmjs.com](https://www.npmjs.com/) [[R.48]](/references/#r48).
-
-## Fichier de configuration d'un projet
-Tous les packages associés à une app, ses dépendances, sont données dans le fichier : **`package.json`**.
-
-C'est le fichier qui décrit la configuration d'un projet JS.
-
-On peut manuellement créer ce fichier à l'aide de la commande **`npm init`** si l'on souhaite quelque chose de plus interactif ou **`npm init -y`** si l'on souhaite un fichier avec le minimum autogénéré.
-
-Voici un exemple de fichier **`package.json`** :
-
-```json
-{
-  "name": "api2",
-  "version": "0.0.0",
-  "private": true,
-  "scripts": {
-    "debug": "npm run dev",
-    "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www",
-    "lint": "eslint **/*.js",
-    "lint:fix": "npm run lint -- --fix"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "data/*"
-    ],
-    "exec": "npm run lint && node"
-  },
-  "dependencies": {
-    "cookie-parser": "~1.4.4",
-    "debug": "~2.6.9",
-    "express": "~4.16.1",
-    "morgan": "~1.9.1"
-  },
-  "devDependencies": {
-    "eslint": "^8.19.0",
-    "eslint-config-airbnb-base": "^15.0.0",
-    "nodemon": "^2.0.19",
-    "prettier-airbnb-config": "^1.0.0"
-  },
-  "author": "e-Baron"
-}
-```
-
-Lors de l'installation d'un package, celui-ci s'ajoute à la liste des dépendances.  
-Ainsi, si des développeurs trouvent votre projet sur Git, ils n'auront qu'à exécuter **`npm i`** afin d'installer toutes les dépendances.
-
-C'est dans le répertoire **`node_modules`** que toutes les dépendances seront installées.  
-Ces dépendances peuvent être très volumineuses. C'est donc important de ne jamais mettre ce dossier sur vos web repository, via Git.  
-Pour ce faire, n'oubliez pas d'inclure un fichier **`.gitignore`** dans vos repos pour ignore **`node_modules`**.
-
-**`package.json`** indique les scripts de démarrage, en fonction de la façon dont nous souhaitons démarrer l'application.
-
-```json
-  "scripts": {
-    "debug": "npm run dev",
-    "dev": "nodemon ./bin/www",
-    "start": "node ./bin/www",
-    "lint": "eslint **/*.js",
-    "lint:fix": "npm run lint -- --fix"
-  },  
-```
-
-Au regard de cette configuration, on peut démarrer l'application à l'aide de **`npm start`** ou **`npm run start`**, ce qui exécutera le script **`./bin/www`** à l'aide de **node**.  
-On pourrait aussi démarrer l'application à l'aide de **`npm run dev`**, ce qui démarrerait l'application à l'aide de **nodemon**, un outil permettant de monitorer les changements de fichiers et de redémarrer automatiquement le serveur en cas de changement.
-
-NB : nous verrons plus tard cet outil **nodemon** pour simplifier le développement.
-
-## Installer un package
-Pour installer un package (ou une dépendance), il suffit de faire : **`npm i nomDuPackage`** ou **`npm install nomDuPackage`**.
-
-Pour installer une dépendance de développement, qui ne sera pas installée lorsque nous déploierons une version de production de notre application, tapez : **`npm i nomDuPackage -D`**.
-
-Par exemple, **nodemon** est un package qui permet de rédémarrer le serveur à chaque modification de fichier par les développeurs. En production, l'application n'a pas besoin de ce package !
-
-## Dépendances installées
-On a vu que **`npm i`** permet d'installer toutes les dépendances se trouvant dans **`package.json`**, ainsi que toutes les dépendances de ces dépendances...
-
-L'arbre exact des dépendances installées, numéros de version..., se trouve dans **`package-lock.json`**. Ce fichier est généré automatiquement pour chaque opération modifiant **`node_modules`** ou **`package.json`**.
-
-⚡ Si un fichier **`package-lock.jso`n** est compris dans un repo, lorsque vous introduirez **`npm i`** pour installer toutes les dépendances, npm installera les mêmes versions que celles se trouvant dans **`package-lock.json`**. Cela peut poser des problèmes si votre environnement Node.js est en version différente. En cas de souci, pensez à effacer le répertoire **`node_modules`** et le fichier **`package-lock.json`** avant de relancer l'installation de toutes les dépendances.
-
-## Localisation d'un module ou package par Node
-Node va chercher dans tous les chemins spécifiés dans la variable **`module.paths`** lorsque **`required()`** est appelé. Les chemins cherchés sont par exemple : **`node_modules`**, **./**, ...
-
-## Mise à jour des packages vers leur dernière version
-La mise à jour de toutes les dépendances peut parfois amener à des gros soucis.
-
-Sans prendre trop de risques, vous pouvez tenter de mettre à jour tous vos packages en suivant la documentation de npm :
-[Updating packages downloaded from the registry](https://docs.npmjs.com/updating-packages-downloaded-from-the-registry) [[R.49]](/references/#r49).
-
-Cela vous permettra de mettre à jour vos packages, sans devoir changer la liste de vos dépendances qui est donnée dans **`package.json`**. S'il y a des dépendances qui ont des "breaking changes", ces versions ne seront pas installées.
-
-Si vous souhaitez tous mettre à jour d'un coup, vers la toute dernière version de chaque package, vous pouvez tentez le coup en utilisant la commande **`ncu`** du package [npm-check-updates](https://www.npmjs.com/package/npm-check-updates).  
-Mais attention, certains packages subissent parfois des "breaking changes", ce qui impose que vous deviez faire migrer votre code avant que celui-ci soit fonctionnel.
-
-Nous vous recommandons donc, si vous rencontrer un problème lors de la mise à jour de tous vos packages d'un coup à l'aide de **`ncu`**, de revenir à la situation initiale, et de faire l'upgrade de chaque package listé dans **`package.json`** individuellement. Pour installer la dernière version d'un package, utilisez **`@latest`** :
-
-```bash
-npm i nomPackage@latest
-```
-# <InternalPageTitle> Express c'est quoi ? </InternalPageTitle>
-
-Voici le moto du framework Express: "**Fast, unopinionated, minimalist web framework for Node.js**" [Express](https://expressjs.com/) [[R.50]](/references/#r50).
-
-Express est un framework qui permet de rapidement créer des applications en Node.js. 
-
-Il est possible de créer une application Express soit "from scratch", soit à partir d'un boilerplate.
-
-Dans le cadre de ce cours, nous allons plutôt utiliser des boilerplates pour générer des applications. Néanmoins, il est intéressant de voir comment créer une application "from scratch".
-
-# <InternalPageTitle> Créer une application Express "from scratch" </InternalPageTitle>
-
-Il faut d'abord créer un répertoire pour votre application.
-
-Au sein de votre repo **web2**, veuillez créer le répertoire **`/tutorials/express-static-file-server`**.
-
-Veuillez, via le terminal, entrer dans ce répertoire.
-
-Pour la suite du tutoriel, nous considérons que tous les chemins absolus démarrent du répertoire **`/tutorials/express-static-file-server`**.
-
-Dans ce répertoire, veuillez générer le fichier de configuration du projet (**`package.json`**) : **`npm init`**.  
-Veuillez répondre aux questions pour configurer le point d'entrée de l'application comme étant le script **`index.js`**.
-
-Veuillez configurer le script de démarrage de votre application en ajoutant cette ligne au sein de **`package.json`** :
-
-```json highlighting="2"
-  "scripts": {
-    "start": "node index.js",
-    //...
-  }
-```
-
-Ainsi, notre application pourra démarrer à l'aide de la commande **`npm start`**.
-
-A ce stade-ci, voilà à quoi devrait ressembler votre **`package.json`** :
-
-```json
-{
-  "name": "express-static-file-server",
-  "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "start": "node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "author": "yourName",
-  "license": "ISC"
-}
-```
-
-Veuillez installer le package **express** : 
-
-```bash
-npm i express
-```
-
-Nous allons créer un simple serveur de fichiers statiques à l'aide du middleware **express.static**, afin de servir tous les fichiers qui se trouveront dans le répertoire **public**.
-
-Tout d'abord, téléchargez ce zip : <LinkFile name="public.zip" target="_blank" download>fichiers statiques</LinkFile>.
-
-Veuillez désarchiver ce répertoire dans votre projet afin d'avoir les fichiers statiques qui seront partagés par votre serveur au sein de **`/public`**.   
-Vérifiez bien que vous n'avez qu'un seul répertoire **`/public`** et pas un **`/public/public`**.
-
-Il ne reste plus qu'à créer le serveur. Veuillez créer le fichier **`/index.js`** et y ajouter ce code :
-
-```js
-const express = require('express');
-const app = express();
-
-app.use(express.static('public'));
-
-const PORT = 7777;
-
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-```
-
-On voit que juste cette ligne permet la mise en place d'un serveur de fichier statique, via le middleware **express.static** :
-
-```js
-app.use(express.static('public'));
-```
-
-Et pour démarrer un serveur web qui écoute sur le port **7777**, ces lignes sont suffisantes :
-```js
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
-```
-
-Veuillez lancer l'application en tapant cela dans votre terminal au sein du répertoire du projet :
-
-```bash
-npm start
-```
-
-Pour accéder au serveur de fichiers, vous pouvez le faire via un browser : [http://localhost:7777](http://localhost:7777)
-
-Si tout se passe bien, vous devriez avoir accès au site de la pizzeria que nous découvrirons plus tard dans ce cours.
-
-Si tout fonctionne bien, faites un **commit** de votre repo (**web2**) avec le message "**express-static-file-server**".
-
-En cas de souci, vous pouvez accéder au code de ce tutoriel ici :
-[express-static-file-server](https://github.com/e-vinci/js-demos/tree/main/backend-restful-api/express-static-file-server/).
-
-
-# <InternalPageTitle> Créer une application Express via un générateur </InternalPageTitle>
-
-Le générateur d'applications **express-generator** permet de générer le boilerplate d'une application Express de base.
-
-A l'aide du générateur d'applications Express, vous allez créer une application Express sans "view engine" car nous n'allons pas faire du Server Side Rendering dans le cadre de ce cours.
-
-Afin d'avoir une visibilité de tout le code associé à votre cours de JS, veuillez ouvrir votre répertoire **`web2`** (créé dans le cadre de l'[Exercice 0.1](git/#exercice_0_1_creer_un_repository_local_et_distant_pour_gerer_vos_exercices_tutoriels)) à l'aide de votre éditeur de code. Vous avez deux possiblités :
-- Soit, si vous avez activé l'option **`Open with code`** lors de l'installation de VS Code : clic droit sur le répertoire **`web2`** et **`Open with Code`**.
-- Soit, si par exemple l'option **`Open with Code`** n'est pas disponible : vous lancez VS Code, **`File`**, **`Open Folder`**, et vous sélectionnez votre répertoire **`web2`** (clic sur le répertoire, puis sur le bouton **`Select Folder`**).
-
-Veuillez ouvrir un terminal au sein de VS Code au niveau du répertoire **`/tutorials`**.  
-Le plus simple pour ouvrir un terminal au niveau d'un répertoire est de suivre cette procédure :
-- clic droit dans VS Code sur le répertoire que l'on souhaite ouvrir (ici **`/web2/tutorials`**);
-- sélection de l'option **`Open in Integrated Terminal`**.
-
-Ensuite, créez une application nommée **basic-generated-app** en tapant :
-
-```bash
-npx express-generator --no-view basic-generated-app
-```
-
-**`npx`** permet de directement exécuter un package en mode de commandes en installant une copie locale et temporaire de ce package (et de ses dépendances).
-
-Veuillez installer les dépendances de votre app et la démarrer :
-
-```bash
-cd basic-generated-app
-npm i 
-npm start
-```
-
-Si vous copier / coller le contenu du répertoire **`/public`** du tutoriel précédent dans le répertoire **public** généré, l'application fournira le même résultat que la précédente, mais sur un port différent : [http://localhost:3000](http://localhost:3000).
-
-Nous allons découvrir en détails ce qui a été généré par **express-generator** un peu plus tard.
-
-Actuellement, on remarquera : 
-- le point d'entrée de l'application est **`./bin/www`** au regard de **`package.json`**;
-- que **`./bin/www`** démarre un serveur web sur le port **3000** en lui demandant de s'occuper de démarrer tous les middlewares en lui passant tout ce qui est exporté de **`app.js`**.
-- **`app.js`** met aussi à disposition un serveur de fichier statiques servant le contenu du répertoire **`/public`**.
-
-Avant d'aller dans les détails d'Express que nous souhaitons utiliser pour développer des services web de type RESTful, nous allons voir ce que nous entendons par **RESTful**.
-
-# <InternalPageTitle> Exercice 0.2 : mise à disposition d'une page HTML via une app Express </InternalPageTitle>
-
-Veuillez utiliser le générateur d'application d'Express pour générer une application.
-
-Vous devez configurer votre application pour qu'elle offre la page HTML du site http://perfectionkills.com/ via cette URL :
-http://localhost:678.
-
-Le code de votre application doit se trouver dans votre repository local et votre web repository (normalement appelé **`web2`**) dans le répertoire nommé **`/exercises/0.2`**.  
-Veuillez faire un **`commit`** de votre code avec le message suivant : **`0.2 : app express creation & HTML reminder`**.
-
-
-#### 🤝 Tips
-- N'hésitez pas à créer une page html et à y intégrer une **iframe**. Vous allez devoir travailler sur le style de votre **iframe** pour qu'elle prenne toute la page.
-- Si vous n'êtes pas inspiré par une **iframe**, vous pouvez toujours simplement copier le code source de la page d'index du site http://perfectionkills.com/ et copier le code source de la feuille de style associée.
-
- 

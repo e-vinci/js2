@@ -13,7 +13,7 @@ const defaultAssociatedProjectGroupName = ""; //'Web2 2024';
 const projectDocument = ""; // 'WEB2-2023-PROJET-GROUP-XY.docx';
 
 const config = {
-  pathPrefix: `/web2`,
+  pathPrefix: `/js2`,
   siteMetadata: {
     version: pkg?.version,
     title: siteTitle,
