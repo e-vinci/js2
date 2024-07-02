@@ -27,7 +27,7 @@ workbox.core.clientsClaim();
  */
 self.__precacheManifest = [
   {
-    "url": "webpack-runtime-121f12cc1ee41d3b51ee.js"
+    "url": "webpack-runtime-706983fe0af80453fbad.js"
   },
   {
     "url": "framework-2e5b211a15610374bd3d.js"
@@ -36,15 +36,15 @@ self.__precacheManifest = [
     "url": "cb1608f2-79a359b845df824af80c.js"
   },
   {
-    "url": "app-51393bcac7afe137a71c.js"
+    "url": "app-d72f200ab430a1b3a779.js"
   },
   {
     "url": "offline-plugin-app-shell-fallback/index.html",
-    "revision": "95d0d5c0f85060a4535a5c442d55a891"
+    "revision": "28c71498f77a0de932fcd85fd7d1e642"
   },
   {
     "url": "manifest.webmanifest",
-    "revision": "edc2236133d7a318355183ba1bc9642b"
+    "revision": "7b0b7baa75bb9155ab0c0eba01622737"
   }
 ].concat(self.__precacheManifest || []);
 workbox.precaching.precacheAndRoute(self.__precacheManifest, {});
@@ -149,12 +149,12 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
   lastNavigationRequest = event.request.url
 
   let { pathname } = new URL(event.request.url)
-  pathname = pathname.replace(new RegExp(`^/web2`), ``)
+  pathname = pathname.replace(new RegExp(`^/js2`), ``)
 
   // Check for resources + the app bundle
   // The latter may not exist if the SW is updating to a new version
   const resources = await idbKeyval.get(`resources:${pathname}`)
-  if (!resources || !(await caches.match(`/web2/app-51393bcac7afe137a71c.js`))) {
+  if (!resources || !(await caches.match(`/js2/app-d72f200ab430a1b3a779.js`))) {
     return await fetch(event.request)
   }
 
@@ -167,7 +167,7 @@ const navigationRoute = new NavigationRoute(async ({ event }) => {
     }
   }
 
-  const offlineShell = `/web2/offline-plugin-app-shell-fallback/index.html`
+  const offlineShell = `/js2/offline-plugin-app-shell-fallback/index.html`
   const offlineShellWithKey = workbox.precaching.getCacheKeyForURL(offlineShell)
   return await caches.match(offlineShellWithKey)
 })
