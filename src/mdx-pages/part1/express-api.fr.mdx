@@ -23,6 +23,7 @@ description: "Introduction aux RESTful API en Node.js, Express & TS"
   <InternalPageMenuItem> Paramètres de requête </InternalPageMenuItem>
   <InternalPageMenuItem> Opération de création & parsing du body </InternalPageMenuItem>
   <InternalPageMenuItem> Client REST </InternalPageMenuItem>
+  <InternalPageMenuItem> Utilisation du debugger</InternalPageMenuItem>
   <InternalPageMenuItem> Exercice 1.3 : lectures spécifiques, création & REST Client </InternalPageMenuItem>
   <InternalPageMenuItem> 🍬 Exercice 1.4 : Gestion de la pagination, du tri et du filtrage </InternalPageMenuItem>
   <InternalPageMenuItem> Codes de statut HTTP associés aux réponses </InternalPageMenuItem> 
@@ -81,7 +82,7 @@ Pour lire cette ressource, il faudrait faire une requête http de type **GET** s
 # <InternalPageTitle> Démarrage d'une RESTful API en Express & TS  </InternalPageTitle>
 
 ## Création d'un projet à partir d'un boilerplate
-Nous allons maintenant découvrir notre toute première RESTful API permettant de gérer les données associées à une pizzeria, afin de bénéficier d'opérations sur des ressources de type "pizzas".
+Nous allons maintenant découvrir notre toute première RESTful API permettant de gérer les données associées à une pizzeria, afin de bénéficier d'opérations sur des ressources de type "pizzas" et de type "drinks".
 
 Dans votre repo **web2**, veuillez créer le répertoire **`/tutorials/back/api`**.
 
@@ -179,7 +180,7 @@ app.use((_req, _res, next) => {
 ```
 
 ## Router-level middleware : exemple
-Voici une partie du code qui pourrait se trouver au sein d'un router de pizzas, dans un fichier **`/routes/pizzas.js`** :
+Voici une partie du code qui pourrait se trouver au sein d'un router de pizzas, dans un fichier **`/routes/pizzas.ts`** :
 
 ```js
 import { Router } from "express";
@@ -426,7 +427,7 @@ Un film pourra avoir des propriétés supplémentaires (elles sont optionnelles)
 Veuillez donc "hardcoder" au moins trois ressources, parmi vos films préférés, dans un array au sein de votre RESTful API. Et si vous voulez aller très vite, demander à une IA de générez des films contenant les propriétés demandées.
 
 Le code de votre application doit se trouver dans votre repo git au sein du répertoire **`/exercises/1.1`**.  
-Veuillez faire un **`commit`** de votre code avec le message suivant : **`1.1 API : read`**.
+Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.1`**.
 
 # <InternalPageTitle> Exercice 1.2 : middleware s'exécutant sur toutes les routes </InternalPageTitle>
 ## Application middleware de base
@@ -440,7 +441,7 @@ GET counter : 2
 ```
 
 Le code de votre application doit se trouver dans votre repo git au sein du répertoire **`/exercises/1.2`**.  
-Veuillez faire un **`commit`** de votre code avec le message suivant : **`1.2 : app middleware`**.
+Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.2`**.
 
 #### 🤝 Tips
 - Comment récupérer la méthode HTTP ? **`req.method`** ...
@@ -539,7 +540,7 @@ router.get("/", (req, res) => {
 });
 ```
 
-Pour consommer cette nouvelle opération via un browser, nous pouvons lire toutes les ressources de type "pizzas" triées par leur titre de manière descendante :
+Pour consommer cette nouvelle opération via un browser, nous pouvons lire toutes les ressources de type "drinks" triées par leur titre de manière descendante :
 http://localhost:3000/drinks/?budget-max=3
 
 N'hésitez pas à tester d'autres filtres.
@@ -654,8 +655,8 @@ router.post("/", (req, res) => {
     typeof image !== "string" ||
     typeof volume !== "number" ||
     typeof price !== "number" ||
-    title.trim() === "" ||
-    image.trim() === "" ||
+    !title.trim() ||
+    !image.trim() ||
     volume <= 0 ||
     price <= 0
   ) {
@@ -721,7 +722,7 @@ GET http://localhost:3000/drinks
 - Pour exécuter une requête, il suffit de cliquer sur **`Send Request`**.
 - Lorsqu'on envoie des données au format JSON, il est important d'avoir un espace avant les accolades (avant le "**`{`**" ).
 - On peut définir des **File variables** via ce genre de syntaxe : **`@baseUrl = http://localhost:3000`**.
-- Pour utiliser la variable **`baseUrl`**, il suffit de la mettre entre double accolades. Par exemple, voici la requête permettant de lire toutes les pizzas :  
+- Pour utiliser la variable **`baseUrl`**, il suffit de la mettre entre double accolades. Par exemple, voici la requête permettant de lire toutes les boissons :  
 ```http
 ### Read all drinks with File variable
 @baseUrl = http://localhost:3000
@@ -777,6 +778,36 @@ Il suffit d'exécuter l'opération de lecture de toutes les boissons 😎 !
 Lors de l'ajout d'une boisson, si la nouvelle ressource apparaît, c'est qu'elle a bien été créée !  
 Faites le test !
 
+# <InternalPageTitle> Utilisation du debugger </InternalPageTitle>
+
+## Introduction
+💭 Qui est votre meilleur ami ?
+
+Il est possible qu'à ce stade-ci, vous ignorez une des bonnes réponses, car pour les développeurs, le debugger est leur meilleur ami !
+
+Le debugger est toujours là pour vous, prêt à vous faire voyager pas à pas dans votre code, à vous donner des pistes dans les moments difficiles, sans imposer de solutions, il vous offre une liberté totale ! Et il acceptera toujours votre code tel qu'il est, sous réserve bien sûr que celui-ci compile.
+C'est exactement ce que l'on attend d'un ami 😁.
+
+## Utilisation de la configuratin de debug offerte
+
+Nous vous offrons une configuration de Debug permettant de facilement débugger plusieurs applications au sein d'un même folder de VS Code. Cette configuration se trouve dans le fichier **`.vscode/launch.json`**.  
+Cette configuration est active au sein de VS Code que si elle se trouve à la racine du folder ouverte dans VS Code. Vous devez donc vous assurer que le dossier **`.vscode`** et son fichier **`launch.json`** se trouvent au bon endroit. Voici deux scénarios :
+- Si vous ouvrez un seul projet au sein de VS Code, c'est-à-dire que le folder ouvert de VS Code est le clone du boilerplate d'une API : vous ne devez pas déplacer le répertoire **`.vscode`**, tout est bien configuré.
+- Si vous ouvrez ou folder de VS Code contenant plusieurs projets, comme par exemple un repository contenant plusieurs API : vous devez déplacer **`.vscode`** à la racine du folder ouvert dans VS Code.
+
+Si vous avez plusieurs applications au sein d'un folder de VS Code, pour débugger une application en particulier, nous vous conseillons cette approche :
+- Ouvrez le fichier **`package.json`** de l'application à débugger ;
+- Cliquez sur l'icône **`Run and Debug`** à gauche de l'Explorer, puis cliquez sur **`Start Debugging`** (ou cliquez juste sur **`F5`**) en vérifiant que la configuration de debugging sélectionnée est bien nommée **`Launch via NPM`**.
+
+Nottons que le nom de la configuration de debugging peut facilment être modifiée en changeant la valeur de l'attribut **`name`** dans **`/.vscode/launch.json`**.
+
+## Utilisation du debugger TS
+Il existe un autre moyen de débugger son application au sein de VS Code :
+- Vous pouvez installer l'extension **`TypeScript Debugger`** au sein de VS Code;
+- Ensuite, il vous suffit de créer une configuration de Debug : **`Add Configuration...`**, **`TS Debug`** ; sinon, vous pouvez sélectionner la configuration existante et nommée **`ts-node`** dans le boilerplate d'une API. Une fois que votre configuration est ouverte après avoir cliqué sur l'onglet de Debug, vous êtes prêt à débugger.
+- Ouvrez le script d'entrée de votre application : **`/bin/www.ts`**.
+- Cliquez sur **`Start Debugging`** ou csur **`F5`** en vérifiant que la configuration de debugging sélectionnée est bien nommée **`ts-node`** (ou le nom que vous auriez choisi pour la configuration de votre debugger pour TS).
+
 # <InternalPageTitle> Exercice 1.3 : lectures spécifiques, création & REST Client </InternalPageTitle>
 
 Veuillez continuer le développement de la RESTful API de **myMovies**, sous Express, afin de mettre à disposition de nouvelles opérations sur des films et utiliser **REST Client**.
@@ -810,8 +841,10 @@ Veuillez bien valider les paramètres reçu par les opérations de vos API ; vé
 
 Veuillez **tester toutes les fonctions de la RESTful API** pour la collection de films à l'aide du **REST Client** dans VS Code. Veuillez ajouter vos requêtes au sein du fichier **`films.http`** dans le répertoire **REST Client** du dossier associé à cet exercice.
 
+Veuillez tester pas à pas chaque ligne de votre opération de création de film. Pour ce faire, vous devez utiliser le debugger !
+
 Le code de votre application doit se trouver dans votre repo git dans **`/exercises/1.3`**.  
-Veuillez faire un **`commit`** de votre code avec le message suivant : **`1.3 : API : create & REST client`**.
+Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.3`**.
 
 #### 🤝 Tips
 - Développez les opérations de votre API de manière incrémentale : testez une opération via REST Client avant de passer à une nouvelle opération.
@@ -832,7 +865,7 @@ N'hésitez pas, c'est optionnel, de gérer de nouvelles opérations au sein de v
 Le code de votre application est à ajouter dans votre repo git dans **`/exercises/1.4`**.  
 Veuillez faire un **`commit`** de votre code avec le message suivant : **`1.4 : API : ordering & filtering client`**.
 
-🍬 Et si vraiment vous avez encore du temps et souhaitez déjà approfondir les RESTful APIs, n'hésitez pas aussi à implémenter la gestion de la pagination. Pour cette partie, veuillez faire un **`commit`** de votre code avec le message suivant : **`1.4 : API : pagination`**.
+🍬 Et si vraiment vous avez encore du temps et souhaitez déjà approfondir les RESTful APIs, n'hésitez pas aussi à implémenter la gestion de la pagination. Pour cette partie, veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.4`**.
 
 #### 🤝 Tips
 Besoin d'inspiration pour l'aspect filtrage et la gestion du tri des ressources ? [REST API Guide](https://dev.to/drminnaar/rest-api-guide-14n2) [[R.58]](/references/#r58).
@@ -840,63 +873,73 @@ Besoin d'inspiration pour l'aspect filtrage et la gestion du tri des ressources 
 
 # <InternalPageTitle> Codes de statut HTTP associés aux réponses </InternalPageTitle>
 
-<div className="card card__simple-youtube-container">
-    <YoutubeImage src="https://youtu.be/OHd092ILf7g" />
-</div>
-
 On ne peut pas toujours renvoyer du JSON suite à une requête client ainsi qu'un code HTTP correspondant au fait que tout est OK (**`200 OK`**).
 
 Quand vous exécutez cette requête :
 ```http
-### Read all pizzas with File variable
-GET {{baseUrl}}/pizzas
+### Read all drinks with File variable
+GET {{baseUrl}}/drinks
 ```
 
-Vous faites appel à l'opération de lecture de toutes les pizzas. La dernière ligne de cette opération est la suivante :
-```js
-res.json(orderedMenu ?? MENU);
+Vous faites appel à l'opération de lecture de toutes les boissons. La dernière ligne de cette opération est la suivante :
+```ts
+return res.json(filteredDrinks);
 ```
 
 La fonction **`json`** renvoie une réponse au format JSON, mais de plus, elle renvoie un **status code** **`200`** indiquant au client que tout s'est bien passé.
 
-Au sein de **`pizzas.http`**, veuillez ajouter cette requête pour tenter de créer une pizza en oubliant un paramètre :
+Au sein de **`drinks.http`**, veuillez ajouter cette requête pour tenter de créer une boisson en oubliant un paramètre :
 ```http
-### Create a pizza which lacks a property
-POST {{baseUrl}}/pizzas
+### Try to create a drink with incomplete data
+POST {{baseUrl}}/drinks
 Content-Type: application/json
 
 {
-    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+    "title":"Missing Data Drink",
+    "volume":0.25,
+    "price":4.5    
 }
 ```
 
 Veuillez exécuter cette requête. Que se passe-t-il ?  
 On récupère un code d'erreur **`400 Bad Request`**.
 
-En effet, lorsqu'on omet un paramètre dans la représentation de la ressource à créer, voici les lignes de code amenant au renvoi du code d'erreur **`400`** au sein de **`pizzas.js`** :
-```js numbered highlighting="3,4,8"
-// Create a pizza to be added to the menu.
-router.post('/', (req, res) => {
-  const title = req?.body?.title?.length !== 0 ? req.body.title : undefined;
-  const content = req?.body?.content?.length !== 0 ? req.body.content : undefined;
+En effet, lorsqu'on omet un paramètre dans la représentation de la ressource à créer, voici les lignes de code amenant au renvoi du code d'erreur **`400`** au sein de **`drinks.ts`** :
+```ts numbered highlighting="4-19"
+router.post("/", (req, res) => {
+  const { title, image, volume, price } = req.body as NewDrink;
 
-  console.log('POST /pizzas');
+  if (
+    !title ||
+    !image ||
+    !volume ||
+    !price ||
+    typeof title !== "string" ||
+    typeof image !== "string" ||
+    typeof volume !== "number" ||
+    typeof price !== "number" ||
+    !title.trim() ||
+    !image.trim() ||
+    volume <= 0 ||
+    price <= 0
+  ) {
+    return res.sendStatus(400);
+  }
 
-  if (!title || !content) return res.sendStatus(400); // error code '400 Bad request'
+  const nextId =
+    drinks.reduce((maxId, drink) => (drink.id > maxId ? drink.id : maxId), 0) +
+    1;
 
-  const lastItemIndex = MENU?.length !== 0 ? MENU.length - 1 : undefined;
-  const lastId = lastItemIndex !== undefined ? MENU[lastItemIndex]?.id : 0;
-  const nextId = lastId + 1;
-
-  const newPizza = {
+  const newDrink: Drink = {
     id: nextId,
-    title: title,
-    content: content,
+    title,
+    image,
+    volume,
+    price,
   };
 
-  MENU.push(newPizza);
-
-  res.json(newPizza);
+  drinks.push(newDrink);
+  return res.json(newDrink);
 });
 ```
 
@@ -930,89 +973,94 @@ Veuillez améliorer les deux opérations de lecture (**`GET /films`** & **`GET /
 - Lors de l'échec de la lecture d'un film en particulier, veuillez renvoyer le status code approprié.
 - Lors de l'ajout d'un film, si la ressource existe déjà, c'est-à-dire s'il y a déjà un film présent avec le **`title`** donné, veuillez renvoyer le status code approprié.
 
-Le code de votre application doit se trouver dans votre repository local et votre web repository (normalement appelé **`web2`**) dans le répertoire nommé **`/exercises/1.5`**.  
-Veuillez faire un **`commit`** de votre code avec le message suivant : **`1.5 : API : status code`**.
+Le code de votre application doit se trouver dans votre repo git dans **`/exercises/1.5`**.  
+Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.5`**.
 
 # <InternalPageTitle> Opérations de suppression & de modification </InternalPageTitle>
 
-<div className="card card__simple-youtube-container">
-    <YoutubeImage src="https://youtu.be/1AQ9BknswUI" />
-</div>
-
 ## Opération de suppression
-Nous souhaitons développer une opération permettant de supprimer une ressource de type "pizzas" à l'aide de son identifiant.  
+Nous souhaitons développer une opération permettant de supprimer une ressource de type "boisson" à l'aide de son identifiant.  
 
 Selon les conventions REST, une **opération de suppression**:
-- est associée à une requête de type **`DELETE /pizzas/{id}`** contenant l'**identifiant** de la ressource à supprimer au sein de l'URI comme **paramètre de route**.
+- est associée à une requête de type **`DELETE /drinks/{id}`** contenant l'**identifiant** de la ressource à supprimer au sein de l'URI comme **paramètre de route**.
 - **ne contient pas de données dans le body** et est de **type DELETE**.
 
-Voici le code du router **`/routes/pizzas.js`** pour la nouvelle opération, veuillez la rajouter dans le répertoire de votre tutoriel en cours :
-```js
-// Delete a pizza from the menu based on its id
-router.delete('/:id', (req, res) => {
-  console.log(`DELETE /pizzas/${req.params.id}`);
-
-  const foundIndex = MENU.findIndex(pizza => pizza.id == req.params.id);
-
-  if (foundIndex < 0) return res.sendStatus(404);
-
-  const itemsRemovedFromMenu = MENU.splice(foundIndex, 1);
-  const itemRemoved = itemsRemovedFromMenu[0];
-
-  res.json(itemRemoved);
+Voici le code du router **`/routes/drinks.ts`** pour la nouvelle opération, veuillez la rajouter dans le répertoire de votre tutoriel en cours :
+```ts
+router.delete("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const index = drinks.findIndex((drink) => drink.id === id);
+  if (index === -1) {
+    return res.sendStatus(404);
+  }
+  const deletedElements = drinks.splice(index, 1); // splice() returns an array of the deleted elements
+  return res.json(deletedElements[0]);
 });
 ```
 
-Au sein de **`pizzas.http`**, veuillez ajouter cette requête pour supprimer la pizza possédant l'identifiant "2" :
+Au sein de **`drinks.http`**, veuillez ajouter cette requête pour supprimer la boisson possédant l'identifiant "2" :
 ```http
-### Delete pizza identified by 2
-DELETE {{baseUrl}}/pizzas/2
+### Delete a drink
+DELETE {{baseUrl}}/drinks/2
 ```
 
-Veuillez exécuter cette requête et vérifier que la pizza a bien été supprimée.
+Veuillez exécuter cette requête et vérifier que la boisson a bien été supprimée.
 
 ## Opération de modification
-Nous souhaitons développer une opération permettant de modifier une ressource de type "pizzas" à l'aide de son identifiant et de nouvelles valeurs pour ses propriétés. 
+Nous souhaitons développer une opération permettant de modifier une ressource de type "drinks" à l'aide de son identifiant et de nouvelles valeurs pour ses propriétés. 
 
 Selon les conventions REST, une **opération de modification** :
-- si l'on accepte de modifier que certaines des propriétés d'une pizza (qu'il ne faut donc pas fournir toutes les propriétés d'une pizza), est associée à une requête de type **`PATCH /pizzas/{id}`** contenant l'**identifiant** de la ressource à supprimer au sein de l'URL comme **paramètre de route**.
+- si l'on accepte de modifier que certaines des propriétés d'une boisson (que l'on ne doit donc pas fournir toutes les propriétés d'une boisson), est associée à une requête de type **`PATCH /drinks/{id}`** contenant l'**identifiant** de la ressource à supprimer au sein de l'URL comme **paramètre de route**.
 - **contient les nouvelles données au sein du body** et est de **type PATCH ou PUT**.
 
-Lors de l'ajout d'un film, si nous souhaitons modifier une ressource identifiée par **`6`** en fournissant un nouveau titre "Magic Green 2", la représentation des données de la ressource à modifier sera la suivante :
+Lors de l'ajout d'une boisson, si nous souhaitons modifier une ressource identifiée par **`5`** en fournissant un nouveau titre "Citronnade", la représentation des données de la ressource à modifier sera la suivante :
 ```json
 {
-    "title":"Magic Green 2"
+    "title":"Citronnade"
 }
 ```
 
 Selon les conventions REST, la requête de modification est de type PATCH et contient ses paramètres au sein du body de la requête.
 
-Voici le code du router **`/routes/pizzas.js`** pour la nouvelle opération à rajouter dans votre tutoriel en cours :
-```js
-// Update a pizza based on its id and new values for its parameters
-router.patch('/:id', (req, res) => {
-  console.log(`PATCH /pizzas/${req.params.id}`);
+Voici le code du router **`/routes/drinks.ts`** pour la nouvelle opération à rajouter dans votre tutoriel en cours :
+```ts
+router.patch("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const drink = drinks.find((drink) => drink.id === id);
+  if (!drink) {
+    return res.sendStatus(404);
+  }
 
-  const title = req?.body?.title;
-  const content = req?.body?.content;
+  const { title, image, volume, price } = req.body as Partial<NewDrink>;
 
-  console.log('POST /pizzas');
+  if (
+    (title !== undefined && (typeof title !== "string" || !title.trim())) ||
+    (image !== undefined && (typeof image !== "string" || !image.trim())) ||
+    (volume !== undefined && (typeof volume !== "number" || volume <= 0)) ||
+    (price !== undefined && (typeof price !== "number" || price <= 0))
+  ) {
+    return res.sendStatus(400);
+  }
 
-  if ((!title && !content) || title?.length === 0 || content?.length === 0) return res.sendStatus(400);
+  if (title) {
+    drink.title = title;
+  }
+  if (image) {
+    drink.image = image;
+  }
+  if (volume) {
+    drink.volume = volume;
+  }
+  if (price) {
+    drink.price = price;
+  }
 
-  const foundIndex = MENU.findIndex(pizza => pizza.id == req.params.id);
-
-  if (foundIndex < 0) return res.sendStatus(404);
-
-  const updatedPizza = {...MENU[foundIndex], ...req.body};
-
-  MENU[foundIndex] = updatedPizza;
-
-  res.json(updatedPizza);
+  return res.json(drink);
 });
 ```
 
-Au sein de **`pizzas.http`**, veuillez ajouter cette requête pour modifier la pizza possédant l'identifiant "6" :
+Au sein de **`drinks.http`**, veuillez ajouter cette requête pour modifier la boisson possédant l'identifiant "5" :
+
 ```http
 ### Update the pizza identified by 6
 PATCH {{baseUrl}}/pizzas/6
@@ -1023,14 +1071,9 @@ Content-Type: application/json
 }
 ```
 
-Veuillez exécuter cette requête et vérifier que la pizza a bien été modifiée.
+Veuillez exécuter cette requête et vérifier que la boisson a bien été modifiée.
 
-💭 Cela ne fonctionne pas ?  
-Avez vous précédemment exécuté la requête permettant de créer une sixième pizza.
-
-Lors de l'ajout d'un film, si votre tutoriel fonctionne bien, faites un **commit** de votre repo (**web2**) avec comme message : **`api-basic tutorial`**.
-
-En cas de souci, vous pouvez accéder au code du tutoriel ici : [api-basic](https://github.com/e-vinci/js-demos/tree/main/backend-restful-api/restful-api-essentials/basic).
+En cas de souci, vous pouvez accéder au code du tutoriel ici : [basic](https://github.com/e-vinci/ts-demos/tree/main/back/api/basic).
 
 # <InternalPageTitle> Exercice 1.6 : suppression & modification de ressources </InternalPageTitle>
 
@@ -1044,13 +1087,15 @@ Veuillez ajouter ces trois nouvelles opérations :
 |---|---|---|
 | **`films/{id}`** | DELETE | DELETE ONE : Effacer la ressource identifiée |
 | **`films/{id}`** | PATCH | UPDATE ONE : Mettre à jour les propriétés de la ressource par les valeurs données dans la requête, pour une ou plusieurs propriétés |
-| **`films/{id}`** | PUT | UPDATE ONE or CREATE ONE : Remplacer la ressource par une ressource reprenant les valeurs données dans la requête, seulement si toutes les propriétés de la ressource sont données ! Si la ressource n'existe pas, créer cette ressource seulement si l'**id** donné n'est pas déjà existant. |
+| **`films/{id}`** | PUT | UPDATE ONE or CREATE ONE : Remplacer la ressource par une ressource reprenant les valeurs données dans la requête, seulement si toutes les propriétés de la ressource sont données ! Si la ressource n'existe pas, créer cette ressource seulement si l'**`id`** donné n'est pas déjà existant. |
 
 Veuillez bien valider les paramètres reçus par les opérations de vos API ; vérifiez par exemple que **`budget`** et **`duration`** sont des **nombres positifs**. 
 
 Veuillez **tester toutes les fonctions de la RESTful API** pour la collection de films à l'aide du **REST Client** dans VS Code. Veuillez ajouter vos requêtes au sein du fichier **`films.http`** dans le répertoire **REST Client** du dossier associé à cet exercice.
 
-Le code de votre application doit se trouver dans votre repository local et votre web repository (normalement appelé **`web2`**) dans le répertoire nommé **`/exercises/1.6`**.  
-Veuillez faire un **`commit`** de votre code avec le message suivant : **`1.6 : API : delete & modify`**.
+Et n'hésitez pas à utiliser le debugger pour tester pas à pas chaque ligne de vos opérations qui ne fournissent pas le résultat attendu.
+
+Le code de votre application doit se trouver dans votre repo git dans **`/exercises/1.6`**.  
+Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.6`**.
 
 
