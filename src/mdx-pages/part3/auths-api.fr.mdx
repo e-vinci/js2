@@ -1,15 +1,15 @@
 ---
-title: "JWT auths API"
-description: "Authentification et autorisation d'accès aux opérations d'une RESTful API via JWT"
+title: "JWT auths API & bcrypt"
+description: "Sécurisation d'une RESTful API : Authentification et autorisation d'accès aux opérations d'une RESTful API via JWT & bcrypt"
 ---
 
-# a) Authentification et autorisation d'accès aux opérations d'une RESTful API via JWT
+# b) Sécurisation d'une RESTful API
 
 <InternalPageMenu>
   <PathViewer>
     <PathViewerItem to="/"> web2course </PathViewerItem>
     <PathViewerItem to="/part3"> Partie 3 </PathViewerItem>
-    <PathViewerItem selected> a) JWT auths & API </PathViewerItem>
+    <PathViewerItem selected> b) API & JWT & bcrypt </PathViewerItem>
   </PathViewer>
   <InternalPageMenuItem> C'est quoi l'authentification et l'autorisation ? </InternalPageMenuItem>
   <InternalPageMenuItem> Stateful VS stateless authentication </InternalPageMenuItem>
@@ -17,8 +17,12 @@ description: "Authentification et autorisation d'accès aux opérations d'une RE
   <InternalPageMenuItem> Authentification et création de token </InternalPageMenuItem>
   <InternalPageMenuItem> Autorisation et vérification de token </InternalPageMenuItem>
   <InternalPageMenuItem> Client REST avec JWT </InternalPageMenuItem>
-  <InternalPageMenuItem> Protection des opérations d'écriture d'une API </InternalPageMenuItem>
-  <InternalPageMenuItem> Project 4.1 : Authentification & autorisation d'opérations </InternalPageMenuItem>
+  <InternalPageMenuItem> Protection des opérations d'écriture d'une API </InternalPageMenuItem> 
+  <InternalPageMenuItem> Sécurisation des passwords </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 3.1 : Authentification & autorisation d'opérations </InternalPageMenuItem>
+  <InternalPageMenuItem> 🍬 Exercice 3.2 : une autre API sécurisée </InternalPageMenuItem> 
+  <InternalPageMenuItem> 🍬 Authentification & autorisation JWT à l'aide de cookies </InternalPageMenuItem> 
+  <InternalPageMenuItem> 🍬 Test via REST Client d'une RESTful API attendant des cookies </InternalPageMenuItem>
 </InternalPageMenu>
 
 <div className="card card__simple-youtube-container">
@@ -58,7 +62,7 @@ On parle de **session** d'un utilisateur comme étant toute la durée où le cli
 ### Authentification stateless 
 
 De manière plus moderne, nous avons des mécanismes d'authentification qui sont dits **stateless**. Dans ce genre de mécanisme, c'est le client qui doit sauvegarder les données de session, et donc le browser. L'authentification à l'aide de **tokens** devient très populaire.  
-Il existe différents moyen de l'implémenter. Dans le cadre de ce cours, nous focuserons sur la façon la plus habituelle, les **JSON Web Tokens**, ou **JWT**.
+Il existe différents moyen de l'implémenter. Dans le cadre de ce cours, nous focaliserons sur la façon la plus habituelle, les **JSON Web Tokens**, ou **JWT**.
 
 Il existe d'autres mécanismes très modernes qui utilisent des tokens, et qui sont mis en place par des tiers : **OAuth**, **OpenId**... Ces mécanismes sont offerts par Microsoft, Google, Facebook... Nous ne les verrons pas dans le cadre de cours. Néanmoins, à la fin de ce cours, vous devriez être apte à pouvoir les utiliser, sous réserve de bien lire la documentation 😉.
 
@@ -70,7 +74,7 @@ Quels sont les avantages & inconvénients d'une authentification stateful ? et d
 **Inconvénients** :
 - La session utilise de la mémoire pour chaque utilisateur.
 - Le backend n'a aucune manière de déterminer si le frontend s'est déconnecté du site ou non : gestion de l'expiration d'une session plus compliquée, notamment si le frontend revient après une longue durée.
-- Toutes les sessions sont perdues en cas de redémarrage du serveur (réauthentification).
+- Toutes les sessions sont perdues en cas de redémarrage du serveur (ré-authentification).
 - Load balancing compliqué ; en effet, si un client fait une requête, pendant toute la durée de la session, s'il y a plusieurs serveurs qui peuvent y répondre, comment est gérée la session de ce client ? Par quel(s) serveur(s) ? Comment se partagent-ils les données de session ? Est-ce que ça doit toujours être le même serveur qui réponde au même client ?
 
 **Avantages** :
@@ -81,8 +85,8 @@ Quels sont les avantages & inconvénients d'une authentification stateful ? et d
 Comme le serveur ne retient plus l'utilisateur en mémoire, il doit utiliser de la cryptographie pour créer et valider les token ; c'est donc consommateur en ressource point de vue processing.
 
 **Avantages** : 
-- Pas de session à gérer, même après redémarrage du serveur, il n'y a pas de réauthentification nécessaire.
-- Evolutif, utilisation facile de plusieurs serveurs si du load balancing est nécessaire ; en effet, comme chaque requête du client contient toutes les infos pour se faire autoriser, il n'est pas nécessaire de savoir quel serveur va prendre en charge la requête.
+- Pas de session à gérer, même après redémarrage du serveur, il n'y a pas de ré-authentification nécessaire.
+- Évolutif, utilisation facile de plusieurs serveurs si du load balancing est nécessaire ; en effet, comme chaque requête du client contient toutes les infos pour se faire autoriser, il n'est pas nécessaire de savoir quel serveur va prendre en charge la requête.
 
 Notons que la "scalability" horizontale, la possibilité de permettre à une application d'augmenter sa capacité de répondre à une charge grandissante simplement en ajoutant des machines, est quelque chose de très important à notre époque.  
 Certaines applications web ont des centaines de millions d'utilisateurs ; pour celles-ci, on ne peut pas compter sur la "scalability" verticale, c'est-à-dire le fait d'augmenter les ressources d'une machine, en augmentant sa RAM, son processeur, son espace de stockage...
@@ -104,26 +108,26 @@ Voici les 3 parties d'un JWT et leurs caractéristiques :
 - la **signature** : c'est une signature numérique construite à partir d'un secret privé ou d'une clé publique/privée, via l'algorithme précisé dans la signature.
 
 💭 C'est bien joli tout ça, mais comment ça permet de sécuriser la session d'un utilisateur ?  
-Généralement, l'API, et elle uniquement, connait le secret privé. Elle va donc créer le token d'un utilisateur authentifié, en y ajoutant le claim (ou les affirmations) qu'elle juge utile.  
+Généralement, l'API, et elle uniquement, connaît le secret privé. Elle va donc créer le token d'un utilisateur authentifié, en y ajoutant le claim (ou les affirmations) qu'elle juge utile.  
 Lorsque le client reçoit son token, il va le sauvegarder dans son browser.  
 Pour chaque requête nécessitant une autorisation de l'API, le client enverra son token au sein du header de la requête.  
 L'API utilisera le secret privé, connu d'elle-même uniquement, pour vérifier la signature du token. Si tout est OK, c'est que l'utilisateur est bien authentifié et que son claim est OK.
 
-Imaginez maintenant qu'un hackeur tente de modifier le token, pour modifier le claim, notamment en changeant l'id de l'utilisateur présent dans le payload du token.
+Imaginez maintenant qu'un hacker tente de modifier le token, pour modifier le claim, notamment en changeant l'id de l'utilisateur présent dans le payload du token.
 Et bien la signature ne correspondra plus à ce token là ! L'API le détectera.  
-Pour que le hackeur réussisse son acte malicieux, il est obligé de connaître le secret privé qui ne doit être connu que de l'API. Ca ne serait que sur base du secret privé que les hackeurs pourraient générer un nouveau token qui serait validé par l'API. Pas évident à faire...
+Pour que le hacker réussisse son acte malicieux, il est obligé de connaître le secret privé qui ne doit être connu que de l'API. Ca ne serait que sur base du secret privé que les hackers pourraient générer un nouveau token qui serait validé par l'API. Pas évident à faire...
 
 Ainsi, on peut imaginer un token comme une enveloppe sécurisé par un cadenas très spécial : ce cadenas, qui est mis sur l'enveloppe contenant, par exemple, l'identifiant d'un utilisateur, est fermé par la clé 🔑 que seulement connaît l'API.
-Si quelqu'un touche à l'enveloppe, le cadenas ne s'ouvrira plus avec la 🔑 de l'API : la tentative de hackage sera détectée ! 
+Si quelqu'un touche à l'enveloppe, le cadenas ne s'ouvrira plus avec la 🔑 de l'API : la tentative de hack sera détectée ! 
 Si quelqu'un tente de créer une enveloppe sécurisé, il le fera avec une autre clé, **🗝** par exemple, car il ne connaît pas 🔑. L'API, tentant d'ouvrir l'enveloppe sécurisée à l'aide de 🔑, elle ne s'ouvrira pas : la tentative de hacking sera détectée ! 
 
 💭 Est-ce que cette métaphore d'enveloppe sécurisée vous parle ?
-Attention que dans la réalité, le payload classique d'un token sera décodable, que l'on connaisse ou pas le secret privé. Il est encodé en base64 ! Ne mettez donc jamais de secrets dans le payload d'un token !  
+Attention que dans la réalité, le payload classique d'un token sera decodable, que l'on connaisse ou pas le secret privé. Il est encodé en base64 ! Ne mettez donc jamais de secrets dans le payload d'un token !  
 Si vraiment un jour vous deviez mettre un secret dans un payload, bien que déconseillé, vous pourriez toujours le faire en cryptant le payload.
 
 👍 Le mécanisme de token assure que l'on aie une très haute probabilité de détecter les altérations faites sur les tokens, les tentatives de forgeage, grâce à la signature de ceux-ci.  
 
-⚡ Par contre, si nous laissions traîner des informations dans le payload d'un token, comme un password d'un utilisateur et son username, alors là, c'est juste un beau cadeau que l'on offre aux hackeurs ; ils n'auraient plus qu'à trouver un moyen de voler à distance nos données de session ; ils pourraient ensuite utiliser le formulaire de connexion et prendre possession de notre identité 😨.
+⚡ Par contre, si nous laissions traîner des informations dans le payload d'un token, comme un password d'un utilisateur et son username, alors là, c'est juste un beau cadeau que l'on offre aux hackers ; ils n'auraient plus qu'à trouver un moyen de voler à distance nos données de session ; ils pourraient ensuite utiliser le formulaire de connexion et prendre possession de notre identité 😨.
 
 Il existe un site fort intéressant qui montre la structure d'un token et qui permet de les décoder : [jwt.io](https://jwt.io/) [[R.63]](/references/#r63). Nous l'utiliserons plus tard pour décoder les tokens générés par nos RESTful API.
 
@@ -371,8 +375,8 @@ export type {
 };
 ```
 
-Attention, il faut rajouter le nouveau router au sein de **`app.js`** pour que notre API puisse offrir les nouvelles opérations ; veuillez donc ajouter ce code dans **`/app.js`** :
-```js numbered highlighting="6,24"
+Attention, il faut rajouter le nouveau router au sein de **`app.js`** pour que notre API puisse offrir les nouvelles opérations ; veuillez donc ajouter ce code dans **`/app.ts`** :
+```ts numbered highlighting="6,24"
 import express, { ErrorRequestHandler } from "express";
 
 import usersRouter from "./routes/users";
@@ -935,60 +939,679 @@ Authorization: {{admin.response.body.token}}
 }
 ```
 
-# <InternalPageTitle> Project 4.1 : Authentification & autorisation d'opérations </InternalPageTitle>
+# <InternalPageTitle> Sécurisation des passwords </InternalPageTitle>
 
-Vous devez mettre à jour l'API développée pour [Project 2.18](../../part2/comms-security/#project_2_18_autorisation_de_nouvelles_origines) afin de sécuriser certaines opérations par JWT.
+Nous souhaitons maintenant assurer que les passwords enregistrés dans un support de données (un fichier ou une base de données) ne puissent pas être récupérés.
 
-Le code doit se trouver dans votre repository local et votre web repository (normalement appelé **`web2`**) dans le répertoire nommé **`/project/4.1/api`** sur base d'un clone du boilerplate [jwt-api-boilerplate](https://github.com/e-vinci/jwt-api-boilerplate) et de l'ajout de votre code créé pour [Project 2.18](../../part2/comms-security/#project_2_18_autorisation_de_nouvelles_origines).
+👍 Pour ce faire, il est recommandé d'hacher les passwords avant de les enregistrer au niveau d'une API.
 
-Il est possible que dans le cadre de votre projet, vous n'ayez pas besoin d'authentifier des utilisateurs afin de protéger l'accès à certaines opérations sur des ressources.
+Afin de se protéger contre les "hash attacks", on utilise du **salt** :
+- un **salt** : c'est une donnée aléatoire qui est utilisé en entrée d'une fonction qui hache des données. Ainsi, si un hacker utilise une base de données de passwords hachés, il devra en plus trouver le bon **salt** pour que son attaque puisse fonctionner.
+- **salt round** : nombre de fois que l'opération de hachage est faite, rendant les attaques de force brute plus lente et donc difficile ; une valeur de **10** semble être généralement raisonnable et recommandée. 
 
-Si c'est le cas, il est quand même important d'apprendre les concepts associés à l'authentification et à l'autorisation JWT. Veuillez donc développer un prototype d'application qui nécessiterait une authentification, ainsi qu'au moins une opération qui devrait être autorisée.
+Pour hacher sous Node.js, nous utiliserons la librairie [bcrypt](https://www.npmjs.com/package/bcrypt).
 
-Si vous n'avez pas d'idée, vous pourriez simplement développer un prototype permettant d'entrer des commentaires sur votre site web et de les visualiser.
+Veuillez installer la librairie **`bcrypt`** et les types associés à bcrypt au sein de votre API **`auths`** :
+```bash
+npm i bcrypt 
+npm i @types/bcrypt -D
+```
 
-Dans un premier temps, veuillez identifier toutes les opérations mises à disposition par votre API, ainsi que si celles-ci sont protégées par JWT, au sein du fichier **`README.md`** (fichier Markdown) de votre projet. Voici un exemple de comment nous vous recommandons de documenter votre API, sous forme de tableau : 
+En résumé, nous allons utiliser :
+- la fonction asynchrone **`hash`** de **`bcrypt`** pour **hacher un password** ;
+- la fonction asynchrone **`compare`** de **`bcrypt`** pour **comparer un password en clair à un password haché** ; si le résultat est positif, cela signifie que le password fournit pour un utilisateur correspond au password initial.
+
+Nous préférons utiliser les librairies asynchrone afin que l'API reste disponible à gérer des requêtes clientes et ne bloque pas celles-ci jusqu'à la fin d'une opération de **`bcrypt`** !
+
+Veuillez effacer le fichier **`/data/users.json`** contenant les credentials d'utilisateurs où les passwords sont donnés en clair.
+
+Nous allons maintenant mettre à jour le service "users" pour utiliser **`bcrypt`**. Veuillez modifier **`/services/users.ts`** :
+```ts numbered highlighting="2,10,18,22,25,28-29,45,48,52,76,79,87"
+import jwt from "jsonwebtoken";
+import bcrypt from "bcrypt";
+import path from "node:path";
+import { parse, serialize } from "../utils/json";
+import { AuthenticatedUser, User } from "../types";
+
+const jwtSecret = "ilovemypizza!";
+const lifetimeJwt = 24 * 60 * 60 * 1000; // in ms : 24 * 60 * 60 * 1000 = 24h
+
+const saltRounds = 10;
+
+const jsonDbPath = path.join(__dirname, "/../data/users.json");
+
+const defaultUsers: User[] = [
+  {
+    id: 1,
+    username: "admin",
+    password: bcrypt.hashSync("admin", saltRounds),
+  },
+];
+
+async function login(
+  username: string,
+  password: string
+): Promise<AuthenticatedUser | undefined> {
+  const userFound = readOneUserFromUsername(username);
+  if (!userFound) return undefined;
+  const passwordMatch = await bcrypt.compare(password, userFound.password);
+  if (!passwordMatch) return undefined;
+
+  const token = jwt.sign(
+    { username }, // session data added to the payload (payload : part 2 of a JWT)
+    jwtSecret, // secret used for the signature (signature part 3 of a JWT)
+    { expiresIn: lifetimeJwt } // lifetime of the JWT (added to the JWT payload)
+  );
+
+  const authenticatedUser: AuthenticatedUser = {
+    username,
+    token,
+  };
+
+  return authenticatedUser;
+}
+
+async function register(
+  username: string,
+  password: string
+): Promise<AuthenticatedUser | undefined> {
+  const userFound = readOneUserFromUsername(username);
+  if (userFound) return undefined;
+
+  await createOneUser(username, password);
+
+  const token = jwt.sign(
+    { username }, // session data added to the payload (payload : part 2 of a JWT)
+    jwtSecret, // secret used for the signature (signature part 3 of a JWT)
+    { expiresIn: lifetimeJwt } // lifetime of the JWT (added to the JWT payload)
+  );
+
+  const authenticatedUser: AuthenticatedUser = {
+    username,
+    token,
+  };
+
+  return authenticatedUser;
+}
+
+function readOneUserFromUsername(username: string) {
+  const users = parse(jsonDbPath, defaultUsers);
+  const userFound = users.find((user) => user.username === username);
+  if (!userFound) return undefined;
+
+  return userFound;
+}
+
+async function createOneUser(username: string, password: string) {
+  const users = parse(jsonDbPath, defaultUsers);
+
+  const hashedPassword = await bcrypt.hash(password, saltRounds);
+
+  const nextId =
+    users.reduce((acc, user) => (user.id > acc ? user.id : acc), 0) + 1;
+
+  const createdUser: User = {
+    id: nextId,
+    username,
+    password: hashedPassword,
+  };
+
+  users.push(createdUser);
+
+  serialize(jsonDbPath, users);
+
+  return createdUser;
+}
+
+export { login, register, readOneUserFromUsername };
+```
+
+Voici les modifications apportées :
+- **pour créer un password haché** : on utilise la fonction asynchrone **`hash`** pour créer le password haché. Dès lors, **`createOneUser`** devient asynchrone. De plus, comme **`createOneUser`** est devenue asynchrone, dans **`register`**, pour chaîner le traitement de création du token, on met un **`await`** à l'appel de **`createOneUser`**. Et comme un **`await`** est ajouté au sein de **`register`**, il faut mettre un **`async`** à la méthode **`register`**. Attention, du coup, comme **`register`** est devenue asynchrone, il faudra aussi bien chaîner les traitements où **`register`** est appelé, dans le router **`auths`**. Notez aussi que nous avons changé le type de retour des fonctions asynchrones qui renvoient maintenant des **`Promise`**.
+- **pour vérifier qu'un password en clair "match" à un password haché** : on utilise la fonction asynchrone **`compare`** que l'on chaîne à la création du token à l'aide de **`await`**. Dès lors, la fonction **`login`** doit elle aussi être déclarée **`async`**. Attention, du coup, comme `login` est devenue asynchrone, il faudra bien chaîner les traitements où **`login`** est appelé, dans le router **`auths`**.
+- **pour créer l'utilisateur **`admin`** se trouvant dans les **`defaultUsers`** avec des credentials par défaut** : on souhaite indiquer comme **`password`** le password haché correspondant au password **`"admin"`**. Pour se simplifier la vie, on appelle la fonction synchrone **`hashSync`** (voir ligne 18). Bien évidemment, dans une application robuste et sécurisée, il est interdit de coder en dur ce genre de secrets dans les sources de notre application 😉 !
+
+Afin de traiter des deux fonctions du service **`users`** qui sont devenues asynchrones, **`login`** et **`register`**, nous allons modifier le router **`/routes/auths`** :
+```ts numbered highlighting="7,13,23,29"
+import { Router } from "express";
+import { PotentialUser } from "../types";
+import { login, register } from "../services/users";
+const router = Router();
+
+/* Register a user */
+router.post("/register", async (req, res) => {
+  const { username, password } = req.body as PotentialUser;
+  if (!username || !password || !username.trim() || !password.trim()) {
+    return res.sendStatus(400);
+  }
+
+  const authenticatedUser = await register(username, password);
+
+  if (!authenticatedUser) {
+    return res.sendStatus(409);
+  }
+
+  return res.json(authenticatedUser);
+});
+
+/* Login a user */
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body as PotentialUser;
+  if (!username || !password || !username.trim() || !password.trim()) {
+    return res.sendStatus(400);
+  }
+
+  const authenticatedUser = await login(username, password);
+
+  if (!authenticatedUser) {
+    return res.sendStatus(401);
+  }
+
+  return res.json(authenticatedUser);
+});
+
+export default router;
+```
+
+Nous avons simplement chaîné les réponses à faire au client seulement une fois les opérations **`register`** et **`login`** terminées. Pour ce faire, nous avons précédé le nom de ces méthodes par **`await`**. Nous avons donc du ajouter **`async`** aux fonctions middleware s'occupant des routes **`POST /auths/register`** et **`POST /auths/login`**.
+
+Veuillez vérifier que votre application fonctionne correctement.  
+Via l'IHM, veuillez faire un register d'un nouvel utilisateur.  
+Au niveau de l'API, allez voir le contenu du nouveau fichier **`/data/users.json`**. Les passwords devraient maintenant être hachés, comme par exemple :
+
+```json
+[
+  {
+    "id": 1,
+    "username": "admin",
+    "password": "$2b$10$RioLKlPFyYFEhv/46gR7dufDkke07eDpWH9tBt/A4Z9tJh0oJnnf2"
+  },
+  {
+    "id": 2,
+    "username": "manager",
+    "password": "$2b$10$NZZ1zxOPdby6gl4Dw8K0Q.v4ZRWTbh1Ta7qcYzH5G4SrO5z71H0kO"
+  }
+]
+```
+
+En cas de souci, vous pouvez utiliser le code du tutoriel [auths](https://github.com/e-vinci/ts-demos/tree/main/back/api/auths).
+
+# <InternalPageTitle> Exercice 3.1 : Authentification & autorisation d'opérations </InternalPageTitle>
+
+Vous allez sécuriser la RESTful API de **myMovies**.
+
+Veuillez créer un nouveau projet ans votre repo git dans **`/exercises/3.1`** en clonant le boilerplate du cours offrant l'authentification et l'autorisation JWT : [jwt-ts-api-boilerplate](https://github.com/e-vinci/jwt-ts-api-boilerplate). Dans ce boilerplate, vous trouverez déjà un service **`users`** qui gère les utilisateurs, ainsi que des routes pour les opérations de **`login`** et de **`register`**.
+
+Dans ce projet, dans un premier temps, sans utiliser JWT, veuillez intégrer le code utile de vos opérations (router & service de **`films`**, requêtes HTTP pour tester les opérations sur les **`films`**) de votre **`/exercises/1.8`**. 
+
+Une fois que vous opérations sur les films sont bien intégrées, veuillez planifier de nouvelles opérations et quelles opérations protéger par JWT. 
+
+Pour les nouvelles opérations, vous devez pouvoir ajouter des commentaires sur un film et lire tous les commentaires associés à un film.
+
+Pour la protection des opérations, vous ne devez pas gérer de rôles, mais simplement vérifier que l'utilisateur est authentifié.
+
+Veuillez d'abord identifier toutes les opérations mises à disposition par votre API (y compris l'authentification), ainsi que si celles-ci sont protégées par JWT, au sein du fichier **`README.md`** (fichier Markdown) de votre projet. Voici un exemple de comment nous vous recommandons de documenter votre API, sous forme de tableau : 
 
 | URI | Méthode HTTP | Auths? | Opération |
 |---|---|---|---|
 | **`films`** | GET | Non | READ ALL : Lire toutes les ressources de la collection |
+| ... | ... | ... | ... |
 | **`comments`** | GET | JWT | READ ALL FILTERED : Lire toutes les ressources de la collection |
 | **`comments`** | POST | JWT | CREATE ONE : Créer une ressource basée sur les données de la requête |
 | ... | ... | ... | ... |
 
 <br/>
 
-<AuthenticatedBlock>
+Une fois la documentation de votre API prête, vous pouvez commencer par protéger les opérations existantes et les tester avec Rest Client.
 
-Veuillez travailler avec les membres de votre groupe et vous partager le travail.
+Une fois que tout est fonctionnel, vous pouvez implémenter les nouvelles opérations de gestion de commentaires et les protéger par JWT.
 
-Un peu avant la fin de la séance, veuillez discuter :
-- du lien entre les UCs que vous avez identifiés en début de projet et les opérations de votre API.
-- des difficultés rencontrées, de ce que vous avez appris...
+Veuillez vérifier que vos opérations sont bien protégées et fonctionnelles en les testant avec Rest Client.
 
-</AuthenticatedBlock>
-
-Vous devez tester toutes les nouvelles opérations que vous protégez par une autorisation JWT à l'aide de Rest Client.
-
-Quand un prototype d'api est finalisé et testé, veuillez faire un **`commit`** de votre code avec comme message : **`4.1 : api JWT auths`**.
+Quand un prototype d'api est finalisé et testé, veuillez faire un **`commit`** de votre code avec comme message : **`new: ex3.1`**.
 
 #### 🤝 Tips
 Comment créer un tableau dans un fichier Markdown (pour **`README.md`**) ?  
 Voici deux options :
-- Soit vous utiliser des **`|`** pour délimiter les cellules et des **`|---|`** pour séparer 
-les headers du corps du tableau. 
+- Soit vous utiliser des **`|`** pour délimiter les cellules et des **`|---|`** pour séparer les headers du corps du tableau. 
 Voici le Markdown de l'exemple donné ci-dessus :
 ```text
 | URI | Méthode HTTP | Auths? | Opération |
 |---|---|---|---|
 | **`films`** | GET | Non | READ ALL : Lire toutes les ressources de la collection |
+| ... | ... | ... | ... |
 | **`comments`** | GET | JWT | READ ALL FILTERED : Lire toutes les ressources de la collection |
 | **`comments`** | POST | JWT | CREATE ONE : Créer une ressource basée sur les données de la requête |
 | ... | ... | ... | ... |
 ```
 - Soit c'est simplement un tableau HTML (`<table>`).
 
-Comment ajouter l'authentification et l'autorisation JWT au sein de votre projet ?
-- Soit vous partez du boilerplate du cours offrant l'authentification et l'autorisation JWT : [jwt-api-boilerplate](https://github.com/e-vinci/jwt-api-boilerplate). 
-Puis vous pouvez y intégrer le code développée pour [Project 2.18](../../part2/comms-security/#project_2_18_autorisation_de_nouvelles_origines).
-- Soit vous refaites les étapes du tutoriel dans cette page en partant du code développé pour [Project 2.18](../../part2/comms-security/#project_2_18_autorisation_de_nouvelles_origines).
+# <InternalPageTitle> 🍬 Exercice 3.2 : une autre API sécurisée </InternalPageTitle>
+
+Cet exercice est optionnel, n'hésitez pas à le faire si vous avez du temps.
+
+Peut-être avez-vous déjà entendu parler de cette mode montante dans le Web qu'est la JAMstack ?
+
+Nous souhaitons développer un Headless CMS, c'est-à-dire un outil permettant de créer du contenu, très souvent utilisé dans le cadre de sites JAMstack.
+
+Un Headless CMS fournira une interface web pour créer du contenu (ou des données), ainsi qu'une RESTful API mettant à disposition ce contenu.
+
+L'Headless CMS que nous souhaitons développer doit permettre de créer le contenu associé à un blog.
+
+Un blog sera structuré en pages. Une page aura un id, un titre, un URI, un contenu, un auteur ainsi qu'un statut de publication.
+
+Le statut de publication d'une page peut actuellement prendre comme valeur :
+- « hidden »
+- « published »
+
+Seul un utilisateur authentifié pourra lire, créer, modifier ou supprimer des pages.
+
+La modification d'une page, tout comme la suppression d'une page ne pourra se faire que par son auteur.
+
+L'ajout ou la modification d'une page ne sera possible que si le statut de publication donné correspond à un des deux statuts actuels (« hidden ou « published »). Sinon un message d'erreur devra être renvoyé.
+
+La lecture d'une page, ou de toutes les pages, pourra être réalisée par n'importe quel utilisateur authentifié pour les pages dont le statut vaut « published ».
+
+Pour les pages dont le statut vaut « hidden », seul leur auteur authentifié pourra les lire.
+
+Veuillez créer un nouveau projet dans votre repo git dans **`/exercises/3.2`** sur base du boilerplate : [jwt-ts-api-boilerplate](https://github.com/e-vinci/jwt-ts-api-boilerplate).
+
+⚡ Si vous avez fait un clone du boilerplate, attention au Git dans le Git, n'oubliez pas de supprimer le dossier **`.git`** présent dans votre nouveau projet.
+
+Puis, veuillez formaliser les opérations associées à vos RESTful APIs sous forme d'un tableau dans un fichier **`README.md`**.
+
+Veuillez tester toutes les méthodes offertes par votre application à l'aide du client HTTP de REST Client.
+
+Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex3.2`**.
+
+## 🍬 Bonus 
+- N°1 : vous souhaitez rapidement découvrir les principes d'une architecture Web associée à la JAMstack ? https://jamstack.wtf/
+- N°2 : si vous souhaitez découvrir le format Markdown, notamment très souvent utilisé dans certains sites JAMstack (source des données pour certains Headless CMS) : https://www.markdownguide.org/basic-syntax/
+
+
+## 🍬 Challenges
+- N°1 : Modifiez les autorisations au niveau des opérations de lecture : la lecture d'une page, ou de toutes les pages, pourra être réalisée par n'importe quel utilisateur anonyme ou authentifié pour les pages dont le statut vaut « published ». Pour les pages dont le statut vaut « hidden », seul leur auteur authentifié pourra les lire.
+N°2 : lorsqu'un utilisateur tente d'effacer ou modifier une page dont il n'est pas l'auteur, renvoyez un code d'erreur approprié au client.
+N°3 : Si ça n'est pas déjà fait, pensez à ne pas renvoyer les passwords des utilisateurs dans les réponses de votre API.
+
+# <InternalPageTitle> 🍬 Authentification & autorisation JWT à l'aide de cookies </InternalPageTitle>
+
+## Pourquoi utiliser l'autorisation JWT à l'aide de cookies ?
+
+Nous avons vu une façon de gérer des token JWT, sans gérer de cookies.
+
+Cela impose aux client de sauvegarder les tokens et de les envoyer dans un **`authorization header`** lorsqu'ils souhaitent accéder à une opération protégée.
+
+Il est aussi possible d'intégrer les tokens au sein de cookies. Dans ce cas-là, les clients qui ont reçu un cookie de l'API renverront automatiquement ce cookie (mécanisme des browsers). Les tokens JWT voyageront automatiquement grâce au mécanisme de cookies.
+
+💭 Faut-il mieux intégrer les token JWT dans des cookies ou pas ?  
+Il est difficile de donner une réponse à cette question. Chaque approche a des avantages et des inconvénients. Ce qui devrait être le point d'attention, c'est la sécurité. Et dans les deux cas, on atteint un niveau de sécurité raisonnable.
+Pour ce cours, nous avons choisi la façon la plus moderne, en laissant au client le choix de sauvegarder les token dans le web storage (nous allons voir ça tout prochainement pour l'aspect frontend).  
+Notons que le cas le plus sûr est probablement d'avoir deux types de token, ce qui est d'une complexité qui dépasse les objectifs de ce cours. Néanmoins, pour votre info, les mécanismes d'authentification comme OAuth (authorization de MS Azure) & OpenID Connect (authentification de MS Azure) gère deux types de token :
+- un token à durée de vie courte qui sera enregistré en mémoire vive au niveau du client (access token) ou dans le web storage.
+- un token à durée de vie longue qui sera enregistré par le client dans un cookie (refresh token, notamment utilisé par l'API pour créer un nouvel access token).
+
+## Un cookie, c'est quoi ?
+
+Un **cookie** représente des données qu'un serveur envoie à un browser.  
+Le browser peut sauver ce cookie. Pour chaque requête faite au serveur sur la même origine (que l'origine où le cookie a été reçu), le cookie sera automatiquement envoyé au serveur.
+
+Il fut un temps où les cookies étaient utilisés comme un mécanisme général de stockage de données côté client. 
+
+👍 Actuellement, si les cookies sont utilisés pour sauvegarder les données de session, il faut se protéger contre les attaques XSS et rendre les cookies inaccessibles au JavaScript : on utilise donc les cookies **`HttpOnly`** qui sont inaccessibles à la **`Document.cookie API`**. 
+
+Pour la suite, on va donc voir :
+- comment utiliser Express pour créer des cookies au niveau d'une API ;
+- comment rendre ces cookies inaccessibles aux attaques XSS en configurant **`HttpOnly`**.
+
+## Implémentation de l'authentification & l'autorisation JWT au sein de cookies
+
+### Intro
+
+Nous allons donc créer une nouvelle version de l'API sauvegardant le token d'un utilisateur au sein d'un cookie, ainsi que son username, sans que ces infos soient accessible au JS côté client.
+
+Pour ce faire nous allons utiliser la librairie [cookie-session](https://github.com/expressjs/cookie-session) qui permet d'enregistrer des données de session dans des cookies.
+
+Veuillez créer un nouveau projet nommé **`/back/api/cookies`** sur base d'un copié/collé du projet [auths](https://github.com/e-vinci/ts-demos/tree/main/back/api/auths)).
+
+Veuillez installer la librairie **`cookie-session`** au sein de votre nouveau projet **`cookies`** et les types associés (pour TypeScript):
+```bash
+npm i cookie-session
+npm install @types/cookie-session -D
+```
+
+### Utilisation de la fonction middleware **`cookieSession`**
+
+Veuillez mettre à jour **`/app.ts`** pour mettre en place la gestion de cookies :
+
+```ts numbered highlighting="2,11-20"
+import express, { ErrorRequestHandler } from "express";
+import cookieSession from "cookie-session";
+
+import usersRouter from "./routes/users";
+import pizzaRouter from "./routes/pizzas";
+import drinkRouter from "./routes/drinks";
+import authsRouter from "./routes/auths";
+
+const app = express();
+
+const expiryDateIn3Months = new Date(Date.now() + 1000 * 60 * 60 * 24 * 30 * 3);
+const cookieSecreteKey = 'YouWouldnot!not!like!mypizza';
+app.use(
+  cookieSession({
+    name: 'user',
+    keys: [cookieSecreteKey],  
+    httpOnly: true,
+    expires: expiryDateIn3Months,
+  }),
+);
+
+app.use((_req, _res, next) => {
+  console.log(
+    "Time:",
+    new Date().toLocaleString("fr-FR", { timeZone: "Europe/Brussels" })
+  );
+  next();
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use("/users", usersRouter);
+app.use("/pizzas", pizzaRouter);
+app.use("/drinks", drinkRouter);
+app.use("/auths", authsRouter);
+
+const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+  console.error(err.stack);
+  return res.status(500).send("Something broke!");
+};
+
+app.use(errorHandler);
+export default app;
+```
+
+Nous avons donc bien indiqué que le cookie est inaccessible au JS via : **`httpOnly: true`**.
+
+Nous avons fait en sorte que le cookie soit signé via la clé **`cookieSecreteKey`**.  
+Le mécanisme de signature correspond à ce qui a été vu dans le cadre des tokens JWT.  
+Ainsi, si un cookie venait être modifié par un utilisateur, lors de la vérification du cookie, cela sera automatiquement détecté par la fonction middleware **`cookieSession`** et la session ne sera pas créée.
+
+Pour info, la fonction middleware **`cookieSession`** va créer deux cookies :
+- un cookie portant comme nom la valeur de **`name`** ; il est encodé en base64. N'hésitez pas à vous amuser à décoder un cookie généré par **`cookieSession`** sur [base64decode](https://www.base64decode.org/).
+- un cookie portant comme nom la valeur de **`name`** + **`.sig`** : c'est la signature qui prévient contre le "tempering" (acte intentionnel mais non autorisé qui amène à la modification d'un système ou de données).
+
+### Lecture et ajout de données de session via `req.session`
+
+Pour créer des données de session, il suffit de simplement les ajouter à l'objet **`req.session`**.
+
+Dans le cadre de la RESTful API gérant les pizzas, cela est fait lors d'une opération de type **`register`** ou **`login`**.
+
+Veuillez mettre à jour le router **`/routes/auths.ts`** :
+
+```ts numbered highlighting="19,21,37,39,43-46,48-57"
+import { Request, Router } from "express";
+import { AuthenticatedUser, PotentialUser } from "../types";
+import { login, register } from "../services/users";
+const router = Router();
+
+/* Register a user */
+router.post("/register", async (req, res) => {
+  const { username, password } = req.body as PotentialUser;
+  if (!username || !password || !username.trim() || !password.trim()) {
+    return res.sendStatus(400);
+  }
+
+  const authenticatedUser = await register(username, password);
+
+  if (!authenticatedUser) {
+    return res.sendStatus(409);
+  }
+
+  createCookieSessionData(req, authenticatedUser);
+
+  return res.json({ username: authenticatedUser.username });
+});
+
+/* Login a user */
+router.post("/login", async (req, res) => {
+  const { username, password } = req.body as PotentialUser;
+  if (!username || !password || !username.trim() || !password.trim()) {
+    return res.sendStatus(400);
+  }
+
+  const authenticatedUser = await login(username, password);
+
+  if (!authenticatedUser) {
+    return res.sendStatus(401);
+  }
+
+  createCookieSessionData(req, authenticatedUser);
+
+  return res.json({ username: authenticatedUser.username });
+});
+
+/* Logout a user */
+router.get("/logout", (req, res) => {
+  req.session = null;
+  return res.sendStatus(200);
+});
+
+function createCookieSessionData(
+  req: Request,
+  authenticatedUser: AuthenticatedUser
+) {
+  if (!req.session) {
+    return;
+  }
+  req.session.username = authenticatedUser.username;
+  req.session.token = authenticatedUser.token;
+}
+
+export default router;
+```
+
+Dans le code ci-dessus, nous préparons les données de session qui seront écrites dans le cookie à l'aide de l'objet **`req.session`**.  
+Lorsque nous renvoyons du JSON aux clients, nous ne renvoyons plus le token, mais juste le username de l'utilisateur. L'application cliente, le browser, pourra utiliser cette info pour afficher le nom de l'utilisateur. Pour rappel, le browser n'a pas accès, via le JS, à l'info se trouvant dans le cookie.
+
+Quand nous gérons une session via des cookies, il n'est pas évident de bien clore une session. Nous avons créé une nouvelle opération de type **`GET /auths/logout`** qui permet d'effacer les données de session d'un utilisateur.
+
+Il nous reste à changer le mécanisme d'autorisation.
+Les tokens ne seront plus reçus via un authorization header, mais via un cookie.  
+Nous allons donc mettre à jour le middleware **`/utils/authorize`** :
+
+```ts numbered highlighting="13-16"
+import jwt from "jsonwebtoken";
+import { readOneUserFromUsername } from "../services/users";
+import { NextFunction, RequestHandler, Response } from "express";
+import { AuthenticatedRequest, JwtPayload, User } from "../types";
+
+const jwtSecret = "ilovemypizza!";
+
+const authorize = (
+  req: AuthenticatedRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (!req.session) {
+    return res.sendStatus(401);
+  }
+  const { token } = req.session;
+  if (!token) {
+    return res.sendStatus(401);
+  }
+
+  try {
+    const decoded = jwt.verify(token, jwtSecret) as JwtPayload;
+    const { username } = decoded;
+
+    const existingUser = readOneUserFromUsername(username);
+
+    if (!existingUser) {
+      return res.sendStatus(401);
+    }
+
+    req.user = existingUser; // request.user object is available in all other middleware functions
+    return next();
+  } catch (err) {
+    console.error("authorize: ", err);
+    return res.sendStatus(401);
+  }
+};
+
+const isAdmin: RequestHandler = (req: AuthenticatedRequest, res, next) => {
+  const { username } = req.user as User;
+
+  if (username !== "admin") {
+    return res.sendStatus(403);
+  }
+  return next();
+};
+
+export { authorize, isAdmin };
+```
+
+# <InternalPageTitle> 🍬 Test via REST Client d'une RESTful API attendant des cookies </InternalPageTitle>
+
+Il nous reste à tester nos requêtes via REST Client.
+
+Il n'y a pas de nouvelles notions à apprendre pour utiliser REST Client avec des cookies : le comportement par défaut de REST Client, lorsqu'un cookie est renvoyé dans une réponse, est d'inclure ce cookie dans chaque requête vers la même origine.
+
+Dès lors, pour tester l'API, il suffit d'enlever tous les authorization headers et de rajouter une requête pour tester l'effacement d'une session.
+
+Veuillez tester les requêtes à l'aide de **`/REST Client/pizzas.http`** :
+
+```http
+######### NORMAL OPERATION  ###########
+
+### Read all pizzas
+GET http://localhost:3000/pizzas
+
+### Read all pizzas with File variable
+@baseUrl = http://localhost:3000
+GET {{baseUrl}}/pizzas
+
+### Read all pizzas sorted by title (ascending)
+GET {{baseUrl}}/pizzas/?order=+title
+
+### Read all pizzas sorted by title (descending)
+GET {{baseUrl}}/pizzas/?order=-title
+
+### Read pizza identified by 2
+GET {{baseUrl}}/pizzas/2
+
+### Create a pizza by using the admin account
+#### First login as the admin
+POST {{baseUrl}}/auths/login
+Content-Type: application/json
+
+{
+    "username":"admin",
+    "password":"admin"
+}
+
+#### Create a pizza with the admin token
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "title":"Magic Green",
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+
+### Delete pizza identified by 2 with the admin token
+DELETE {{baseUrl}}/pizzas/2
+
+### Update the pizza identified by 6 with the admin token
+PATCH {{baseUrl}}/pizzas/6
+Content-Type: application/json
+
+{
+    "title":"Magic Green 2"
+}
+
+
+######### ERROR OPERATION  ###########
+
+### 1. Create a pizza without a token
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "title":"Magic Green",
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+
+### 2. Create a pizza without being the admin, use manager account
+#### 2.1 First login as the manager
+POST {{baseUrl}}/auths/login
+Content-Type: application/json
+
+{
+    "username":"manager",
+    "password":"manager"
+}
+
+#### 2.2 Try to create a pizza with the manager token
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "title":"Magic Green",
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+
+### Read pizza which does not exists
+GET {{baseUrl}}/pizzas/100
+
+### Create a pizza which lacks a property
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+
+### Create a pizza without info for a property
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "title":"",
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+
+### Update for a pizza which does not exist
+PATCH {{baseUrl}}/pizzas/200
+Content-Type: application/json
+
+{
+    "title":"Magic Green 2"
+}
+
+### Update for a pizza which does not provide any info for a property
+PATCH {{baseUrl}}/pizzas/1
+
+Content-Type: application/json
+
+{
+    "title":"Magic Green 2",
+    "content":""
+}
+```
+
+Veuillez mettre à jour **`/REST Client/auths.http`** pour tester **`GET /auths/logout`** :
+```http
+### Logout any user
+GET {{baseUrl}}/auths/logout
+```
+
+Pour ajouter une pizza, il suffit juste :
+1. De loguer l'admin.
+2. De créer une nouvelle pizza ; le cookie est automatiquement envoyé.
+
+Admettons que vous souhaitez tester l'ajout d'une pizza sans envoyer de token :
+1. Lancez l'opération de logout (**`GET /auths/logout`**) ; le cookie renvoyé ne contient pas de données de session ;
+2. Tentez la création d'une pizza qui renverra un code **`401 Unauthorized`**.
+
+En cas de souci, vous pouvez utiliser le code du tutoriel [cookies](https://github.com/e-vinci/ts-demos/tree/main/back/api/cookies).

@@ -1,0 +1,95 @@
+---
+title: "CORS & autorisation d'origines"
+description: "CORS & autorisation d'origines"
+---
+
+# d) Autoriser des origines pour une API
+
+<InternalPageMenu>
+  <PathViewer>
+    <PathViewerItem to="/"> web2course </PathViewerItem>
+    <PathViewerItem to="/part1"> Partie 1 </PathViewerItem>
+    <PathViewerItem selected> d) Autoriser des origines </PathViewerItem>
+  </PathViewer>
+</InternalPageMenu>
+
+
+# Autorisation d'origines & les CORS
+
+A cette partie-ci, nous allons voir comment mettre à jour une API afin que dans chaque réponse faite à un client, on ajoute un header permettant d'autoriser une ou plusieurs origines.
+
+C'est un moyen de relâcher la sécurité d'une API tout en restant vigilant sur les origines autorisées.
+
+Pour ce nouveau tutoriel, nous allons partir de la dernière version de la RESTful API de pizzas.
+
+Veuillez créer un nouveau projet nommé **`/web2/tutorials/back/api/cors`** sur base d'un copié collé de [services](https://github.com/e-vinci/ts-demos/tree/main/back/api/services).
+
+Dans ce projet, veuillez installer le package **`cors`** et les types associés :
+
+```bash
+npm i cors
+npm i @types/cors -D
+```
+
+Nous allons configurer les headers de la RESTful API à l'aide du middleware **`cors`** offert par la librairie **`cors`**.
+
+Pour configurer et utiliser les **CORS**, veuillez mettre à jour le fichier **`/app.ts`** :
+
+```ts numbered highlighting="2,10-12,14"
+import express, { ErrorRequestHandler } from "express";
+import cors from "cors";
+
+import usersRouter from "./routes/users";
+import pizzaRouter from "./routes/pizzas";
+import drinkRouter from "./routes/drinks";
+
+const app = express();
+
+const corsOptions = {
+  origin: [/^http:\/\/localhost/, "http://amazing.you.com"],
+};
+
+app.use(cors(corsOptions));
+
+app.use((_req, _res, next) => {
+  console.log(
+    "Time:",
+    new Date().toLocaleString("fr-FR", { timeZone: "Europe/Brussels" })
+  );
+  next();
+});
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
+
+app.use("/users", usersRouter);
+app.use("/pizzas", pizzaRouter);
+app.use("/drinks", drinkRouter);
+
+const errorHandler: ErrorRequestHandler = (err, _req, res, _next) => {
+  console.error(err.stack);
+  return res.status(500).send("Something broke!");
+};
+
+app.use(errorHandler);
+export default app;
+```
+
+Via **`/^http:\/\/localhost/`**, nous précisons que l'API doit autoriser toutes les origines locales (REGEX qui accepte toutes les URL qui commencent par `http://localhost`).
+
+Il reste à s'assurer que votre frontend (**`/web2/tutorials/pizzeria/front/fetch-no-proxy`**) est lui aussi bien démarré et peut réaliser ses "fetch" vers l'API.
+
+Tout fonctionne correctement ?
+
+Normalement oui, vous devriez avoir le site de la pizzeria qui affiche le menu des pizzas suite à un appel à l'API.
+
+En cas de souci, vous pouvez accéder au code du tutoriel ici :
+- pour l'API : [cors](https://github.com/e-vinci/ts-demos/tree/main/back/api/cors).
+- pour le frontend :
+  [fetch-no-proxy](https://github.com/e-vinci/ts-demos/tree/main/front/fetch-no-proxy).
+
+💭 OK, ça fonctionne bien... Mais cela est possible seulement si nous sommes les propriétaires de la RESTful API. Maintenant, que faire si une API tierce doit être intégrée dans notre frontend ?  
+Imaginez que vous souhaitez intégrer une opération d'une API offerte par Google...  
+Pensez-vous que vous pouvez leur donner un coup de fil et dire : *"Google, peux-tu STP autoriser l'origine associée à mon site web ?"...*  
+
+Il y a une solution pour cela : le **proxy** qui est vu ailleurs dans ce cours.
