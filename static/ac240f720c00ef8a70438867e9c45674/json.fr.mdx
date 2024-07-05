@@ -1,0 +1,478 @@
+---
+title: "JSON"
+description: "Introduction au JSON et persistance des données"
+---
+
+# b) Introduction au JSON et persistance des données
+
+<InternalPageMenu>
+  <PathViewer>
+    <PathViewerItem to="/"> web2course </PathViewerItem>
+    <PathViewerItem to="/part1"> Partie 1 </PathViewerItem>
+    <PathViewerItem selected> b) JSON </PathViewerItem>
+  </PathViewer>
+  <InternalPageMenuItem> Le JSON, c'est quoi ? </InternalPageMenuItem>
+  <InternalPageMenuItem> Communication de données en JSON à une API </InternalPageMenuItem>
+  <InternalPageMenuItem> Les génériques en TS </InternalPageMenuItem> 
+  <InternalPageMenuItem> Lecture de données se trouvant dans un fichier JSON </InternalPageMenuItem> 
+  <InternalPageMenuItem> Sauvegarde de données dans un fichier JSON </InternalPageMenuItem> 
+  <InternalPageMenuItem> Exercice 1.7 : Persistance des données </InternalPageMenuItem>
+</InternalPageMenu>
+
+# <InternalPageTitle> Le JSON, c'est quoi ? </InternalPageTitle>
+
+Précédemment, nous avons développé notre première RESTful API.  
+Nous avons implicitement découvert le JSON, notamment lorsque nous avons fait des requêtes vers nos API.
+
+Nous allons maintenant voir ce que permet le JSON, notamment la création de fichiers permettant de sauvegarder des données facilement en JS.
+
+**JSON** vient de **J**ava**S**cript **O**bject **N**otation.
+
+C'est une syntaxe pour **échanger** et **faire persister des données**.
+
+Du JSON, c'est du texte en notation JS.
+
+Voici les types de données qui sont valides en JSON :
+
+- **`string`**
+- **`number`**
+- **`object`**
+- **`array`**
+- **`boolean`**
+- **`null`**
+
+⚡ Il n'y a donc pas de **`function`**, **`date`** et **`undefined`**.
+
+Voici un exemple de représentation de données en JSON qui correspond à ce que très souvent une API renvoie, un array d'objets :
+
+```json
+[
+  {
+    "email": "raphael@voila.com",
+    "fullname": "Raphael Baroni"
+  },
+  {
+    "email": "jkj@herenqn.com",
+    "fullname": "JK Roling"
+  },
+  {
+    "email": "serena@gmail.com",
+    "fullname": "Serena Here"
+  }
+]
+```
+
+# <InternalPageTitle> Communication de données en JSON à une API </InternalPageTitle>
+
+## Introduction
+Dans le tutoriel précédent, nous avons communiqué des données au format JSON :
+- soit lors des requêtes via REST Client : nous avons envoyé les données permettant de créer ou modifier une boisson :
+- soit lors du traitment des requêtes par l'API, afin de créer ou modifier les boissons et les sauvegarder en mémoire vive (dans un tableau d'objets).
+
+Nous allons maintenant approfondir comment les données au format JSON ont été traitées par l'API.
+
+## Envoi de données d'une API vers un client & sérialisation
+
+Via Express, nous pouvons très facilement convertir un objet JS en JSON afin de l'envoyer vers une application cliente grâce à la méthode **`res.json()`**.
+
+C'est ce que nous appelons de la **sérialisation** de données : nous passons du monde "objets en mémoire" vers du texte (ou des octets) qui va voyager sur un réseau.
+
+Le code actuel de notre RESTful API, renvoyant un array de pizzas au format JSON, est géré automatiquement via :
+
+```js
+return res.json(drinks);
+```
+
+Lorsque l'API renvoie **`drinks`** pour les boissons par défaut, voici le JSON qui voyage sur le réseau :
+
+```json
+[
+  {
+    "id": 1,
+    "title": "Coca-Cola",
+    "image": "https://media.istockphoto.com/id/1289738725/fr/photo/bouteille-en-plastique-de-coke-avec-la-conception-et-le-chapeau-rouges-d%C3%A9tiquette.jpg?s=1024x1024&w=is&k=20&c=HBWfROrGDTIgD6fuvTlUq6SrwWqIC35-gceDSJ8TTP8=",
+    "volume": 0.33,
+    "price": 2.5
+  },
+  {
+    "id": 2,
+    "title": "Pepsi",
+    "image": "https://media.istockphoto.com/id/185268840/fr/photo/bouteille-de-cola-sur-un-fond-blanc.jpg?s=1024x1024&w=is&k=20&c=xdsxwb4bLjzuQbkT_XvVLyBZyW36GD97T1PCW0MZ4vg=",
+    "volume": 0.33,
+    "price": 2.5
+  },
+  {
+    "id": 3,
+    "title": "Eau Minérale",
+    "image": "https://media.istockphoto.com/id/1397515626/fr/photo/verre-deau-gazeuse-%C3%A0-boire-isol%C3%A9.jpg?s=1024x1024&w=is&k=20&c=iEjq6OL86Li4eDG5YGO59d1O3Ga1iMVc_Kj5oeIfAqk=",
+    "volume": 0.5,
+    "price": 1.5
+  },
+  {
+    "id": 4,
+    "title": "Jus d'Orange",
+    "image": "https://images.unsplash.com/photo-1600271886742-f049cd451bba?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "volume": 0.25,
+    "price": 4.5
+  },
+  {
+    "id": 5,
+    "title": "Limonade",
+    "image": "https://images.unsplash.com/photo-1583064313642-a7c149480c7e?q=80&w=1430&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "volume": 0.33,
+    "price": 5
+  }
+]
+```
+
+💭 La puissance du JSON peut déjà s'exprimer ici. Mais comment ?
+
+L'API renvoie un array d'objets, des boissons, au format JSON, qui correspond en fait à un format texte avec des conventions.  
+Il est donc possible à n'importe quelle application cliente d'utiliser ces données, quelque soit la technologie, le langage utilisé pour développer cette application cliente.   
+Ainsi, par exemple, une application Android, développée en Java, pourrait consommer cette API pour afficher un menu des boissons !
+
+## Réception de données d'un client par une API & parsing
+
+Via Express, nous pouvons très facilement convertir du JSON vers un objet JS à l'aide du middleware **`express.json()`**.
+
+C'est ce que nous appelons du **parsing** de données, ou de la **désérialisation** : nous passons du monde texte / JSON (ou des octets) vers des "objets en mémoire".
+
+Le code actuel de notre RESTful API, récupérant les données d'une boisson à créer, est très simple :
+
+```ts
+const { title, image, volume, price } = req.body as NewDrink;
+```
+
+Automatiquement, grâce à Express et au middleware appelé dans **`apps.ts`** (**`app.use(express.json());`**), **`req.body`** contient un objet JS représentant toutes les données JSON qui étaient présentes dans le body de la requête cliente, comme par exemple :
+
+```http highlighting="5-10"
+### Create a drink
+POST {{baseUrl}}/drinks
+Content-Type: application/json
+
+{
+    "title":"Virgin Tonic",
+    "image":"https://plus.unsplash.com/premium_photo-1668771899398-1cdd763f745e?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    "volume":0.25,
+    "price":4.5    
+}
+```
+
+Il est important de communiquer le "**media type**" (ou **MIME type**) dans le corps de la requête : **`application/json`**.  
+Cela indique à l'application qui est la cible de la requête (l'API dans notre cas) quel genre d'outil elle devra utiliser pour décoder les données.  
+Par exemple, il faut faire un traitement différent pour récupérer des données au format JSON que pour récupérer des données directement associées à un fichier image.
+
+# <InternalPageTitle> Les génériques en TS </InternalPageTitle>
+
+Les génériques en TypeScript permettent de créer des composants réutilisables qui fonctionnent avec différents types tout en maintenant la sécurité de typage.
+
+Un bon exemple d'utilisation de type générique est le code de la fonction **`parse`** donnée dans le fichier **`/utils/json.ts`** : 
+
+```ts
+/**
+ * Parse items given in a .json file
+ * @param {String} filePath - path to the .json file
+ * If the file does not exist or it's content cannot be parsed as JSON data,
+ * use the default data.
+ * @param {Array} defaultArray - Content to be used when the .json file does not exists
+ * @returns {Array} : the array that was parsed from the file (or defaultArray)
+ */
+function parse<T>(filePath: string, defaultArray: T[] = []): T[] {
+  if (!fs.existsSync(filePath)) return defaultArray;
+  const fileData = fs.readFileSync(filePath, "utf8");
+  try {
+    // parse() Throws a SyntaxError exception if the string to parse is not valid JSON.
+    return JSON.parse(fileData) as T[];
+  } catch (err) {
+    return defaultArray;
+  }
+}
+```
+
+**`function parse<T>(...)`**: Ici, **`T`** est un paramètre de type générique. Il agit comme un espace réservé pour le type que la fonction utilisera. Par convention, les paramètres de type génériques sont souvent des lettres simples comme **`T`**, **`U`**, **`V`**...
+
+Ensuite, on précise là où on utilise **`T`** : tant en paramètre de la fonction **`parse`** que dans le type de retour de la fonction.
+
+La fonction **`JSON.parse(fileData) `** permet de créer un objet JS à partir d'une **`string`** contenant des données au format JSON.
+
+Lorsqu'on va utiliser la fonction **`parse<T>`**, on pourrait préciser le type de données que l'on attend en retour. Par exemple, si on attend un array d'objets de type **`Drink`**, on pourrait appeler la fonction **`parse<T>`** de la manière suivante :
+
+```ts
+const drinks = parse<Drink>(jsonDbPath, defaultDrinks);
+```
+
+Néanmoins, TypeScript est capable d'inférer le type de retour de la fonction **`parse`**. Il n'est donc pas nécessaire de préciser le type de retour de la fonction **`parse`** si vous avez précisé le type de l'argument **`defaultDrinks`**. Ce code serait donc valide :
+```ts
+const drinks = parse(jsonDbPath, defaultDrinks);
+```
+
+# <InternalPageTitle> Lecture de données se trouvant dans un fichier JSON </InternalPageTitle>
+
+La fonction parse du fichier **`/utils/json.ts`**, introduite dans les génériques, permet de lire des données se trouvant dans un fichier JSON.
+
+Veuillez créer un nouveau projet **`/tutorials/back/api/persistence`** sur base d'un copier/coller de votre répertoire **`/tutorials/back/api/basic`**.
+
+En cas de souci, vous pouvez télécharger le code du tutoriel précédent ici : [basic](https://github.com/e-vinci/ts-demos/tree/main/back/api/basic).
+
+Plutôt que de lire le menu des boissons à partir d'un array d'objets, on souhaite lire ce menu grâce au contenu d'un fichier contenant du JSON. 
+
+Veuillez commencer par mettre à jour le router de boissons pour faire un **`Rename Symbol`** de la variable **`drinks`** en **`defaultDrinks`** : pour ce faire, vous pouvez cliquer sur la variable **`drinks`** et appuyer sur **`F2`** (équivalent de clic droit sur la variable, **`Rename Symbol`** ) dans le fichier **`/routes/drinks.js`**.
+
+Ensuite, nous prévoyons que le chemin du futur fichier contenant les boissons sera **`/data/drinks.json`**. 
+
+Voici ce que donnerait l'opération de lecture de toutes les boissons si le chemin et nom complet du fichier JSON était donné dans la constante **`jsonDbPath`**. Veuillez mettre à jour votre fichier **`/routes/drinks.js`** :
+
+```ts numbered highlighting="2-4,9,12,15"
+// Code existant ...
+import path from "node:path";
+import { parse } from "../utils/json";
+const jsonDbPath = path.join(__dirname, "/../data/drinks.json");
+
+// Suite du code
+
+router.get("/", (req, res) => {
+  const drinks = parse(jsonDbPath, defaultDrinks);
+  if (!req.query["budget-max"]) {
+    // Cannot call req.query.budget-max as "-" is an operator
+    return res.json(drinks);
+  }
+  const budgetMax = Number(req.query["budget-max"]);
+  const filteredDrinks = drinks.filter((drink) => {
+    return drink.price <= budgetMax;
+  });
+  return res.json(filteredDrinks);
+});
+```
+
+Actuellement, le fichier **`/data/drinks.json`** n'existe pas, c'est donc le tableau **`defaultDrinks`** qui est retourné par la fonction **`parse`**.
+
+# <InternalPageTitle> Sauvegarde de données dans un fichier JSON </InternalPageTitle>
+
+La fonction **`JSON.stringify(objectToSerialised)`** permet de créer une **`string`** contenant la représentation JSON d'un objet à sérialiser.
+
+Côté serveur, il est ensuite facile de sauvegarder les données JSON au sein d'un fichier.
+
+Le boilerplate du cours pour une API offre déjà une fonction **`serialize`** (voir fichier **`/utils/json.ts`**) permettant à une application Express de sauvegarder au format JSON un objet dans un fichier **`.json`** dont son chemin et nom complet sont indiqués dans le paramètre **`filePath`** :
+
+```ts
+/**
+ * Serialize the content of an Object within a file
+ * @param {String} filePath - path to the .json file
+ * @param {Array} object - Object to be written within the .json file.
+ * Even if the file exists, its whole content is reset by the given object.
+ */
+function serialize(filePath: string, object: object) {
+  const objectSerialized = JSON.stringify(object);
+  createPotentialLastDirectory(filePath);
+  fs.writeFileSync(filePath, objectSerialized);
+}
+
+/**
+ *
+ * @param {String} filePath - path to the .json file
+ */
+function createPotentialLastDirectory(filePath: string) {
+  const pathToLastDirectory = filePath.substring(
+    0,
+    filePath.lastIndexOf(path.sep)
+  );
+
+  if (fs.existsSync(pathToLastDirectory)) return;
+
+  fs.mkdirSync(pathToLastDirectory);
+}
+```
+
+La fonction **`createPotentialLastDirectory`** permet de créer le répertoire qui contiendra le fichier JSON si celui-ci n'existe pas. Par exemple, le répertoire **`/data`** sera créé si le fichier **`/data/drinks.json`** doit être créé et que **`/data`** n'existe pas.
+
+Il n'est pas intéressant de retenir par coeur le code donné dans **`/utils/json.js`**. Par contre, il est important que vous compreniez celui-ci, ce qu'il fait.
+
+A présent, nous allons convertir le code du router de "drinks" pour rendre les données peristantes.  
+Voici ce que nous devons faire pour les opérations de :
+- **lecture de ressources** : il suffit de faire appel à la fonction **`parse`** qui tentera de charger les ressources qui devraient se trouver dans le répertoire **`/data/drinks.json`**. Notons que le chemin vers ce fichier JSON est un simple choix, il doit être configurable. 
+- **écriture de ressources** : lors d'une opération d'écriture pour créer une nouvelle ressource, ou pour mettre à jour une ressource existante, voici les étapes :
+  - création d'une liste de toutes les boissons dans un array : cela correspond à l'utilisation de la fonction **`parse`** pour tenter de charger ce qui est contenu dans la mini DB de drinks.
+  - mise à jour de l'array soit en ajoutant un nouvel objet (une boisson), soit en modifiant un objet existant, soit en supprimant un objet.
+  - réécriture complète du fichier JSON contenant la liste des boissons sur base de l'array de boissons qui a précédemment été mis à jour via la méthode **`serialize`**.
+
+Veuillez mettre à jour le code du router **`/router/drinks.js`** afin de gérer la persistance selon la stratégie définie ci-dessus, les modifications étant surlignées (on a repris les modifications associées à la lecture de toutes les boissons même si nous l'avions déjà vu précédemment) :
+
+```ts numbered highlighting="2,4-5,53,56,59,67-68,95,98,110,116,117,122,128,129,158"
+import { Router } from "express";
+import path from "node:path";
+import { Drink, NewDrink } from "../types";
+import { parse, serialize } from "../utils/json";
+const jsonDbPath = path.join(__dirname, "/../data/drinks.json");
+
+const defaultDrinks: Drink[] = [
+  {
+    id: 1,
+    title: "Coca-Cola",
+    image:
+      "https://media.istockphoto.com/id/1289738725/fr/photo/bouteille-en-plastique-de-coke-avec-la-conception-et-le-chapeau-rouges-d%C3%A9tiquette.jpg?s=1024x1024&w=is&k=20&c=HBWfROrGDTIgD6fuvTlUq6SrwWqIC35-gceDSJ8TTP8=",
+    volume: 0.33,
+    price: 2.5,
+  },
+  {
+    id: 2,
+    title: "Pepsi",
+    image:
+      "https://media.istockphoto.com/id/185268840/fr/photo/bouteille-de-cola-sur-un-fond-blanc.jpg?s=1024x1024&w=is&k=20&c=xdsxwb4bLjzuQbkT_XvVLyBZyW36GD97T1PCW0MZ4vg=",
+    volume: 0.33,
+    price: 2.5,
+  },
+  {
+    id: 3,
+    title: "Eau Minérale",
+    image:
+      "https://media.istockphoto.com/id/1397515626/fr/photo/verre-deau-gazeuse-%C3%A0-boire-isol%C3%A9.jpg?s=1024x1024&w=is&k=20&c=iEjq6OL86Li4eDG5YGO59d1O3Ga1iMVc_Kj5oeIfAqk=",
+    volume: 0.5,
+    price: 1.5,
+  },
+  {
+    id: 4,
+    title: "Jus d'Orange",
+    image:
+      "https://images.unsplash.com/photo-1600271886742-f049cd451bba?q=80&w=1374&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    volume: 0.25,
+    price: 4.5,
+  },
+  {
+    id: 5,
+    title: "Limonade",
+    image:
+      "https://images.unsplash.com/photo-1583064313642-a7c149480c7e?q=80&w=1430&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    volume: 0.33,
+    price: 5,
+  },
+];
+
+const router = Router();
+
+router.get("/", (req, res) => {
+  const drinks = parse(jsonDbPath, defaultDrinks);
+  if (!req.query["budget-max"]) {
+    // Cannot call req.query.budget-max as "-" is an operator
+    return res.json(drinks);
+  }
+  const budgetMax = Number(req.query["budget-max"]);
+  const filteredDrinks = drinks.filter((drink) => {
+    return drink.price <= budgetMax;
+  });
+  return res.json(filteredDrinks);
+});
+
+router.get("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const drinks = parse(jsonDbPath, defaultDrinks);
+  const drink = drinks.find((drink) => drink.id === id);
+  if (!drink) {
+    return res.sendStatus(404);
+  }
+  return res.json(drink);
+});
+
+router.post("/", (req, res) => {
+  const { title, image, volume, price } = req.body as NewDrink;
+
+  if (
+    !title ||
+    !image ||
+    !volume ||
+    !price ||
+    typeof title !== "string" ||
+    typeof image !== "string" ||
+    typeof volume !== "number" ||
+    typeof price !== "number" ||
+    !title.trim() ||
+    !image.trim() ||
+    volume <= 0 ||
+    price <= 0
+  ) {
+    return res.sendStatus(400);
+  }
+
+  const drinks = parse(jsonDbPath, defaultDrinks);
+
+  const nextId =
+    drinks.reduce((maxId, drink) => (drink.id > maxId ? drink.id : maxId), 0) +
+    1;
+
+  const newDrink: Drink = {
+    id: nextId,
+    title,
+    image,
+    volume,
+    price,
+  };
+
+  drinks.push(newDrink);
+  serialize(jsonDbPath, drinks);
+  return res.json(newDrink);
+});
+
+router.delete("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const drinks = parse(jsonDbPath, defaultDrinks);
+  const index = drinks.findIndex((drink) => drink.id === id);
+  if (index === -1) {
+    return res.sendStatus(404);
+  }
+  const deletedElements = drinks.splice(index, 1); // splice() returns an array of the deleted elements
+  serialize(jsonDbPath, drinks);
+  return res.json(deletedElements[0]);
+});
+
+router.patch("/:id", (req, res) => {
+  const id = Number(req.params.id);
+  const drinks = parse(jsonDbPath, defaultDrinks);
+  const drink = drinks.find((drink) => drink.id === id);
+  if (!drink) {
+    return res.sendStatus(404);
+  }
+
+  const { title, image, volume, price } = req.body as Partial<NewDrink>;
+
+  if (
+    (title !== undefined && (typeof title !== "string" || !title.trim())) ||
+    (image !== undefined && (typeof image !== "string" || !image.trim())) ||
+    (volume !== undefined && (typeof volume !== "number" || volume <= 0)) ||
+    (price !== undefined && (typeof price !== "number" || price <= 0))
+  ) {
+    return res.sendStatus(400);
+  }
+
+  if (title) {
+    drink.title = title;
+  }
+  if (image) {
+    drink.image = image;
+  }
+  if (volume) {
+    drink.volume = volume;
+  }
+  if (price) {
+    drink.price = price;
+  }
+
+  serialize(jsonDbPath, drinks);
+
+  return res.json(drink);
+});
+
+export default router;
+```
+
+Veuillez testez le bon fonctionnement de l'application. Faites quelques requêtes pour ajouter et modifier des données et vérifiez, une fois que vous redémarrer votre application, que les données persistent.
+
+
+# <InternalPageTitle> Exercice 1.7 : Persistance des données </InternalPageTitle>
+
+Vous allez mettre à jour la RESTful API de **myMovies** afin de rendre les données persistantes dans un fichier JSON : **`/data/films.json`**.
+
+Veuillez repartir du code de la solution de votre [Exercice 1.6](../express-api/#exercice_1_6_suppression_modification_de_ressources).  
+Le code de votre application doit se trouver dans votre repo git dans **`/exercises/1.7`**.  
+
+Veuillez tester toutes les fonctions de la RESTful API pour la collection de films à l'aide de REST Client en copiant les requêtes développées pour l'exercice précédent (fichier **`films.http`** du répertoire **REST Client**). Normalement, il n'y a pas de nouvelles requêtes à écrire, il suffit juste de les exécuter.
+
+Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.7`**.

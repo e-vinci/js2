@@ -1,0 +1,557 @@
+---
+title: 'Language TS'
+description: 'Introduction au langage TypeScript, apprentissage de la syntaxe'
+---
+
+# c) Introduction au TS
+
+<InternalPageMenu>
+  <PathViewer>
+    <PathViewerItem to="/"> web2course </PathViewerItem>
+    <PathViewerItem to="/part0" > Partie 0 </PathViewerItem>
+    <PathViewerItem selected> c) TS </PathViewerItem>
+  </PathViewer>
+  <InternalPageMenuItem> Le TS, c'est quoi ? </InternalPageMenuItem>
+  <InternalPageMenuItem> Quand définir les types ? </InternalPageMenuItem>
+  <InternalPageMenuItem> Comment définir les types ? </InternalPageMenuItem> 
+  <InternalPageMenuItem> Comment contrôler le flux en TS ? </InternalPageMenuItem> 
+  <InternalPageMenuItem> Comment en savoir plus sur TS ? </InternalPageMenuItem> 
+</InternalPageMenu>
+
+
+# <InternalPageTitle> Le TS, c'est quoi ? </InternalPageTitle>
+
+ **Le TypeScript est du JavaScript avec des types**. Ainsi, toute la syntaxe décrite dans l'[introduction du JS](../js-language) est valable pour le TS.
+
+Le TS s'écrit tant dans un browser que dans un environnement serveur.  
+On écrira du TS conforme au standard que l'on souhaite voir associé à JS : **`ECMAScript`**, **`CommonJS`**...
+
+Comme le monde de l'entreprise va de plus en plus vers `ECMAScript 6` (ou `ES6`), nous avons choisi `ECMAScript` comme standard pour ce cours.
+
+Nous allons voir dans cette partie les spécificités utiles du TS.
+
+Notons que le TS permet d'améliorer l'orienté objet en JS, mais nous ne verrons pas ces aspects dans ce cours sauf pour quelques exceptions. Nous estimons que le développement web moderne ne nécessite pas de maîtriser l'orienté objet en JS ; il nous semble plus intéressant de faire de la programmation fonctionnelle, tout en manipulant des objets et des types.
+
+# <InternalPageTitle> A quel moment le TS intervient ? </InternalPageTitle>
+
+En TypeScript, l'intervention se fait principalement au moment de la **transpilation** (on parle aussi de compilation par abus de langage) :
+- **Type Checking**: TypeScript intervient lors de la transpilation, vérifiant les types et s'assurant que le code respecte les définitions de types fournies. Cela permet de détecter les erreurs de type avant l'exécution. 
+- **Type Safety** : TypeScript aide à maintenir la sécurité des types en obligeant à définir des types précis pour les variables, les fonctions, etc. Cela évite l'utilisation du type `any`, qui désactive les vérifications de type, et réduit les risques d'erreurs liées aux pointeurs nuls (null pointers).
+- Le code TypeScript est transpilé en JavaScript. Les annotations de type sont supprimées et le **code résultant est du pur JavaScript**.
+
+Il y a d'autres aspects importants où TypeScript peut intervenir, principalement : 
+- **Intellisense** : Les éditeurs de code et IDE qui supportent TypeScript (comme Visual Studio Code) utilisent les informations de type pour fournir des suggestions de code, auto-compléter les noms de variables et de fonctions, et offrir des informations sur les signatures de fonctions.
+- **Erreurs en temps réel** : Pendant l'écriture du code, les éditeurs peuvent afficher des erreurs de type en temps réel, avant même que le code ne soit compilé.
+- **Documentation** : Les annotations de type servent de documentation vivante, aidant les développeurs à comprendre les interfaces et les attentes des fonctions.
+- **Refactoring** : Les outils de refactoring utilisent les informations de type pour effectuer des transformations de code de manière sécurisée (comme par exemple le `Quick Fix...` de VS Code).
+- **Linting** : Les outils comme ESLint utilisent les types pour imposer des règles de style et de bonnes pratiques de code.
+- **Tests** : Les frameworks de tests peuvent utiliser les types pour générer des cas de test ou vérifier les types des données manipulées.
+- **Runtime (indirectement)** : Même si TypeScript ne vérifie pas les types à l'exécution, les développeurs peuvent utiliser des gardes de type (type guards) et des assertions pour vérifier les types à l'exécution, ce qui ajoute une couche supplémentaire de sécurité.
+
+# <InternalPageTitle> Quand définir les types ? </InternalPageTitle>
+
+## Introduction
+
+Pour maintenir la sécurité des types, il est important d'éviter que TypeScript infère le type `any` pour les variables, les fonctions, les paramètres, etc.
+
+Il y a beaucoup de cas où TS est capable d'inférer le type d'une variable, d'une fonction, etc. sans que l'on ait besoin de le spécifier explicitement. 
+
+## Cas où il est inutile de spécifier le type
+
+👍 Lorsque l'inférence de type est claire et évidente, ou lorsque l'annotation (de type) n'apporte pas de valeur ajoutée significative en termes de lisibilité ou de documentation, il n'est pas recommandé de spécifier le type explicitement. Cela peut rendre le code plus verbeux et moins lisible.
+
+Voici quelques exemples où il est inutile de spécifier le type :
+  
+  ```ts 
+  const x = 10; // TypeScript infère que x est de type number
+  const y = 'hello'; // TypeScript infère que y est de type string
+  const z = [1, 2, 3]; // TypeScript infère que z est de type number[]
+
+  function greet(name: string) { 
+    return `Hello, ${name}!`; // Le type string est évident ici
+  }
+  ```
+
+## Cas où il est important de spécifier le type
+
+### Type Checking
+
+👍 Il est recommandé de spécifier le type lorsque TypeScript ne peut pas inférer le type correctement, ou lorsque l'inférence de type peut entraîner des erreurs potentielles difficiles à détecter.
+
+Voici un exemple concret où il est recommandé de spécifier le type :
+
+  ```ts
+  let value; // TypeScript infère que value est de type any
+
+function setValue(newValue) { 
+    value = newValue; 
+}
+
+setValue(42);
+
+// Plus tard dans le code
+console.log(value.toFixed(2)); // Erreur à la compilation/transpilation : toFixed n'est pas une fonction sur type 'any'
+  ```
+
+TypeScript détectera l'erreur lors de la transpilation/compilation, car value est de type `any` et n'a pas de méthode `toFixed`.
+C'est l'éditeur de code qui indiquera cette erreur avant que le code ne soit transpilé en JavaScript.
+
+Pour éviter ce problème, voici comment on peut spécifier le type de `value` :
+
+```ts
+let value: number;
+
+function setValue(newValue: number) {
+    value = newValue;
+}
+
+setValue(42);
+
+// Maintenant, TypeScript sait que value est de type number
+console.log(value.toFixed(2)); // Correct : affiche '42.00'
+```
+
+En spécifiant `value` comme étant de type `number`, TypeScript peut vérifier statiquement que les opérations ultérieures sur `value` (comme `toFixed(2)`) sont appropriées et éviter les erreurs potentielles qui seraient révélées à l'exécution.
+
+### Documentation & lisibilité
+
+👍 Pour l'aspect documentation et lisibilité, il est recommandé de spécifier le type des paramètres de fonction. Concernant les valeurs de retour, même si TypeScript peut les inférer correctement, il est conseillé de spécifier le type de retour lorsque le corps de la fonction est volumineux. Cela rend le code plus explicite et aide les autres développeurs à comprendre comment utiliser la fonction sans avoir à lire son implémentation.
+
+Voici un exemple d'une fonction assez volumineuse où il est recommandé de spécifier le type de retour :
+
+```ts
+function processData(data: string[]): { averageLength: number, maxLength: number } {
+    let totalLength = 0;
+    let maxLength = 0;
+
+    for (let item of data) {
+        totalLength += item.length;
+        if (item.length > maxLength) {
+            maxLength = item.length;
+        }
+    }
+
+    const averageLength = data.length > 0 ? totalLength / data.length : 0;
+
+    return { averageLength, maxLength };
+}
+```
+En spécifiant le type de retour `{ averageLength: number, maxLength: number }`, on documente clairement que la fonction processData produit un objet avec ces deux propriétés. Cela rend le code plus explicite et facilite la compréhension pour les autres développeurs qui utilisent ou maintiennent cette fonction.
+
+### Maintenabilité 
+
+👍 Dans le cas où le type de retour est complexe ou utilisé à plusieurs endroits dans le code, il est intéressant de définir une interface ou un type pour ce type de retour. Cela permet de réutiliser le type de retour dans d'autres parties du code et de garantir la cohérence des types. 
+
+Voici ce que ça donnerait pour notre exemple :
+  
+  ```ts
+  interface DataProcessingResult {
+    averageLength: number;
+    maxLength: number;
+}
+
+function processData(data: string[]): DataProcessingResult {
+    let totalLength = 0;
+    let maxLength = 0;
+
+    for (let item of data) {
+        totalLength += item.length;
+        if (item.length > maxLength) {
+            maxLength = item.length;
+        }
+    }
+
+    const averageLength = data.length > 0 ? totalLength / data.length : 0;
+
+    return { averageLength, maxLength };
+}
+  ```
+  
+En définissant l'interface `DataProcessingResult`, on peut réutiliser ce type de retour dans d'autres parties du code, ce qui rend le code plus maintenable et évite les erreurs de type.
+
+# <InternalPageTitle> Comment définir les types ? </InternalPageTitle>
+
+Il existe plusieurs façons de définir des types en TypeScript. Voici les principales méthodes :
+
+## Les annotations de type
+
+Les annotations de type sont des instructions qui indiquent au compilateur TypeScript le type d'une variable, d'un paramètre de fonction, d'une valeur de retour, etc. Les annotations de type sont placées après le nom de la variable, du paramètre ou de la fonction, suivies de deux points **`:`** et du type souhaité.
+
+Voici quelques exemples d'annotations de type :
+
+```ts
+let x: number; // x est de type number
+let y: string; // y est de type string
+let z: number[]; // z est de type number[]
+const numbers: number[] = [1, 2, 3]; // numbers est de type number[]
+let isActive: boolean; // isActive est de type boolean
+let greet: (name: string) => string; 
+// greet est une fonction qui prend un paramètre de type string et retourne une valeur de type string
+const person: { name: string, age: number } = { name: "Alice", age: 30 };
+```
+
+## Les interfaces
+
+Les interfaces sont des contrats qui définissent la structure des objets en TypeScript. Elles permettent de définir des types personnalisés pour les objets, les fonctions, les classes, etc. Les interfaces sont largement utilisées pour définir des types complexes et réutilisables.
+
+Voici un exemple d'interface pour définir un type de données :
+
+```ts
+interface Person {
+    readonly id: number; // Propriété en lecture seule
+    name: string;
+    age: number;
+    email?: string; // Propriété optionnelle
+}
+
+const alice: Person = { id:1, name: "Alice", age: 30 };
+const bob: Person = { id:2, name: "Bob", age: 25, email: "bob@vinci.be" };
+
+// Tentative de modification d'une propriété en lecture seule (erreur)
+// alice.id = 3; // Erreur: Cannot assign to 'id' because it is a read-only property.
+```
+
+Notons qu'une interface peut étendre un type défini ou une autre interface. Voici un exemple d'interface qui étend un type défini:
+  
+  ```ts
+  type Employee = { // fonctionne aussi avec une interface (interface Employee { ... })
+    name: string;
+    age: number;
+};
+
+interface Manager extends Employee {
+    department: string;
+    manageTeam(): void;
+}
+
+const manager: Manager = {
+    name: "Bob",
+    age: 35,
+    department: "HR",
+    manageTeam() {
+        console.log("Managing team...");
+    }
+};
+  ```
+
+## Les types
+
+Les types sont similaires aux interfaces, mais ils peuvent également être utilisés pour définir des types primitifs, des unions, des intersections, des tuples, etc. 
+
+Voici un exemple de type pour définir un type de données :
+
+```ts
+type Person = {
+    name: string;
+    age: number;
+    email?: string; // Propriété optionnelle
+    readonly id: number; // Propriété en lecture seule
+}
+
+const person: Person = {
+    name: "Alice",
+    age: 30,
+    id: 1
+    // email est optionnel et peut être omis si nécessaire
+};
+```
+
+Notons que les types peuvent être utilisés pour définir des types primitifs, des unions, des intersections, des tuples, etc. :
+
+```ts
+type ID = string | number; // Unions type
+
+type Printable = {
+    print(): void;
+};
+
+type Loggable = {
+    log(): void;
+};
+
+type LoggableAndPrintable = Printable & Loggable; // Intersections de type
+
+// Utilisation du type intersection
+let obj: LoggableAndPrintable = {
+    print() {
+        console.log("Printing...");
+    },
+    log() {
+        console.log("Logging...");
+    }
+};
+
+function readPizzaById(id: number): Pizza | undefined {
+  const pizzas = parse(jsonDbPath, defaultPizzas);
+  return pizzas.find((pizza) => pizza.id === id);
+} // Fonction qui retourne un type Pizza ou undefined
+```
+
+## Les classes
+
+Les classes en TypeScript peuvent également être utilisées pour définir des types. Les classes peuvent être utilisées pour définir des types d'objets avec des propriétés et des méthodes.
+
+Voici un exemple de classe pour définir un type de données :
+
+```ts
+class Person {
+    name: string;
+    age: number;
+    email?: string; // Propriété optionnelle
+
+    constructor(name: string, age: number, email?: string) {
+        this.name = name;
+        this.age = age;
+        this.email = email;
+    }
+}
+``` 
+👍 Dans ce cours, nous avons volontairement choisi de ne pas faire d'orienté objet en JS/TS. Nous vous recommandons de ne pas utiliser les classes pour définir des types, mais plutôt d'utiliser des interfaces ou des types.
+
+## Les enums
+
+Les énumérations (enums) sont des types de données qui permettent de définir un ensemble de valeurs nommées. Les énumérations sont largement utilisées pour définir des types de données avec des valeurs prédéfinies.
+
+Voici un exemple d'énumération pour définir un type de données :
+
+```ts
+enum Color {
+    Red = 'red',
+    Green = 'green',
+    Blue = 'blue'
+}
+
+const color: Color = Color.Red;
+
+if (color === Color.Red) {
+    console.log("It's red!");
+}
+```
+
+## Generics
+
+Les génériques (generics) sont des types de données paramétrés qui permettent de définir des types réutilisables et flexibles. Les génériques sont utilisés pour définir des types de données qui peuvent accepter différents types de paramètres.  
+
+Voici un exemple de générique pour définir un type de données :
+
+```ts
+// Définition d'une interface générique
+interface Box<T> {
+    value: T;
+}
+
+// Utilisation de l'interface générique
+const box1: Box<number> = { value: 10 };
+const box2: Box<string> = { value: "Hello, TypeScript!" };
+const box3: Box = { value: true }; // le type de T est inféré comme boolean
+
+console.log(box1.value); // Output: 10
+console.log(box2.value); // Output: "Hello, TypeScript!"
+console.log(box3.value); // Output: true
+```
+
+## Interfaces vs Types
+
+Les interfaces et les types sont deux façons de définir des types en TypeScript. Les interfaces sont principalement utilisées pour définir des structures d'objets (et leur contrat), tandis que les types sont utilisés pour définir des types primitifs, des unions, des intersections...
+
+👍 Dans ce cours, nous vous recommandons d'utiliser les interfaces pour définir des types d'objets.
+
+Voici un exemple :
+  
+  ```ts
+interface Pizza {
+  id: number;
+  title: string;
+  content: string;
+}
+
+const pizza: Pizza = {
+  id: 1,
+  title: "Margherita",
+  content: "Tomato, mozzarella, basilique"
+};
+```
+
+
+👍 Dans ce cours, nous vous recommandons d'utiliser les types pour définir des types primitifs, des unions et des intersections, des types sur base d'interfaces...
+
+Voici quelques exemples :
+  
+  ```ts
+  interface AuthenticatedUser {
+  username: string;
+  token: string;
+}
+
+  type MaybeAuthenticatedUser = AuthenticatedUser | undefined; // Union type
+
+
+  interface Pizza {
+  id: number;
+  title: string;
+  content: string;
+}
+
+  type NewPizza = Omit<Pizza, "id">;  // Omet la propriété "id" de l'interface Pizza
+
+  function updatePizza(
+  id: number,
+  updatedPizza: Partial<NewPizza> // Partial permet de rendre les propriétés de NewPizza optionnelles
+): Pizza {
+  // ...
+}
+```
+
+`Omit` est un utilitaire TS qui permet de créer un nouveau type en omettant certaines propriétés d'un type existant.
+
+`Partial` est un utilitaire TS qui permet de rendre toutes les propriétés d'un type optionnel.
+
+# <InternalPageTitle> Comment contrôler le flux en TS ? </InternalPageTitle>
+
+## Introduction
+
+Le contrôle de flux vise à garantir la sécurité et la précision des types en fonction des chemins d'exécution possibles. 
+
+Le contrôle de flux en TypeScript se réfère généralement à l'ensemble des mécanismes par lesquels le transpilateur/compilateur analyse les chemins d'exécution possibles d'un programme pour déterminer les types des variables. Cela inclut les vérifications de type conditionnelles telles que `if`, `else`, `switch`, ainsi que les opérateurs de vérification de type comme `typeof`, `instanceof`, `in`, et les assertions de type via `as`.
+
+## Vérification de type conditionnelle
+
+La vérification de type conditionnelle est une technique courante pour garantir la sécurité des types en fonction des conditions. TypeScript utilise les instructions `if`, `else`, `switch` pour effectuer des vérifications de type conditionnelles.
+
+Voici un exemple d'utilisation de la vérification de type conditionnelle avec `if` :
+
+```ts
+function greet(name: string | undefined) {
+    if (name) { // TypeScript sait que name est de type string ici
+        console.log(`Hello, ${name}!`); 
+    } else { // TypeScript sait que name est de type undefined ici
+        console.log("Hello, stranger!");
+    }
+}
+```
+
+Dans cet exemple, TypeScript infère que `name` est de type `string | undefined`. La vérification `if (name)` permet de vérifier si `name` est défini (non `undefined`) avant d'afficher le message de salutation.
+
+## Opérateurs de vérification de type
+
+Les opérateurs de vérification de type sont des outils puissants pour garantir la sécurité des types en TypeScript. Ces opérateurs permettent de vérifier le type d'une variable ou d'une expression à l'exécution.
+
+Voici quelques exemples d'opérateurs de vérification de type :
+
+### `typeof`
+
+L'opérateur `typeof` permet de vérifier le type d'une variable ou d'une expression à l'exécution. TypeScript utilise `typeof` pour effectuer des vérifications de type sur les variables.
+
+```ts 
+function logType(value: unknown) {
+    if (typeof value === "string") {  // Vérifie si value est une string
+        console.log("It's a string!");
+    } else if (typeof value === "number") {
+        console.log("It's a number!");
+    } else {
+        console.log("Unknown type!");
+    }
+}
+```
+
+Dans cet exemple, TypeScript utilise `typeof` pour vérifier le type de `value` et afficher un message en fonction du type détecté.
+
+### `instanceof`
+
+L'opérateur `instanceof` permet de vérifier si un objet est une instance d'une classe.
+
+Voici un exemple :
+  
+  ```ts
+class Person {
+    name: string;
+
+    constructor(name: string) {
+        this.name = name;
+    }
+}
+
+function greet(person: Person | unknown) {
+    if (person instanceof Person) { // Vérifie si person est une instance de Person
+        console.log(`Hello, ${person.name}!`);
+    } else {
+        console.log("Hello, stranger!");
+    }
+}
+```
+Dans cet exemple, TypeScript utilise `instanceof` pour vérifier si `person` est une instance de `Person` avant d'afficher le message de salutation. Vous ne verrez pas ce genre de code dans ce cours, car nous ne faisons pas d'orienté objet en JS/TS.
+
+### `in`
+
+L'opérateur `in` permet de vérifier si une propriété existe dans un objet. TypeScript utilise `in` pour effectuer des vérifications de type sur les propriétés d'un objet.
+
+Voici un exemple avec une interface `Person` :
+  
+  ```ts
+interface Person {
+  name: string;
+  age: number;
+}
+
+function greet(person: Person | unknown) {
+  if (person && typeof person === "object"  && "name" in person) {
+      console.log(`Hello, ${person.name}!`);
+  } else {
+      console.log("Hello, stranger!");
+  }
+}
+  ```
+
+Dans cet exemple, TypeScript utilise `in` pour vérifier si la propriété `name` existe dans `person` avant d'afficher le message de salutation.
+
+### Assertions de type
+
+Les assertions de type (type assertions) permettent de forcer le type d'une variable ou d'une expression à un type spécifique. TypeScript utilise les assertions de type pour effectuer des vérifications de type manuelles.
+
+Voici un exemple d'assertion de type avec `as` :
+  
+  ```ts
+ interface Person {
+  id: number;
+  username: string;
+  email: string;
+}
+
+// Exemple de données reçues de l'API (simplifié)
+const apiResponse: unknown = {
+  id: 1,
+  username: "john_doe",
+  email: "john.doe@example.com",
+  // D'autres propriétés qui ne nous intéressent pas pour cet exemple
+};
+
+// Vérification de type pour garantir que 'apiResponse' est bien de type 'User'
+if (
+  apiResponse &&
+  typeof apiResponse === "object" &&
+  "id" in apiResponse &&
+  "username" in apiResponse &&
+  "email" in apiResponse
+) {
+  const user: Person = {
+    id: apiResponse.id as number, // Assertion de type pour 'id'
+    username: apiResponse.username as string,   // Assertion de type pour 'username'
+    email: apiResponse.email as string,  // Assertion de type pour 'email'
+  };
+
+  console.log(user);
+}
+  ```
+
+Dans cet exemple, TypeScript utilise des assertions de type avec `as` pour forcer le type des propriétés de `apiResponse` à `number` et `string` respectivement. Cela garantit que `user` est de type `Person` et évite les erreurs de type potentielles. 
+
+## Conclusion
+
+Le contrôle de flux en TypeScript est un outil puissant pour garantir la sécurité des types en fonction des chemins d'exécution possibles. En utilisant des vérifications de type conditionnelles, des opérateurs de vérification de type et des assertions de type, les développeurs peuvent s'assurer que leur code respecte les définitions de types fournies et éviter les erreurs de type potentielles.
+
+Nous avons vu les façons les plus directes de contrôler le flux en TS ; il existe d'autre façons (type guards, assertion functions), mais nous ne les verrons pas dans ce cours. 
+
+# <InternalPageTitle> Comment en savoir plus sur TS ? </InternalPageTitle>
+
+Si vous souhaitez en savoir plus sur ce langage, nous vous recommandons de consulter la documentation en ligne de [typescriptlang.org](https://www.typescriptlang.org).
+
