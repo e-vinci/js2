@@ -508,6 +508,10 @@ Dans cet exemple, TypeScript utilise `in` pour vérifier si la propriété `name
 
 Les assertions de type (type assertions) permettent de forcer le type d'une variable ou d'une expression à un type spécifique. TypeScript utilise les assertions de type pour effectuer des vérifications de type manuelles.
 
+Attention, les assertions de type ne changent pas le comportement à l'exécution de votre code ! Il est donc important d'utiliser les assertions de type que quand vous êtes sûr du type de la variable ! A utiliser avec précaution et parcimonie.
+
+#### Assertions de type avec `as`
+
 Voici un exemple d'assertion de type avec `as` :
   
   ```ts
@@ -543,7 +547,22 @@ if (
 }
   ```
 
-Dans cet exemple, TypeScript utilise des assertions de type avec `as` pour forcer le type des propriétés de `apiResponse` à `number` et `string` respectivement. Cela garantit que `user` est de type `Person` et évite les erreurs de type potentielles. 
+Dans cet exemple, TypeScript utilise des assertions de type avec `as` pour forcer le type des propriétés de `apiResponse` à `number` et `string` respectivement. Cela garantit que `user` est de type `Person` et évite les erreurs de type potentielles à la transpilation.
+
+#### Assertion de type non-null
+
+L'assertion de type non-null (`!`) affirme (au transpiler et aux lecteurs du code) que la valeur d'une variable n'est pas `null` ou `undefined` (on dit "nullish").
+
+Voici un exemple d'assertion de type non-null :
+  
+  ```ts
+let value: string | undefined = "Hello, TypeScript!";
+const length = value!.length; // Assertion de type non-null(ish)
+console.log(length); // Output: 17
+  ```
+Dans cet exemple, TypeScript utilise l'assertion de type non-null (`!`) pour garantir que `value` n'est pas `null` avant d'accéder à sa propriété `length`.
+
+
 
 ## Conclusion
 
