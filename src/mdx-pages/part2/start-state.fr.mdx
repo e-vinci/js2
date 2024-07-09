@@ -3,13 +3,13 @@ title: "Destructuring & l'état"
 description: "Destructuring et l'état : les composants stateful en React"
 ---
 
-# a) Destructuring et l'état
+# c) Destructuring et l'état
 
 <InternalPageMenu>
   <PathViewer>
     <PathViewerItem to="/"> web2course </PathViewerItem>
     <PathViewerItem to="/part2"> Partie 2 </PathViewerItem>
-    <PathViewerItem selected> a) Destructuring et l'état </PathViewerItem>
+    <PathViewerItem selected> c) Destructuring et l'état </PathViewerItem>
   </PathViewer>
   <InternalPageMenuItem> Destructuring </InternalPageMenuItem>
   <InternalPageMenuItem> Gestion de l'état </InternalPageMenuItem>
@@ -39,7 +39,7 @@ const Header = (props: HeaderProps) => {
 ```
 
 Une première étape, en utilisant le "destructuring assignment", serait :
-```tsx highlighting="2"
+```tsx highlighting="2,5-6"
 const Header = (props: HeaderProps) => {
   const { title, version } = props;
   return (
@@ -52,7 +52,7 @@ const Header = (props: HeaderProps) => {
 ```
 
 Mais nous pouvons faire le destructuring assignment directement dans le paramètre de la fonction `Header` : 
-```tsx highlighting="1"
+```tsx highlighting="1,4-5"
 const Header = ({ title, version }: HeaderProps) => {
   return (
     <header>
@@ -67,7 +67,7 @@ Ainsi, nous avons un code plus concis et plus clair : on sait directement quelle
 👍 Dans la suite de ce cours, nous vous recommandons d'utiliser le destructuring assignment pour passer vos props. Cela rend le code plus lisible, on voit directement les paramètres attendus par la fonction.
 
 En plus de mettre à jour `Header`, veuillez mettre à jour `DrinkMenu` :
-```tsx
+```tsx highlighting="1,4-5"
 const DrinkMenu = ({ title, children }: DrinkMenuProps) => {
   return (
     <div className="drink-menu">
@@ -79,7 +79,7 @@ const DrinkMenu = ({ title, children }: DrinkMenuProps) => {
 ```
 
 Veuillez aussi mettre à jour `DrinkCard` :
-```tsx
+```tsx highlighting="1,4-6"
 const DrinkCard = ({ title, image, children }: DrinkCardProps) => {
   return (
     <div className="drink-card">
@@ -258,6 +258,8 @@ Allez-y, veuillez tester pour voir ce que cette erreur classique provoque...
 `Error: Too many re-renders. React limits the number of renders to prevent an infinite loop.` 😱.
 
 💭 Veuillez prendre un moment, au niveau de la compréhension de React, pour voir si vous savez expliquer pourquoi on va vers une boucle infinie.
+
+Si nécessaire, vous pouvez trouver le code associé à ce tutoriel ici : [start-state](https://github.com/e-vinci/ts-demos/tree/main/front/start-state).
 
 # <InternalPageTitle> Exercice 2.5 : Destructing & composant stateful </InternalPageTitle>
 
