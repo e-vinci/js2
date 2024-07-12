@@ -325,10 +325,21 @@ const router = Router();
 
 /* Register a user */
 router.post("/register", (req, res) => {
-  const { username, password } = req.body as PotentialUser;
-  if (!username || !password || !username.trim() || !password.trim()) {
+  const body: unknown = req.body;
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("username" in body) ||
+    !("password" in body) ||
+    typeof body.username !== "string" ||
+    typeof body.password !== "string" ||
+    !body.username.trim() ||
+    !body.password.trim()
+  ) {
     return res.sendStatus(400);
   }
+
+  const { username, password } = body as PotentialUser;
 
   const authenticatedUser = register(username, password);
 
@@ -341,10 +352,21 @@ router.post("/register", (req, res) => {
 
 /* Login a user */
 router.post("/login", (req, res) => {
-  const { username, password } = req.body as PotentialUser;
-  if (!username || !password || !username.trim() || !password.trim()) {
+  const body: unknown = req.body;
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("username" in body) ||
+    !("password" in body) ||
+    typeof body.username !== "string" ||
+    typeof body.password !== "string" ||
+    !body.username.trim() ||
+    !body.password.trim()
+  ) {
     return res.sendStatus(400);
   }
+
+  const { username, password } = body as PotentialUser;
 
   const authenticatedUser = login(username, password);
 
@@ -421,7 +443,7 @@ Veuillez créer le fichier **`/REST Client/auths.http`** et y ajouter le code su
 ```http
 @baseUrl = http://localhost:3000
 
-### Try to login an unknow user
+### Try to login an unknown user
 POST {{baseUrl}}/auths/login
 Content-Type: application/json
 
@@ -475,7 +497,7 @@ Vous comprenez maintenant pourquoi on n'ajoute pas des secrets dans un token �
 
 Dans le workflow que nous avons choisi, les utilisateurs reçoivent un token lors du **`register`** ou du **`login`**. C'est le job de l'application cliente de trouver un moyen de sauvegarder ce token. 
 
-Lorsqu'une application client souhaite créer une pizza, on souhaite autoriser cette opération qu'à l'administrateur du site gérant la pizzéria.  
+Lorsqu'une application client souhaite créer une pizza, on souhaite autoriser cette opération qu'à l'administrateur du site gérant la pizzeria.  
 Nous décidons donc pour l'**opération de création de pizza que l'utilisateur doit** non seulement être **authentifié**, mais qu'en plus, il doit être l'**admin** du site.
 
 ### Mécanisme d'autorisation quand le token JWT est valide
@@ -634,18 +656,21 @@ import { authorize, isAdmin } from "../utils/auths";
 
 // Create a pizza to be added to the menu.
 router.post("/", authorize, isAdmin, (req, res) => {
-  const { title, content } = req.body as NewPizza;
-
+  const body: unknown = req.body;
   if (
-    !title ||
-    !content ||
-    !isString(title) ||
-    !isString(content) ||
-    !title.trim() ||
-    !content.trim()
+    !body ||
+    typeof body !== "object" ||
+    !("title" in body) ||
+    !("content" in body) ||
+    typeof body.title !== "string" ||
+    typeof body.content !== "string" ||
+    !body.title.trim() ||
+    !body.content.trim()
   ) {
     return res.sendStatus(400);
   }
+
+  const { title, content } = body as NewPizza;
 
   const addedPizza = createPizza({ title, content });
 
@@ -690,7 +715,7 @@ Voici comment mettre à jour le script **`/REST Client/pizzas.http`** pour crée
 ```http
 ### Create a pizza by using the admin account
 #### First login as the admin
-##### Define a request variable nammed admin :
+##### Define a request variable named admin :
 # @name admin
 POST {{baseUrl}}/auths/login
 Content-Type: application/json
@@ -771,16 +796,19 @@ router.delete("/:id", authorize, isAdmin, (req, res) => {
 
 // Update a pizza based on its id and new values for its parameters
 router.patch("/:id", authorize, isAdmin, (req, res) => {
-  const pizzaToUpdate = req.body as PizzaToUpdate;
-  const { title, content } = pizzaToUpdate;
-
+  const body: unknown = req.body;
   if (
-    (!title && !content) ||
-    (title !== undefined && (!isString(title) || !title.trim())) ||
-    (content !== undefined && (!isString(content) || !content.trim()))
+    !body ||
+    typeof body !== "object" ||
+    ("title" in body &&
+      (typeof body.title !== "string" || !body.title.trim())) ||
+    ("content" in body &&
+      (typeof body.content !== "string" || !body.content.trim()))
   ) {
     return res.sendStatus(400);
   }
+
+  const pizzaToUpdate: PizzaToUpdate = body;
 
   const id = Number(req.params.id);
   const updatedPizza = updatePizza(id, pizzaToUpdate);
@@ -817,24 +845,27 @@ Veuillez mettre à jour **`/routes/drinks`** pour ajouter l'appel aux fonctions 
 
 ```ts numbered highlighting="1,25,34"
 router.post("/", authorize, isAdmin, (req, res) => {
-  const { title, image, volume, price } = req.body as NewDrink;
-
+  const body: unknown = req.body;
   if (
-    !title ||
-    !image ||
-    !volume ||
-    !price ||
-    typeof title !== "string" ||
-    typeof image !== "string" ||
-    typeof volume !== "number" ||
-    typeof price !== "number" ||
-    !title.trim() ||
-    !image.trim() ||
-    volume <= 0 ||
-    price <= 0
+    !body ||
+    typeof body !== "object" ||
+    !("title" in body) ||
+    !("image" in body) ||
+    !("volume" in body) ||
+    !("price" in body) ||
+    typeof body.title !== "string" ||
+    typeof body.image !== "string" ||
+    typeof body.volume !== "number" ||
+    typeof body.price !== "number" ||
+    !body.title.trim() ||
+    !body.image.trim() ||
+    body.volume <= 0 ||
+    body.price <= 0
   ) {
     return res.sendStatus(400);
   }
+
+  const { title, image, volume, price } = body as NewDrink;
 
   const newDrink = createOneDrink({ title, image, volume, price });
   return res.json(newDrink);
@@ -852,16 +883,23 @@ router.delete("/:id", authorize, isAdmin, (req, res) => {
 router.patch("/:id", authorize, isAdmin, (req, res) => {
   const id = Number(req.params.id);
 
-  const { title, image, volume, price } = req.body as Partial<NewDrink>;
+  const body: unknown = req.body;
 
   if (
-    (title !== undefined && (typeof title !== "string" || !title.trim())) ||
-    (image !== undefined && (typeof image !== "string" || !image.trim())) ||
-    (volume !== undefined && (typeof volume !== "number" || volume <= 0)) ||
-    (price !== undefined && (typeof price !== "number" || price <= 0))
+    !body ||
+    typeof body !== "object" ||
+    ("title" in body &&
+      (typeof body.title !== "string" || !body.title.trim())) ||
+    ("image" in body &&
+      (typeof body.image !== "string" || !body.image.trim())) ||
+    ("volume" in body &&
+      (typeof body.volume !== "number" || body.volume <= 0)) ||
+    ("price" in body && (typeof body.price !== "number" || body.price <= 0))
   ) {
     return res.sendStatus(400);
   }
+
+  const { title, image, volume, price }: Partial<NewDrink> = body;
 
   const updatedDrink = updateOneDrink(id, { title, image, volume, price });
 
@@ -889,7 +927,7 @@ GET {{baseUrl}}/drinks/3
 GET {{baseUrl}}/drinks/?budget-max=3
 
 ### Create a drink
-##### Define a request variable nammed admin :
+##### Define a request variable named admin :
 # @name admin
 POST {{baseUrl}}/auths/login
 Content-Type: application/json
@@ -1072,7 +1110,7 @@ Voici les modifications apportées :
 - **pour créer l'utilisateur **`admin`** se trouvant dans les **`defaultUsers`** avec des credentials par défaut** : on souhaite indiquer comme **`password`** le password haché correspondant au password **`"admin"`**. Pour se simplifier la vie, on appelle la fonction synchrone **`hashSync`** (voir ligne 18). Bien évidemment, dans une application robuste et sécurisée, il est interdit de coder en dur ce genre de secrets dans les sources de notre application 😉 !
 
 Afin de traiter des deux fonctions du service **`users`** qui sont devenues asynchrones, **`login`** et **`register`**, nous allons modifier le router **`/routes/auths`** :
-```ts numbered highlighting="7,13,23,29"
+```ts numbered highlighting="7,24,34,51"
 import { Router } from "express";
 import { PotentialUser } from "../types";
 import { login, register } from "../services/users";
@@ -1080,10 +1118,21 @@ const router = Router();
 
 /* Register a user */
 router.post("/register", async (req, res) => {
-  const { username, password } = req.body as PotentialUser;
-  if (!username || !password || !username.trim() || !password.trim()) {
+  const body: unknown = req.body;
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("username" in body) ||
+    !("password" in body) ||
+    typeof body.username !== "string" ||
+    typeof body.password !== "string" ||
+    !body.username.trim() ||
+    !body.password.trim()
+  ) {
     return res.sendStatus(400);
   }
+
+  const { username, password } = body as PotentialUser;
 
   const authenticatedUser = await register(username, password);
 
@@ -1096,10 +1145,21 @@ router.post("/register", async (req, res) => {
 
 /* Login a user */
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body as PotentialUser;
-  if (!username || !password || !username.trim() || !password.trim()) {
+  const body: unknown = req.body;
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("username" in body) ||
+    !("password" in body) ||
+    typeof body.username !== "string" ||
+    typeof body.password !== "string" ||
+    !body.username.trim() ||
+    !body.password.trim()
+  ) {
     return res.sendStatus(400);
   }
+
+  const { username, password } = body as PotentialUser;
 
   const authenticatedUser = await login(username, password);
 
@@ -1357,10 +1417,21 @@ const router = Router();
 
 /* Register a user */
 router.post("/register", async (req, res) => {
-  const { username, password } = req.body as PotentialUser;
-  if (!username || !password || !username.trim() || !password.trim()) {
+  const body: unknown = req.body;
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("username" in body) ||
+    !("password" in body) ||
+    typeof body.username !== "string" ||
+    typeof body.password !== "string" ||
+    !body.username.trim() ||
+    !body.password.trim()
+  ) {
     return res.sendStatus(400);
   }
+
+  const { username, password } = body as PotentialUser;
 
   const authenticatedUser = await register(username, password);
 
@@ -1375,10 +1446,21 @@ router.post("/register", async (req, res) => {
 
 /* Login a user */
 router.post("/login", async (req, res) => {
-  const { username, password } = req.body as PotentialUser;
-  if (!username || !password || !username.trim() || !password.trim()) {
+  const body: unknown = req.body;
+  if (
+    !body ||
+    typeof body !== "object" ||
+    !("username" in body) ||
+    !("password" in body) ||
+    typeof body.username !== "string" ||
+    typeof body.password !== "string" ||
+    !body.username.trim() ||
+    !body.password.trim()
+  ) {
     return res.sendStatus(400);
   }
+
+  const { username, password } = body as PotentialUser;
 
   const authenticatedUser = await login(username, password);
 
