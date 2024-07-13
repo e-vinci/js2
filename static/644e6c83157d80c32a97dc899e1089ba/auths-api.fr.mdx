@@ -1110,7 +1110,13 @@ Voici les modifications apportées :
 - **pour créer l'utilisateur **`admin`** se trouvant dans les **`defaultUsers`** avec des credentials par défaut** : on souhaite indiquer comme **`password`** le password haché correspondant au password **`"admin"`**. Pour se simplifier la vie, on appelle la fonction synchrone **`hashSync`** (voir ligne 18). Bien évidemment, dans une application robuste et sécurisée, il est interdit de coder en dur ce genre de secrets dans les sources de notre application 😉 !
 
 Afin de traiter des deux fonctions du service **`users`** qui sont devenues asynchrones, **`login`** et **`register`**, nous allons modifier le router **`/routes/auths`** :
-```ts numbered highlighting="7,24,34,51"
+```ts numbered highlighting="13,30,40,57"
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* 
+In Express V4, asynchronous functions are not fully supported in TypeScript 
+(only void return type for RequestHandler is allowed). 
+In Express V5, this issue has been addressed, but V5 is still in beta. 
+Consequently, the ESLint rule "no-misused-promises" is disabled. */
 import { Router } from "express";
 import { PotentialUser } from "../types";
 import { login, register } from "../services/users";
@@ -1174,6 +1180,8 @@ export default router;
 ```
 
 Nous avons simplement chaîné les réponses à faire au client seulement une fois les opérations **`register`** et **`login`** terminées. Pour ce faire, nous avons précédé le nom de ces méthodes par **`await`**. Nous avons donc du ajouter **`async`** aux fonctions middleware s'occupant des routes **`POST /auths/register`** et **`POST /auths/login`**.
+
+Notons que nous avons ajouté un commentaire pour désactiver la règle **`@typescript-eslint/no-misused-promises`**. En effet, dans Express V4, les fonctions asynchrones ne sont pas pleinement supportées en TypeScript (seul le type de retour **`void`** pour **`RequestHandler`** est autorisé). Dans Express V5, ce problème a été résolu, mais V5 est toujours en version bêta. Par conséquent, la règle ESLint **`no-misused-promises`** est désactivée.
 
 Veuillez vérifier que votre application fonctionne correctement.  
 Via l'IHM, veuillez faire un register d'un nouvel utilisateur.  
@@ -1409,7 +1417,13 @@ Dans le cadre de la RESTful API gérant les pizzas, cela est fait lors d'une op�
 
 Veuillez mettre à jour le router **`/routes/auths.ts`** :
 
-```ts numbered highlighting="19,21,37,39,43-46,48-57"
+```ts numbered highlighting="36,65,70-74,76-85"
+/* eslint-disable @typescript-eslint/no-misused-promises */
+/* 
+In Express V4, asynchronous functions are not fully supported in TypeScript 
+(only void return type for RequestHandler is allowed). 
+In Express V5, this issue has been addressed, but V5 is still in beta. 
+Consequently, the ESLint rule "no-misused-promises" is disabled. */
 import { Request, Router } from "express";
 import { AuthenticatedUser, PotentialUser } from "../types";
 import { login, register } from "../services/users";
