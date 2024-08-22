@@ -426,8 +426,11 @@ Un film pourra avoir des propriétés supplémentaires (elles sont optionnelles)
 
 Veuillez donc "hardcoder" au moins trois ressources, parmi vos films préférés, dans un array au sein de votre RESTful API. Et si vous voulez aller très vite, demander à une IA de générez des films contenant les propriétés demandées.
 
-Le code de votre application doit se trouver dans votre repo git au sein du répertoire **`/exercises/1.1`**.  
-Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.1`**.
+Le code de votre application doit se trouver dans votre repo git au sein du répertoire **`/exercises/1.1`**. Vous allez donc créer un nouveau projet sur base d'un clone du boilerplate : [basic-ts-api-boilerplate](https://github.com/e-vinci/basic-ts-api-boilerplate).
+
+Veuillez supprimer tout le code du boilerplate qui n'est pas nécessaire pour cet exercice.
+
+Une fois tout fonctionnel, veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.1`**.
 
 # <InternalPageTitle> Exercice 1.2 : middleware s'exécutant sur toutes les routes </InternalPageTitle>
 ## Application middleware de base
@@ -435,12 +438,13 @@ Veuillez créer un middleware qui permette d'enregistrer et d'afficher dans la c
 
 Vous devez enregistrer, depuis le démarrage du serveur, le nombre de requêtes **`GET`** faites à votre API.
 
+Veuillez repartir du code de la solution de votre Exercice 1.1 en créant un nouveau projet dans votre repo git dans **`/exercises/1.2`**.  
+
 Voici un example de ce qui devrait être affiché dans la console à chaque requête vers votre API :
 ```bash
 GET counter : 2
 ```
 
-Le code de votre application doit se trouver dans votre repo git au sein du répertoire **`/exercises/1.2`**.  
 Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.2`**.
 
 #### 🤝 Tips
@@ -449,9 +453,9 @@ Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: e
 
 ## 🍬 Challenge optionnel : et si on allait un peu plus loin ?
 
-Vous allez maintenant catégoriser le nombre d'appels par **`PATH`** et par **`méthode HTTP`**.
+S'il vous reste du temps et que vous souhaitez travailler les structures de données, vous pourriez maintenant catégoriser le nombre d'appels par **`PATH`** et par **`méthode HTTP`**.
 
-Voici un example de ce qui devrait être affiché dans la console à chaque requête vers votre API :
+Voici un example de ce qui pourrait être affiché dans la console à chaque requête vers votre API :
 ```bash
 Request counter :
 - GET / : 10
@@ -459,6 +463,7 @@ Request counter :
 - POST /pizzas : 5
 - DELETE /pizzas : 2
 ```
+
 
 # <InternalPageTitle> Utilisation du linter et du formatter pour TS </InternalPageTitle>
 ## Le linter 
@@ -729,7 +734,7 @@ Veuillez exécuter ces deux requêtes.
 
 Nous sommes prêts pour ajouter une requête appelant l'opération de création d'une boisson.
 
-Au sein de **`drinks.http`**, veuillez ajouter cette requête pour la création d'une boission :
+Au sein de **`drinks.http`**, veuillez ajouter cette requête pour la création d'une boisson :
 ```http
 ### Create a drink
 POST {{baseUrl}}/drinks
@@ -785,7 +790,7 @@ Il existe un autre moyen de déboguer son application au sein de VS Code :
 
 Veuillez continuer le développement de la RESTful API de **myMovies**, sous Express, afin de mettre à disposition de nouvelles opérations sur des films et utiliser **REST Client**.
 
-Veuillez repartir du code de la solution de votre [Exercice 1.1](#exercice_1_1_lecture_de_toutes_les_ressources) ou de votre [Exercice 1.2](#exercice_1_2_middleware_sexecutant_sur_toutes_les_routes) si celui-ci contient l'opération de lecture de tous les films.
+Veuillez repartir du code de la solution de votre [Exercice 1.2](#exercice_1_2_middleware_sexecutant_sur_toutes_les_routes) en créant un nouveau projet dans votre repo git dans **`/exercises/1.3`**.  
 
 Veuillez rajouter ces opérations à votre API :
 
@@ -810,14 +815,13 @@ Un film pourra avoir des propriétés supplémentaires (elles sont optionnelles)
 
 Les ressources ne doivent toujours pas persister : dès lors, ajoutez les données associées aux films dans un array.
 
-Veuillez bien valider les paramètres reçu par les opérations de vos API ; vérifiez par exemple que **`budget`** et **`duration`** sont des **nombres positifs**. 
+Veuillez bien valider les paramètres reçu par les opérations de vos API ; vérifiez par exemple que **`budget`** et **`duration`** sont des **nombres positifs**. Si ça n'est pas le cas, renvoyer un message d'erreur (comme par exemple "Wrong minimum duration") au format JSON (via **`res.json`**). Ceci n'est pas une bonne pratique, mais pour l'instant, c'est suffisant.
 
 Veuillez **tester toutes les fonctions de la RESTful API** pour la collection de films à l'aide du **REST Client** dans VS Code. Veuillez ajouter vos requêtes au sein du fichier **`films.http`** dans le répertoire **REST Client** du dossier associé à cet exercice.
 
 Veuillez tester pas à pas chaque ligne de votre opération de création de film. Pour ce faire, vous devez utiliser le debugger !
 
-Le code de votre application doit se trouver dans votre repo git dans **`/exercises/1.3`**.  
-Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.3`**.
+Une fois tout fonctionnel, veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.3`**.
 
 #### 🤝 Tips
 - Développez les opérations de votre API de manière incrémentale : testez une opération via REST Client avant de passer à une nouvelle opération.
@@ -825,9 +829,12 @@ Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: e
 ⚡ Attention, le signe **`-`** est un opérateur en TS/JS, vous ne pouvez pas récupérer le paramètre de requête via **`req.query.minimum-duration`**...  
 💭 Mais alors comment faire ?  
 On accède aussi au propriété d'un objet à l'aide d'un array, ici ça serait via **`req.query['minimum-duration']`**.
-- N'hésitez pas à vous inspirer du code du tutoriel [api-basic](https://github.com/e-vinci/js-demos/tree/main/backend-restful-api/restful-api-essentials/basic).
-- Pour vérifier le type d'une variable, n'hésitez pas à utiliser l'opérateur **`typeof`**.
+- Pour transformer une string en nombre, vous pouvez utiliser la fonction **`Number`** : **`Number(req.query['minimum-duration'])`**...
 
+#### 🍬 Challenge optionnel
+Si vous avez encore du temps, pour l'opération de création, vous pourriez ajouter une validation des données plus robuste en assurant qu'aucune propriété inattendue n'est présente dans la représentation de la ressource à créer.
+
+Une fois tout fonctionnel, veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.3++`**.
 
 # <InternalPageTitle> 🍬 Exercice 1.4 : Gestion de la pagination, du tri et du filtrage </InternalPageTitle>
 
@@ -940,16 +947,15 @@ Voici les "status codes" que nous allons généralement utiliser :
 
 # <InternalPageTitle> Exercice 1.5 : codes de statut HTTP </InternalPageTitle>
 
-Veuillez continuer le développement de la RESTful API de **myMovies**, sous Express, afin de mieux gérer la la lecture et la création de films et le réponses à donner aux clients.
+Veuillez continuer le développement de la RESTful API de **myMovies**, sous Express, afin de mieux gérer la la lecture et la création de films et les réponses à donner aux clients.
 
-Veuillez repartir du code de la solution de votre [Exercice 1.3](#exercice_1_3_lectures_specifiques_creation_rest_client) ou de votre [Exercice 1.4 optionnel](#🍬_exercice_1_4_gestion_de_la_pagination_du_tri_et_du_filtrage).
+Veuillez créer un nouveau projet dans votre repo git dans **`/exercises/1.5`** en partant du code de la solution de votre [Exercice 1.3](#exercice_1_3_lectures_specifiques_creation_rest_client) ou de votre [Exercice 1.4 optionnel](#🍬_exercice_1_4_gestion_de_la_pagination_du_tri_et_du_filtrage).
 
 Veuillez améliorer les deux opérations de lecture (**`GET /films`** & **`GET /films/:id`**) et l'opération de création de films (**`POST /films`**):
 - En cas d'échec de la validation des paramètres reçus par une opération (non respect du contrat de l'API), veuillez renvoyer le status code approprié.
 - Lors de l'échec de la lecture d'un film en particulier, veuillez renvoyer le status code approprié.
-- Lors de l'ajout d'un film, si la ressource existe déjà, c'est-à-dire s'il y a déjà un film présent avec le **`title`** donné, veuillez renvoyer le status code approprié.
+- Lors de l'ajout d'un film, si la ressource existe déjà, c'est-à-dire s'il y a déjà un film présent avec le **`title`** et le **`director`** donné, veuillez renvoyer le status code approprié.
 
-Le code de votre application doit se trouver dans votre repo git dans **`/exercises/1.5`**.  
 Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.5`**.
 
 # <InternalPageTitle> Opérations de suppression & de modification </InternalPageTitle>
@@ -1062,7 +1068,7 @@ En cas de souci, vous pouvez accéder au code du tutoriel ici : [basic](https://
 
 Veuillez continuer le développement de la RESTful API de **myMovies**, sous Express, afin d'ajouter les opérations de suppression et de modification de ressources.
 
-Veuillez repartir du code de la solution de votre [Exercice 1.5](#exercice_1_5_codes_de_statut_http).
+Veuillez créer un nouveau projet dans votre repo git dans **`/exercises/1.6`** en repartant du code de la solution de votre [Exercice 1.5](#exercice_1_5_codes_de_statut_http).
 
 Veuillez ajouter ces trois nouvelles opérations :
 
@@ -1070,7 +1076,7 @@ Veuillez ajouter ces trois nouvelles opérations :
 |---|---|---|
 | **`films/{id}`** | DELETE | DELETE ONE : Effacer la ressource identifiée |
 | **`films/{id}`** | PATCH | UPDATE ONE : Mettre à jour les propriétés de la ressource par les valeurs données dans la requête, pour une ou plusieurs propriétés |
-| **`films/{id}`** | PUT | UPDATE ONE or CREATE ONE : Remplacer la ressource par une ressource reprenant les valeurs données dans la requête, seulement si toutes les propriétés de la ressource sont données ! Si la ressource n'existe pas, créer cette ressource seulement si l'**`id`** donné n'est pas déjà existant. |
+| **`films/{id}`** | PUT | UPDATE ONE or CREATE ONE : Remplacer la ressource par une ressource reprenant les valeurs données dans la requête, seulement si toutes les propriétés non optionnelles de la ressource sont données ! Si la ressource n'existe pas, créer cette ressource seulement si l'**`id`** donné n'est pas déjà existant. |
 
 Veuillez bien valider les paramètres reçus par les opérations de vos API ; vérifiez par exemple que **`budget`** et **`duration`** sont des **nombres positifs**. 
 
@@ -1078,7 +1084,13 @@ Veuillez **tester toutes les fonctions de la RESTful API** pour la collection de
 
 Et n'hésitez pas à utiliser le debugger pour tester pas à pas chaque ligne de vos opérations qui ne fournissent pas le résultat attendu.
 
-Le code de votre application doit se trouver dans votre repo git dans **`/exercises/1.6`**.  
 Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.6`**.
+
+#### 🍬 Challenge optionnel
+Si vous avez encore du temps, pour les opérations de modification, vous pourriez ajouter une validation des données plus robuste en assurant qu'aucune propriété inattendue n'est présente dans la représentation de la ressource à modifier (ou à créer si c'est un **`put`**).  
+
+De plus, pour l'opération `PUT`, lorsqu'il s'agit d'une création, vous pourriez ajouter une validation pour vérifier que le film n'existe pas déjà (sur base du **`title`** et du **`director`**).
+
+Une fois tout fonctionnel, veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.6++`**.
 
 

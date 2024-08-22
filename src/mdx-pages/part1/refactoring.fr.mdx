@@ -519,7 +519,7 @@ Vous allez créer une nouvelle API mettant à disposition des opérations CRUD (
 
 Vous devez appliquer les outils de développement et l'architecture recommandée dans ce cours-ci en mettant en place un service.
 
-Pour ce faire, veuillez créer un nouveau projet dans votre repo git dans **`/exercises/1.9`** sur base du boilerplate : [basic-ts-api-boilerplate](https://github.com/e-vinci/basic-ts-api-boilerplate).
+Pour ce faire, veuillez créer un nouveau projet dans votre repo git dans **`/exercises/1.9`** sur base du boilerplate [basic-ts-api-boilerplate](https://github.com/e-vinci/basic-ts-api-boilerplate) ou sur base de votre exercice précédent (**`/exercises/1.8`**).
 
 ⚡ Si vous avez fait un clone du boilerplate, attention au Git dans le Git, n'oubliez pas de supprimer le dossier **`.git`** présent dans votre nouveau projet.
 
@@ -544,5 +544,9 @@ Voici le tableau formalisant toutes les opérations que vous devez implémenter 
 Veuillez bien valider les valeurs des paramètres. Notamment, une **`level`** doit être compris dans les valeurs autorisées, sinon un code d'erreur approprié doit être renvoyé.
 
 Veuillez tester toutes les méthodes offertes par votre application à l'aide du client HTTP de REST Client.
+
+#### 🤝 Tips
+- Pour utiliser la librairie **`uuid`**, consultez la documentation en ligne : https://www.npmjs.com/package/uuid
+- Si vous avez oublié d'installer les définitions de type pour **`uuid`**, vous pouvez le faire via la commande **`npm install --save-dev @types/uuid`**. Pour rappel, cela est expliqué dans l'[Introduction aux packages Node.js & npm](../../part0/nodejs-app/#introduction_aux_packages_node_js_npm) (voir "Installer un package").
 
 Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: ex1.9`**.

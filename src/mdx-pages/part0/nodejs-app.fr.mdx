@@ -250,11 +250,28 @@ Au regard de cette configuration, on peut démarrer l'application à l'aide de *
 On pourrait aussi démarrer l'application à l'aide de **`npm run dev`**, ce qui démarrerait l'application à l'aide de **`nodemon`**, un outil permettant de monitorer les changements de fichiers et de redémarrer automatiquement le serveur en cas de changement.
 
 ## Installer un package
+### Généralités
 Pour installer un package (ou une dépendance), il suffit de faire : **`npm i nomDuPackage`** ou **`npm install nomDuPackage`**.
 
 Pour installer une dépendance de développement, qui ne sera pas installée lorsque nous déploierons une version de production de notre application, tapez : **`npm i nomDuPackage -D`**.
 
-Par exemple, **`nodemon`** est un package qui permet de rédémarrer le serveur à chaque modification de fichier par les développeurs. En production, l'application n'a pas besoin de ce package !
+Par exemple, **`nodemon`** est un package qui permet de redémarrer le serveur à chaque modification de fichier par les développeurs. En production, l'application n'a pas besoin de ce package !
+
+### Gestion des types lors de l'utilisation de TS
+
+Attention, l'installation des types via **`npm i @types/nomDuPackage -D`** est souvent essentielle pour utiliser des packages JavaScript dans un projet TypeScript. 
+
+Cette installation fournit les définitions de types nécessaires pour que TypeScript comprenne la structure et les types des objets, fonctions, et classes dans le package. Cela permet à l'éditeur de code d'offrir l'auto-complétion, la vérification de type, et des messages d'erreur précis lors du développement. Ces types sont installés en tant que dépendances de développement (**`-D`**), car ils ne sont nécessaires que pour le développement, pas pour l'exécution en production.
+
+Par exemple pour utiliser **`uuid`** dans un projet TS (https://www.npmjs.com/package/uuid), il est important d'installer les définitions de type pour ce package. Pour installer ce package :
+```sh
+npm i uuid
+npm i @types/uuid -D
+```
+
+Certains packages, souvent ceux écrits directement en TypeScript, incluent déjà leurs propres définitions de types dans leur code source. Dans ce cas, vous n'avez pas besoin d'installer **`@types/nomDuPackage`** séparément.
+
+Si vous ne savez pas si vous devez installer les définitions de types pour un package, vous pouvez toujours essayer de l'utiliser sans les définitions de types. Si vous obtenez des erreurs de compilation TypeScript, vous devrez installer les définitions de types, et la façon de le faire sera indiqué dans les messages d'erreur (via **`Quick Fix...`**).
 
 ## Dépendances installées
 On a vu que **`npm i`** permet d'installer toutes les dépendances se trouvant dans **`package.json`**, ainsi que toutes les dépendances de ces dépendances...
