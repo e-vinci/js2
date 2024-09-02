@@ -5,9 +5,9 @@
    This site has been created by using Gatsby.
 
 
-2.  **Install depedencies**
+2.  **Install dependencies**
 
-    Navigate into the site’s directory and install its depedencies.
+    Navigate into the site’s directory and install its dependencies.
 
     ```shell
     npm i --legacy-peer-deps

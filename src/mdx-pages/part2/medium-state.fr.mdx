@@ -512,7 +512,7 @@ Un film pourra avoir :
 - une description
 - un budget (en million)
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex2.7"
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.7`**
 
 # <InternalPageTitle> Gestion d'un état partagé par plusieurs composants  </InternalPageTitle>
 
@@ -774,8 +774,8 @@ Vous avez remarqué que dans le composant `Main`, il est écrit : "Because we lo
 
 Vous pourriez choisir cette mission : à l'aide de JS/TS, veuillez faire en sorte que l'on puisse cliquer sur le `Header` et que cela démarre ou stop la musique de l'élément `<audio>` présent dans le main.
 
-🤝 Tips :
+### 🤝 Tips
 - Utilisation du Hook `useRef` pour obtenir une référence directe et persistante à l'élément `<audio>`, qui peut être mutée, ce qui permet d'interagir avec cet élément DOM de manière impérative, par exemple pour appeler la méthode `play` ou `pause`. L'avantage de cette méthode c'est qu'elle ne provoque pas de re-render du composant quand il est mis à jour (à l'inverse de si l'on faisait de la programmation old-school avec `document.getElementById` pour récupérer une référence à `<audio>`).
 - Utilisation du Hook `useEffect` pour réaliser une action à chaque fois que l'on a une action à réaliser parce qu'il y aurait eu un clic dans le Header. Dans ce cas-ci, il faudrait bien comprendre le `useEffect` pour l'associer au changement d'une variable d'état (qui représente s'il y a besoin d'une action à faire à cause d'un clic dans le header).
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex2.8+".
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.8+`**.

@@ -270,7 +270,7 @@ Par défaut, le projet de base vous offre déjà un compteur de clic.
 
 Commencez par prendre quelques minutes pour comprendre ce code et externaliser le compteur de clics dans un composant stateful nommé `ClickCounter`. 
 
-Une fois tout fonctionnel et le code compris, veuillez faire un commit avec le message suivant : "new:ex2.4-init".
+Une fois tout fonctionnel et le code compris, veuillez faire un commit avec le message suivant : **`new:ex2.5-init`**.
 
 Veuillez ensuite mettre à jour ce composant pour afficher :
 - un titre qu'il reçoit en props. 
@@ -279,29 +279,29 @@ Veuillez ensuite mettre à jour ce composant pour afficher :
 
 Veuillez utiliser le "destructing assignment" comme vu dans le cours.
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex2.4-destructuring".
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.4-destructuring`**.
 
 Veuillez reprendre votre projet précédent et ajouter deux gestionnaires d'événements qui permettront : 
 - lors du passage de la souris sur le compteur, d'afficher un message au dessus du comptage de clics. Notez que ce message doit aussi être passé en props à `ClickCounter`.  
 Vous passerez cette valeur pour votre application : `"Please click on me now !"`.
 - lorsque la souris quitte le compteur, ce message doit être enlevé.
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex2.4-events".
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.5-events`**.
 
-🤝 Tips :
+#### 🤝 Tips
 - Vous allez devoir gérer une nouvelle variable d'état pour savoir si la souris est sur le compteur ou si la souris a quitté le compteur.
 - Quels gestionnaires d'événements ? Commencer à taper `on` en propriétés de l'élément sur lequel vous voulez écouter les passages de souris et vous verrez la liste de tous les événements. 
 - Vous ne voyez toujours pas ? `onMouseEnter`, `onMouseLeave` ; )
 - N'hésitez pas à utiliser tout ce qui existe déjà dans `index.css` concernant le button pour vous aider à gérer l'aspect visuel du compteur.
 
-🍬 Challenge : paramètres optionnels
+#### 🍬 Challenge : paramètres optionnels
 Tentez de rendre les 2 messages passés en props à `ClickCounter` optionnels, tout en leur donnant une valeur par défaut.
 
 # <InternalPageTitle> Exercice 2.6 : Un autre composant stateful </InternalPageTitle>
 
 Veuillez partir d'un copier/coller du projet précédent `/exercises/2.1-2-3-4` pour créer un nouveau projet nommé `/exercises/2.6` dans votre git repo.
 
-Notre client a rajouté dans les données des images associées aux films une courte description. Veuillez créer un nouveau composant `Movie` qui doit permettre :
+Notre client a rajouté, dans les données des images associées aux films, une courte description. Veuillez créer un nouveau composant `Movie` qui doit permettre :
 - D'afficher les mêmes données de films qui sont actuellement toutes traitées dans le composant `Cinema`(`Cinema` fera donc appel à `Movie`) ;
 - D'afficher la description d'un film si les utilisateurs cliquent sur le film ;
 - De ne plus afficher cette description si les utilisateurs cliquent dessus.
@@ -371,4 +371,4 @@ const App = () => {
   //... the following does not change
 ```
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex2.6".
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.6`**.
