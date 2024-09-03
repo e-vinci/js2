@@ -16,7 +16,8 @@ description: "Les modules et collections en React"
   <InternalPageMenuItem> L'attribut "key" </InternalPageMenuItem>
   <InternalPageMenuItem> Exercice 2.3 : Les modules & collection </InternalPageMenuItem>
   <InternalPageMenuItem> Passer du TSX comme enfant : props.children </InternalPageMenuItem>
-  <InternalPageMenuItem> Exercice 2.4 : utilisation de props.children & css </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 2.4 : Utilisation de props.children & css </InternalPageMenuItem> 
+  <InternalPageMenuItem> Exercice 2.4b : Encore des composants </InternalPageMenuItem>
 </InternalPageMenu>
 
 # <InternalPageTitle> Les modules  </InternalPageTitle>
@@ -418,7 +419,7 @@ Ca n'est pas des plus beaux, mais nous n'irons pas plus loin pour ce tutoriel-ci
 
 Si nécessaire, vous pouvez trouver le code associé à ce tutoriel ici : [collections](https://github.com/e-vinci/ts-demos/tree/main/front/collections).
 
-# <InternalPageTitle> Exercice 2.4 : utilisation de props.children & css </InternalPageTitle>
+# <InternalPageTitle> Exercice 2.4 : Utilisation de props.children & css </InternalPageTitle>
 
 Nous allons continuer le projet de votre exercice précédent qui se trouve dans le dossier `/exercises/2.1-2-3-4` dans votre git repo.
 
@@ -441,3 +442,24 @@ Une fois une image trouvée, vous pouvez cliquer dessus, puis clic droit pour r�
 S'il vous reste du temps, n'hésitez pas à peaufiner le layout de votre page et de vos composants à l'aide de CSS.
 
 Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.4-bonus`**.
+
+# <InternalPageTitle> Exercice 2.4b : Encore des composants </InternalPageTitle>
+
+Veuillez créer un nouveau projet ("from scratch") dans le dossier `/exercises/ex2.4b` de votre git repo en utilisant les technos Vite + React + TS + SWC.
+
+Veuillez créer un composant React permettant d'afficher des informations de base sur un utilisateur, sous forme d'une carte, sur base de ces props :
+- son nom 
+- son âge
+- si l'utilisateur est en ligne ou non 
+
+Le nom de l'utilisateur doit être affiché en tête, avec une taille de police plus grande.
+
+L'âge doit être affiché en dessous du nom.
+
+Si l'utilisateur est en ligne, afficher le texte "En ligne" en vert. S'il est hors ligne, afficher le texte "Hors ligne" en rouge.
+
+Veuillez créer trois éléments de votre nouveau composant React dans le composant `App` en passant à chaque fois des valeurs différentes pour les props.
+
+N'oubliez pas d'appliquer les conventions vues dans le cours : chaque composant React doit se trouver dans son propre module,...
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.4b`**.

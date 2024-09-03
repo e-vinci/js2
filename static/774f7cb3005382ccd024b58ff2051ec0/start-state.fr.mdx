@@ -15,7 +15,8 @@ description: "Destructuring et l'état : les composants stateful en React"
   <InternalPageMenuItem> Gestion de l'état </InternalPageMenuItem>
   <InternalPageMenuItem> Gestionnaire d'événements </InternalPageMenuItem>
   <InternalPageMenuItem> Exercice 2.5 : Destructing & composant stateful </InternalPageMenuItem>
-  <InternalPageMenuItem> Exercice 2.6 : Un autre composant stateful </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 2.6 : Un autre composant stateful </InternalPageMenuItem> 
+  <InternalPageMenuItem> Exercice 2.6b : Composant de sélection de couleur </InternalPageMenuItem> 
 </InternalPageMenu>
 
 # <InternalPageTitle> Destructuring  </InternalPageTitle>
@@ -160,7 +161,7 @@ Cela attache un gestionnaire d'événements `onClick` à l'élément `<header>`.
 `onClick` s'attend à recevoir une fonction ! Ici on lui a passé une "function arrow" qui ne prend aucun paramètre.  
 Lorsque le **`<header>`** est cliqué, la fonction bascule l'état `menuPrinted` en appelant `setMenuPrinted(!menuPrinted)` : si `menuPrinted` est à `false`, sa valeur est changée vers `true`, et vice versa.
 
-Le fait d'avoir utilisé la fonction `setMenuPrinted` qui permet de changer l'état va informer React qu'il y a eu un changement d'état ! Et donc React va opérer un re-render.
+La fonction `setMenuPrinted`, qui permet de changer l'état, va informer React qu'il y a eu un changement d'état ! Et donc React va opérer un re-render.
 
 Lorsqu'un composant React subit un re-render, seule la fonction de rendu (c'est-à-dire la fonction qui contient le `return` et qui définit l'interface utilisateur du composant) est réévaluée.
 
@@ -217,7 +218,7 @@ const Header = ({ title, version }: HeaderProps) => {
 };
 ```
 
-Nous pouvons définir cette fonction comme "function arrow" (comme fait ci-dessus),
+Nous pouvons définir cette fonction comme "function arrow" (comme fait ci-dessus à côté de `onClick`),
 mais aussi comme fonction anonyme ou fonction nommée.
 
 Lorsqu'une fonction commence à avoir plusieurs instructions, il est recommandé de créer une fonction nommée.  
@@ -246,7 +247,7 @@ const Header = ({ title, version }: HeaderProps) => {
 👍 Il est recommandé que vos fonctions de gestion d'événements reçoivent un unique paramètre et portent un nom qui commence par **"handle"** afin de les identifier facilement.
 
 
-⚡️ Attention, un gestionnaire d'événement doit **recevoir une fonction** en valeur !  
+⚡️ Attention, un attributs d'événement (`onClick`...) doit **recevoir une fonction** en valeur !   
 Une erreur classique est de lui passer l'**appel d'une fonction**, comme par exemple : 
 ```tsx
 <header onClick={handleClick()}>
@@ -279,9 +280,9 @@ Veuillez ensuite mettre à jour ce composant pour afficher :
 
 Veuillez utiliser le "destructing assignment" comme vu dans le cours.
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.4-destructuring`**.
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.5-destructuring`**.
 
-Veuillez reprendre votre projet précédent et ajouter deux gestionnaires d'événements qui permettront : 
+Veuillez continuer votre application et ajouter deux gestionnaires d'événements qui permettront : 
 - lors du passage de la souris sur le compteur, d'afficher un message au dessus du comptage de clics. Notez que ce message doit aussi être passé en props à `ClickCounter`.  
 Vous passerez cette valeur pour votre application : `"Please click on me now !"`.
 - lorsque la souris quitte le compteur, ce message doit être enlevé.
@@ -372,3 +373,26 @@ const App = () => {
 ```
 
 Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.6`**.
+
+# <InternalPageTitle> Exercice 2.6b : Composant de sélection de couleur </InternalPageTitle>
+
+
+Veuillez créer un nouveau projet en utilisant les technos Vite + React + TS + SWC nommé `/exercises/ex2.6b` dans votre git repo.
+
+Veuillez créer un composant React qui permette à l'utilisateur de changer la couleur de fond d'une boîte en cliquant sur un bouton.
+
+Au sein de la boîte (une **`div`** par exemple) ayant une taille fixe, veuillez afficher un bouton contenant le nom de la prochaine couleur disponible. Après chaque clic sur le bouton, la boîte doit :
+- prendre la couleur qui était annoncée. 
+- afficher un texte indiquant la couleur affichée (sous le bouton).
+
+Veuillez prévoir un cycle de 5 couleurs : rouge, vert, bleu, jaune, violet. Après le violet, on revient au rouge. La première couleur à afficher, sans action de l'utilisateur, est le rouge (et donc un bouton avec comme texte : "vert" et un texte "rouge" au-dessous du bouton). 
+
+Veuillez utiliser votre composant React dans votre application principale pour afficher 3 boîte dont la couleur peut changer.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.6b`**.
+
+#### 🤝 Tips
+- Quel événement gérer au niveau de la liste déroulante ?  
+**`onChange`** ; )
+- Plutôt que d'utiliser du CSS, vous pouvez utiliser des couleurs prédéfinies dans React. Par exemple, pour le rouge, vous pouvez utiliser l'attribut **`style={{ backgroundColor: 'red' }}`**.
+
