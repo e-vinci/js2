@@ -19,6 +19,7 @@ description: "Sessions, authentification & utilisation d'opérations protégées
   <InternalPageMenuItem> Déconnexion d'un utilisateur </InternalPageMenuItem>
   <InternalPageMenuItem> Autorisation de l'appel à une opération protégée </InternalPageMenuItem>
   <InternalPageMenuItem> Exercice 3.4 : Authentification et appel d'opérations protégées par JWT </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 3.4b : Modification de ressources & JWT </InternalPageMenuItem>
   <InternalPageMenuItem> 🍬 Persistance de données de session via des cookies </InternalPageMenuItem>
 </InternalPageMenu>
 
@@ -104,17 +105,19 @@ Cette méthode est très utile lorsque l'on souhaite effacer toute la session d'
 
 # <InternalPageTitle> Exercice 3.3 : Persistence d'un thème </InternalPageTitle>
 
-Veuillez partir d'une copie de l'exercice (`/exercises/2.15`) pour créer un nouveau projet nommé `exercises/3.3-4` afin de continuer l'application `myMovies`.
+Veuillez partir d'une copie de l'exercice (`/exercises/2.15b`) pour créer un nouveau projet nommé `exercises/3.3-4` afin de continuer l'application `myMovies`.
 
-Vous devez ajouter un moyen de switcher d'un thème "light" ou "dark" au sein de votre application. 
+Vous devez ajouter un moyen de switcher d'un thème "light" ou "dark" au sein de votre application.
 
 Par exemple, vous pouvez le faire via un bouton dans le header ou le footer permettant de basculer d'un thème à l'autre.
 
+L'effet du thème doit être visible seulement sur le footer et le header... Il n'est pas nécessaire de faire un thème "dark" complet sur la page. Veuillez donc changer les couleurs des backgrounds du header & du footer et de certains de leurs textes en fonction du thème.
+
 Vous devez sauvegarder le thème sélectionné par l'utilisateur comme donnée de session persistante. Ainsi, vous allez sauvegarder l'information du thème dans le `localStorage`.
 
-Au redémarrage du browser, ou lors du refresh du frontend, l'application doit toujours afficher ses écrans selon le dernier thème sélectionné : veuillez donc changer les couleurs de certains backgrounds et certains textes en fonction du thème.
+Au redémarrage du browser, ou lors du refresh du frontend, l'application doit toujours afficher ses écrans selon le dernier thème sélectionné.
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex3.3".
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex3.3`**.
 
 
 # <InternalPageTitle> Authentification d'un utilisateur via une IHM & JWT </InternalPageTitle>
@@ -160,7 +163,7 @@ Ainsi, nous allons définir le fetch du register au sein de `App` en y ajoutant 
 const [authenticatedUser, setAuthenticatedUser] =
     useState<MaybeAuthenticatedUser>(undefined);
 // ...
-const registerUser = async (newUser: NewUser) => {
+const registerUser = async (newUser: User) => {
     try {
       const options = {
         method: "POST",
@@ -249,20 +252,13 @@ import { useNavigate, useOutletContext } from "react-router-dom";
 import { PizzeriaContext } from "../../types";
 
 const RegisterPage = () => {
+  const { registerUser }: PizzeriaContext = useOutletContext();
 
-   const { registerUser } : PizzeriaContext = useOutletContext();
-  
-    const navigate = useNavigate();
-    const [username, setUsername] = useState("");
-    const [password, setPassword] = useState("");
-  
-    const handleSubmit = (e: SyntheticEvent) => {
-      e.preventDefault();
-      registerUser({ username, password });
-      navigate("/");
-    };
-  
-    const handleSubmit = async (e: SyntheticEvent) => {
+  const navigate = useNavigate();
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
+  const handleSubmit = async (e: SyntheticEvent) => {
     e.preventDefault();
     try {
       await registerUser({ username, password });
@@ -271,41 +267,46 @@ const RegisterPage = () => {
       console.error("RegisterPage::error: ", err);
     }
   };
-  
-    const handlePasswordChange = (e: SyntheticEvent) => {
-      const input = e.target as HTMLInputElement;
-      setPassword(input.value);
-    };
-  
-    return (
-      <div>
-        <h1>Ajoutez un utilisateur</h1>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="username">Username</label>
-          <input
-            value={username}
-            type="text"
-            id="username"
-            name="username"
-            onChange={handleUsernameInputChange}
-            required
-          />
-          <label htmlFor="password">Password</label>
-          <input
-            value={password}
-            type="text"
-            id="password"
-            name="password"
-            onChange={handlePasswordChange}
-            required
-          />
-          <button type="submit">Créer le compte</button>
-        </form>
-      </div>
-    );
+
+  const handleUsernameInputChange = (e: SyntheticEvent) => {
+    const input = e.target as HTMLInputElement;
+    setUsername(input.value);
   };
-  
-  export default RegisterPage;
+
+  const handlePasswordChange = (e: SyntheticEvent) => {
+    const input = e.target as HTMLInputElement;
+    setPassword(input.value);
+  };
+
+  return (
+    <div>
+      <h1>Ajoutez un utilisateur</h1>
+      <form onSubmit={handleSubmit}>
+        <label htmlFor="username">Username</label>
+        <input
+          value={username}
+          type="text"
+          id="username"
+          name="username"
+          onChange={handleUsernameInputChange}
+          required
+        />
+        <label htmlFor="password">Password</label>
+        <input
+          value={password}
+          type="text"
+          id="password"
+          name="password"
+          onChange={handlePasswordChange}
+          required
+        />
+        <button type="submit">Créer le compte</button>
+      </form>
+    </div>
+  );
+};
+
+export default RegisterPage;
 ```
 
 Maintenant nous devons mettre à jour la configuration de notre router pour offrir la `RegisterPage` : pour ce faire, veuillez mettre à jour `/src/main.tsx` :
@@ -583,7 +584,8 @@ Celui-ci est fixé par notre API et nous l'avons déjà défini dans `types.ts`.
 
 💭 A quel moment sauvegarder les données de session ?  
 Ici, l'utilisateur est connecté lors du register, ou lors du login. C'est donc à se moment là qu'il faut sauvegarder ses données dans le `localStorage`.  
-Comme nous allons réutiliser un même traitement (tant dans login que dans register), nous pouvons directement éviter une duplication de code en créant une fonction `storeAuthenticatedUser`. De plus, nous avons besoin d'une fonction qui nous permettra de récupérer l'utilisateur authentifié du `localStorage`.
+Comme nous allons réutiliser un même traitement (tant dans login que dans register), nous pouvons directement éviter une duplication de code en créant une fonction `storeAuthenticatedUser`. De plus, nous avons besoin d'une fonction qui nous permettra de récupérer l'utilisateur authentifié du `localStorage`.  
+Et finalement, afin de prévoir le nettoyage des données de session, nous allons créer une fonction `clearAuthenticatedUser`.
 
 Veuillez créer un nouveau script `/src/utils/session.ts` et y ajouter ce code-ci : 
 ```ts
@@ -601,7 +603,11 @@ const getAuthenticatedUser = (): MaybeAuthenticatedUser => {
   return JSON.parse(authenticatedUser);
 };
 
-export { storeAuthenticatedUser, getAuthenticatedUser };
+const clearAuthenticatedUser = () => {
+  localStorage.removeItem("authenticatedUser");
+};
+
+export { storeAuthenticatedUser, getAuthenticatedUser, clearAuthenticatedUser };
 ```
 
 Veuillez mettre à jour `App` afin de faire appelle à `storeAuthenticatedUser` lors du login et du register :
@@ -802,7 +808,9 @@ On n'affiche actuellement **pas de message d'erreur** aux utilisateurs lorsque l
 
 # <InternalPageTitle> Exercice 3.4 : Authentification et appel d'opérations protégées par JWT  </InternalPageTitle>
 
-Veuillez continuer l'exercice précédent nommé `/exercises/3.3-4` afin de compléter l'application `myMovies`.
+Veuillez continuer l'exercice précédent nommé `/exercises/3.3-4-4b` afin de compléter l'application `myMovies`.
+
+Pour tout cette exercice, vous devez avoir démarré l'API sécurisée par JWT de vos films. Veuillez donc exécuter le code de votre exercice précédent `/exercises/3.1`. En cas de souci, vous trouvez le code de cette API ici : https://github.com/e-vinci/ts-exercises
 
 ## Authentification et appel d'opérations nécessitant une autorisation JWT
 
@@ -813,10 +821,11 @@ Veuillez implémenter ces cas d'utilisation :
 
 N'hésitez pas à reprendre le code du tutoriel ; )
 
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex3.4-authentification`**.
+
 Votre application doit maintenant autoriser les opérations suivantes que pour des utilisateurs authentifiés :
 -	UC2 : l'ajout d'une ressource de type films via un formulaire d'ajout d'un film.
 - UC3 : la suppression d'un film.
-- UC4 : la mise à jour des données d'un film (à l'exception de l'id associé à un film).
 
 Comme auparavant, cette opération est permise pour tous les utilisateurs, anonymes ou authentifiés :
 -	UC1 : l'affichage, sous forme de tableau, de toutes les ressources de type films.
@@ -825,17 +834,29 @@ Pensez à bien mettre à jour votre **`Navbar`** pour afficher les bons élémen
 
 Faites attention, il n'est pas autorisé, pour des raisons d'ergonomie, que le frontend offre les fonctionnalités d'écriture de ressources pour les utilisateur non authentifiés. Vous devez donc rendre invisible les opérations non autorisées aux utilisateurs. 
 
-UC2 (create), UC3 (delete) et UC4 (update) doivent donc être invisibles pour les utilisateurs anonymes.
+UC2 (create) & UC3 (delete) doivent donc être invisibles pour les utilisateurs anonymes.
 
 Veuillez faire en sorte de rajouter dans le web storage ces nouvelles données de session lors du login ou du register : le token et le username.  
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex3.4`**.
 
 #### 🤝 Tips
 
 - 💭 Comment rendre invisible les opérations d'écriture de certaines ressources au sein du frontend ?  
-Par exemple, vous pourriez afficher des boutons de type **`Effacer`** ou **`Sauver`** que si l'utilisateur est authentifié.  
-De même, si l'utilisateur est anonyme, les ressources ne devraient pas être éditables.
+Par exemple, vous pourriez afficher des boutons de type **`Effacer`** que si l'utilisateur est authentifié.  
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex3.4`**.
+# <InternalPageTitle> Exercice 3.4b : Modification de ressources & JWT  </InternalPageTitle>
+
+Veuillez continuer l'exercice précédent nommé `/exercises/3.3-4-4b` afin de compléter l'application `myMovies`.
+
+Votre application doit maintenant autoriser cette opération suivante que pour des utilisateurs authentifiés :
+- UC4 : la mise à jour des données d'un film (à l'exception de l'id associé à un film).
+
+Faites attention, il n'est pas autorisé, pour des raisons d'ergonomie, que le frontend offre les fonctionnalités d'écriture de ressources pour les utilisateur non authentifiés. Vous devez donc rendre invisible les opérations non autorisées aux utilisateurs. 
+
+ UC4 (update) doit donc être invisible pour les utilisateurs anonymes.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex3.4b`**.
 
 ## 🍬 Challenge optionnel : Gestion de session & remember me
 
@@ -843,7 +864,7 @@ S'il vous reste du temps, vous pourriez continuer l'exercice précédent et ajou
 - dans le **`localStorage`** si l'on clique sur une checkbox "Remember me" ;
 - dans le **`sessionStorage`** si l'on ne clique pas sur la checkbox "Remember me" lors du login ou du register.
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex3.4+`**.
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex3.4b+`**.
 
 # <InternalPageTitle> 🍬 Persistance de données de session via des cookies </InternalPageTitle>
 

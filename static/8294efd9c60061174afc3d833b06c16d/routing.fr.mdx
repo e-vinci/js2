@@ -167,7 +167,7 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 );
 ```
 
-Ici, nous avons donc `createBrowserRouter` qui crèe une configuration pour nos 3 routes, et chaque route va afficher une page.
+Ici, nous avons donc `createBrowserRouter` qui crée une configuration pour nos 3 routes, et chaque route va afficher une page.
 
 Ensuite, nous utilisons le `RouterProvider` pour fournir la configuration du routeur à l'ensemble de l'application et pour permettre aux composants de l'application d'accéder au contexte du router.
 
@@ -282,7 +282,7 @@ Il est possible de définir une route parent, ça serait la route "racine" ici, 
 
 Ensuite, nous afficherons des routes "enfants" au sein de la route "parent". Pour indiquer où les routes "enfants" devront s'afficher chez le "parent", nous utiliserons un `<Outlet>`.
 
-Voici comment définir la route `/` pour le squelette de l'application qui se trouvera dans `App`, puis les 3 routes "enfants" pour les 3 pages (veuillez mettre à jour le router au sein de `App`) :
+Voici comment définir la route `/` pour le squelette de l'application qui se trouvera dans `App`, puis les 3 routes "enfants" pour les 3 pages (veuillez mettre à jour le router au sein de `main.tsx`) :
 ```tsx numbered highlighting="3-18"
 const router = createBrowserRouter([
   {
@@ -476,7 +476,7 @@ Veuillez partir d'une copie de l'exercice (`/exercises/2.7`) et y intégrer le c
 - Une `CinemaPage` qui reprend simplement le contenu de l'exercice (`/exercises/2.6`).
 - Une `MovieListPage` qui reprend la liste de vos films selon le design de l'exercise (`/exercises/2.7`).
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex2.10".
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.10`**.
 
 # <InternalPageTitle> Comment gérer l'état avec React Router ? </InternalPageTitle>
 
@@ -530,7 +530,7 @@ const App = () => {
     setActionToBePerformed(false);
   };
 
-  const fullPizzaContext: PizzaContext = {
+  const fullPizzaContext: PizzeriaContext = {
     addPizza,
     pizzas,
     setPizzas,
@@ -621,14 +621,14 @@ Si nécessaire, vous pouvez trouver le code associé à ce tutoriel ici : [routi
 Veuillez continuer votre exercice précédent dans le projet existant et nommé `exercises/2.10-11-12` en y intégrant une `AddMoviePage` qui permette d'ajouter un film à la liste des films. Une fois un film ajouté, l'utilisateur est automatiquement redirigé vers la `MovieListPage`.
 
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex2.11".
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.11`**.
 
 # <InternalPageTitle> Exercice 2.12 : Routes dynamiques </InternalPageTitle>
 
 Veuillez continuer l'exercice précédent dans le projet existant et nommé `exercises/2.10-11-12`.
 
 Nous vous demandons : 
-- De mettre à jour la `HomePage` afin qu'elle n'affiche qu'une liste reprenant les titres de vos films favoris.
+- De mettre à jour la `HomePage` afin qu'elle affiche une liste reprenant uniquement les titres de vos films favoris (sans d'autres infos associées aux films telles que la description...).
 - Il doit être possible de pouvoir cliquer sur le titre d'un de vos films favoris et de naviguer vers une nouvelle `MoviePage` qui affichera toutes les infos de ce film-ci. Pour ce faire, vous devez ajouter un id à vos films, et cette id doit être visible dans l'URL quand les utilisateurs cliquent sur un titre donné dans la `HomePage`.
 
-Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : "new:ex2.12".
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.12`**.
