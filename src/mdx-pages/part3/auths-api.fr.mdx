@@ -1208,37 +1208,38 @@ En cas de souci, vous pouvez utiliser le code du tutoriel [auths](https://github
 
 Vous allez sécuriser la RESTful API de **myMovies**.
 
+## Mise en place du projet 
 Veuillez créer un nouveau projet ans votre repo git dans **`/exercises/3.1`** en clonant le boilerplate du cours offrant l'authentification et l'autorisation JWT : [jwt-ts-api-boilerplate](https://github.com/e-vinci/jwt-ts-api-boilerplate). Dans ce boilerplate, vous trouverez déjà un service **`users`** qui gère les utilisateurs, ainsi que des routes pour les opérations de **`login`** et de **`register`**.
 
-Dans ce projet, dans un premier temps, sans utiliser JWT, veuillez intégrer le code utile de vos opérations (router & service de **`films`**, requêtes HTTP pour tester les opérations sur les **`films`**) de votre **`/exercises/1.8`**. 
+⚡️ Attention, n'oubliez pas les soucis d'avoir un git dans le git... Pensez à supprimer le dossier **`.git`** de votre nouveau projet.
 
-Une fois que vous opérations sur les films sont bien intégrées, veuillez planifier de nouvelles opérations et quelles opérations protéger par JWT. 
+## Identification des opérations & création de la documentation de l'API
 
-Pour les nouvelles opérations, vous devez pouvoir ajouter des commentaires sur un film et lire tous les commentaires associés à un film.
+Nous allons maintenant passer à une phase d'analyse de votre API. Nous allons documenter les opérations de votre API, ainsi que les opérations qui seront protégées par JWT.
 
-Pour la protection des opérations, vous ne devez pas gérer de rôles, mais simplement vérifier que l'utilisateur est authentifié.
+Pour les opérations existantes sur des films, vous devez planifier de protéger les opérations d'écriture (création, modification, suppression) de vos films par JWT. Les opérations de lecture de films ne doivent pas être protégées par JWT.
 
-Veuillez d'abord identifier toutes les opérations mises à disposition par votre API (y compris l'authentification), ainsi que si celles-ci sont protégées par JWT, au sein du fichier **`README.md`** (fichier Markdown) de votre projet. Voici un exemple de comment nous vous recommandons de documenter votre API, sous forme de tableau : 
+Pour la protection des opérations, vous ne devrez pas gérer de rôles, mais simplement vérifier que l'utilisateur est authentifié.
+
+Vous devez planifier des nouvelles opérations : 
+- lire tous les commentaires et pouvoir les filtrer par film ;
+- ajouter des commentaires sur un film, en y associant l'utilisateur ou l'utilisatrice authentifiée ;
+- effacer un commentaire sur un film sur base de l'utilisateur ou de l'utilisatrice authentifiée.
+
+Veuillez identifier toutes les opérations mises à disposition par votre API (y compris l'authentification), ainsi que si celles-ci sont protégées par JWT, au sein du fichier **`README.md`** (fichier Markdown) de votre projet. Voici un exemple de comment nous vous recommandons de documenter votre API, sous forme de tableau : 
 
 | URI | Méthode HTTP | Auths? | Opération |
 |---|---|---|---|
 | **`films`** | GET | Non | READ ALL : Lire toutes les ressources de la collection |
+| **`films/:id`** | GET | Non | READ ALL : Lire une ressource de la collection |
+| **`films`** | POST | Oui | CREATE ONE : Créer une ressource de la collection basée sur un body au format `{title: string; director: string;  duration: number;  budget?: number;  description?: string;  imageUrl?: string;  }` |
 | ... | ... | ... | ... |
 | **`comments`** | GET | JWT | READ ALL FILTERED : Lire toutes les ressources de la collection |
-| **`comments`** | POST | JWT | CREATE ONE : Créer une ressource basée sur les données de la requête |
+| **`comments`** | POST | JWT | CREATE ONE : Créer une ressource basée sur un body au format `{...}` |
 | ... | ... | ... | ... |
 
 <br/>
 
-Une fois la documentation de votre API prête, vous pouvez commencer par protéger les opérations existantes et les tester avec Rest Client.
-
-Une fois que tout est fonctionnel, vous pouvez implémenter les nouvelles opérations de gestion de commentaires et les protéger par JWT.
-
-Veuillez vérifier que vos opérations sont bien protégées et fonctionnelles en les testant avec Rest Client.
-
-Quand un prototype d'api est finalisé et testé, veuillez faire un **`commit`** de votre code avec comme message : **`new: ex3.1`**.
-
-#### 🤝 Tips
 Comment créer un tableau dans un fichier Markdown (pour **`README.md`**) ?  
 Voici deux options :
 - Soit vous utiliser des **`|`** pour délimiter les cellules et des **`|---|`** pour séparer les headers du corps du tableau. 
@@ -1247,12 +1248,51 @@ Voici le Markdown de l'exemple donné ci-dessus :
 | URI | Méthode HTTP | Auths? | Opération |
 |---|---|---|---|
 | **`films`** | GET | Non | READ ALL : Lire toutes les ressources de la collection |
+| **`films/:id`** | GET | Non | READ ALL : Lire une ressource de la collection |
+| **`films`** | POST | Oui | CREATE ONE : Créer une ressource de la collection basée sur un body au format `{title: string; director: string;  duration: number;  budget?: number;  description?: string;  imageUrl?: string;  }` |
 | ... | ... | ... | ... |
 | **`comments`** | GET | JWT | READ ALL FILTERED : Lire toutes les ressources de la collection |
-| **`comments`** | POST | JWT | CREATE ONE : Créer une ressource basée sur les données de la requête |
+| **`comments`** | POST | JWT | CREATE ONE : Créer une ressource basée sur un body au format `{...}` |
 | ... | ... | ... | ... |
 ```
 - Soit c'est simplement un tableau HTML (`<table>`).
+
+Une fois la documentation de votre API prête, veuillez faire un commit avec le message suivant : **`new:ex3.1-doc`**. 
+
+## Sécuriser les opérations d'écriture pour les films
+
+Vous allez maintenant travailler sur le code de votre nouveau projet.
+
+Dans votre nouveau projet, dans un premier temps, sans utiliser JWT, veuillez intégrer le code utile de vos opérations (router & service de **`films`**, requêtes HTTP pour tester les opérations sur les **`films`**) de votre **`/exercises/1.8`**.
+
+Veuillez protéger les opérations d'écriture (création, modification, suppression) de vos films par JWT (en intégrant l'authentification) et vérifier que les opérations protégées fonctionnent correctement via REST Client.  
+Vous devez assurer qu'un utilisateur non authentifié ne puisse pas créer, modifier ou supprimer un film.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex3.1`**.
+
+## Implémenter les opérations associées aux commentaires
+
+Vous pouvez implémenter les nouvelles opérations de gestion de commentaires et les protéger par JWT.
+
+Veuillez vérifier que vos opérations sont bien protégées et fonctionnelles en les testant avec Rest Client.
+
+Veuillez bien nettoyer votre code et ne pas laisser de code mort.
+
+Quand votre api est finalisée et testée, veuillez faire un **`commit`** de votre code avec comme message : **`new: ex3.1-comments`**.
+
+## Sécurisation de vos opérations
+
+💭 Avez-vous bien protégé vos opérations ?  
+Est-ce que pour l'opération de création d'un commentaire, vous avez bien associé l'utilisateur ou l'utilisatrice authentifiée à ce commentaire sur base du token fourni par l'application cliente ? En effet, si vous utilisez le body pour valider le username sans checker le token, il est facilement possible de modifier le body et de créer un commentaire au nom d'un autre utilisateur...  
+De même pour l'opération de suppression d'un commentaire, avez-vous avez bien vérifié l'utilisateur ou l'utilisatrice authentifiée via le token ? Ou est-ce que vous avez simplement vérifié le username à partir de l'URL ?
+
+💭 Concernant la gestion du contrat associé à vos opérations, les status codes, avez-vous pensé à :
+- vérifier lors de la création d'un commentaire que le film existe bien ? que l'utilisateur ou l'utilisatrice n'a pas déjà commenté ce film ?
+- vérifier lors de la suppression d'un commentaire que le commentaire existe bien pour l'utilisateur ou l'utilisatrice authentifiée et pour le film indiqué e ?
+
+Si nécessaire, veuillez mettre à jour votre API, sa documentation et vos tests pour corriger les éventuelles soucis.
+
+Quand votre api est finalisée et testée, veuillez faire un **`commit`** de votre code avec comme message : **`new: ex3.1-sécurité`**.
 
 # <InternalPageTitle> 🍬 Exercice 3.2 : une autre API sécurisée </InternalPageTitle>
 
@@ -1299,8 +1339,8 @@ Veuillez faire un **`commit`** de votre code avec le message suivant : **`new: e
 
 ## 🍬 Challenges
 - N°1 : Modifiez les autorisations au niveau des opérations de lecture : la lecture d'une page, ou de toutes les pages, pourra être réalisée par n'importe quel utilisateur anonyme ou authentifié pour les pages dont le statut vaut « published ». Pour les pages dont le statut vaut « hidden », seul leur auteur authentifié pourra les lire.
-N°2 : lorsqu'un utilisateur tente d'effacer ou modifier une page dont il n'est pas l'auteur, renvoyez un code d'erreur approprié au client.
-N°3 : Si ça n'est pas déjà fait, pensez à ne pas renvoyer les passwords des utilisateurs dans les réponses de votre API.
+- N°2 : lorsqu'un utilisateur tente d'effacer ou modifier une page dont il n'est pas l'auteur, renvoyez un code d'erreur approprié au client.
+- N°3 : Si ça n'est pas déjà fait, pensez à ne pas renvoyer les passwords des utilisateurs dans les réponses de votre API.
 
 # <InternalPageTitle> 🍬 Authentification & autorisation JWT à l'aide de cookies </InternalPageTitle>
 
