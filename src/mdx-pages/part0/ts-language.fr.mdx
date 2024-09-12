@@ -12,8 +12,9 @@ description: 'Introduction au langage TypeScript, apprentissage de la syntaxe'
     <PathViewerItem selected> c) TS </PathViewerItem>
   </PathViewer>
   <InternalPageMenuItem> Le TS, c'est quoi ? </InternalPageMenuItem>
-  <InternalPageMenuItem> Quand définir les types ? </InternalPageMenuItem>
-  <InternalPageMenuItem> Comment définir les types ? </InternalPageMenuItem> 
+  <InternalPageMenuItem> A quel moment le TS intervient ? </InternalPageMenuItem>
+    <InternalPageMenuItem> Quand définir les types ? </InternalPageMenuItem>
+<InternalPageMenuItem> Comment définir les types ? </InternalPageMenuItem> 
   <InternalPageMenuItem> Comment contrôler le flux en TS ? </InternalPageMenuItem> 
   <InternalPageMenuItem> Réduction de type plus avancée </InternalPageMenuItem> 
   <InternalPageMenuItem> Comment en savoir plus sur TS ? </InternalPageMenuItem> 
@@ -631,7 +632,7 @@ Même si le code est très concis, ça n'est pas une bonne pratique de faire des
 
 ## Tentative n°2 de réduction de type du body d'une requête : vérification de type uniquement
 
-Pour réduire le type du `body` à un type plus spécifique, on pourrait tenterd d'utiliser une vérification de type :
+Pour réduire le type du `body` à un type plus spécifique, on pourrait tenter d'utiliser une vérification de type :
 
 ```ts highlighting="9-10"
 router.post("/", (req, res) => {
