@@ -173,10 +173,16 @@ Pour des applications JS, lorsqu'on installe des packages, ceux-ci se retrouvent
 node_modules
 # ignore the specific VS Code configuration parameters
 .vscode
-# ignore the specific packages versions installed by the developper
+# ignore the specific packages versions installed by the developer
 package-lock.json
 # ignore the development environment variables (if any)
 .env
+# ignore MacOS specific files
+.DS_Store
+# ignore the Windows specific files
+Thumbs.db
+# ignore the Linux specific files
+lost+found
 ```
 
 Si ce n'est pas déjà fait, veuillez [installer Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git) [[R.34]](/references/#r34).
