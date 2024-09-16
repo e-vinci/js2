@@ -30,6 +30,7 @@
     "@mdx-js/react": "^1.6.22",
     "@popperjs/core": "^2.9.2",
     "@sindresorhus/slugify": "^1.1.2",
+    "ajv": "^8.17.1",
     "autoprefixer": "^10.2.5",
     "babel-preset-gatsby": "^3.11.0",
     "bootstrap": "^5.0.0-beta3",
@@ -84,6 +85,7 @@
     "theme-ui": "^0.6.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.25.2",
     "@babel/plugin-syntax-import-assertions": "^7.22.5",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "eslint": "^8.40.0",
