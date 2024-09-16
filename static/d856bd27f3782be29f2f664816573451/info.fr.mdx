@@ -1,0 +1,144 @@
+---
+title: 'Info générales'
+description: 'Informations générales associées aux cours de TS/JS & Node.js'
+---
+
+# a) Informations générales
+
+<InternalPageMenu>
+  <PathViewer>
+    <PathViewerItem to="/"> web2course </PathViewerItem>
+    <PathViewerItem to="/part0"> Partie 0 </PathViewerItem>
+    <PathViewerItem selected> a) Informations générales </PathViewerItem>
+  </PathViewer>
+  <InternalPageMenuItem> Public cible </InternalPageMenuItem>
+  <InternalPageMenuItem> Licence & auteurs </InternalPageMenuItem>
+  <InternalPageMenuItem> Compétences à la fin du cours </InternalPageMenuItem>
+  <InternalPageMenuItem> Planning des séances de cours pour les étudiants Vinci </InternalPageMenuItem>
+  <InternalPageMenuItem> Qu'est-ce qu'il est attendu des étudiants Vinci ? </InternalPageMenuItem>
+  <InternalPageMenuItem> Modalités d'évaluation pour les étudiants Vinci </InternalPageMenuItem>
+</InternalPageMenu>
+
+
+
+
+<br />
+
+# <InternalPageTitle> Public cible </InternalPageTitle>
+
+Ce cours est à destination de toute personne souhaitant apprendre le développement d'applications web modernes via du TS/JS.
+
+En prérequis, vous devriez posséder ces compétences :
+
+- Développer dans un langage de programmation (variables, structures conditionnelles, boucles, fonctions…).
+- Créer et structurer une Interface Homme-Machine (IHM) via les bases de l'HTML, incluant les formulaires HTML.
+- Soigner l'apparence d'une IHM via les bases du CSS.
+- Comprendre la documentation technique en Anglais ; les références du cours sont données en anglais.
+- Gérer la configuration du code en utilisant les bases de Git (Version Control).
+
+Si vous souhaitez récupérer les prérequis associés au web, nous vous conseillons de suivre
+ces tutoriels :
+
+- [Tutoriel de MDN sur les bases de l'HTML](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/HTML_basics) [[R.16]](/references/#r16)
+- [Tutoriel de MDN sur les bases du CSS](https://developer.mozilla.org/en-US/docs/Learn/Getting_started_with_the_web/CSS_basics) [[R.17]](/references/#r17)
+
+Concernant Git (Version Control), le cours offre des tutoriels reprenant les points essentiels : [Introduction à Git](/part0/git).
+
+# <InternalPageTitle> Licence & auteurs </InternalPageTitle>
+
+Tout le contenu de ce cours est sous [License Creative Commons BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.fr)
+[[R.15.]](/references/#r15) et son auteur initial est Raphaël Baroni.
+
+Ce cours est revu & corrigé tant par vos apports que par le corps enseignant de Vinci.
+
+# <InternalPageTitle> Compétences à la fin du cours </InternalPageTitle>
+
+A la fin du cours, vous serez apte à :
+
+- **C1 : Créer des services web** ; c'est ce que ferait des développeurs backend ; ainsi on créera plus spécifiquement des RESTful API, une application mettant à disposition de clients des opérations sur des ressources ;
+- **C2 : Créer des Interfaces Homme-Machine (IHM) pour Single-Page-Application (SPA)** qui sont interactives, modernes & esthétiques ; c'est ce que ferait des développeurs frontend ;
+- **C3 : Sécurisation de SPA** pour intégrer l'authentification, l'autorisation et les sessions d'utilisateurs ; c'est ce que ferait tant des développeurs frontend que des développeurs backend pour sécuriser l'accès à des opérations sur des ressources.
+
+# <InternalPageTitle> Planning des séances de cours pour les étudiants Vinci </InternalPageTitle>
+
+Le cours est planifié pour s'étaler sur 24 séances de 2h chacune.
+
+
+| Semaine | Jours | Séances | Compétences | Sujets | Tutoriel | Exercices |
+|---|---|---|---|---|---|---|
+| 38 | 16-20/09 | S1 | Toutes | Partie 0 : Intro | ts-node-start | Git repo |
+|  |  | S2 | Services web | RESTful API, middleware & opération de lecture | basic | 1.1 & 1.2 |
+| 39 | 23-27/09 (27 congé) | S3 | Services web | Paramètres & CRUD & status | basic | 1.3 (& 1.4) |
+| 40 | 30/09-04/10 | S4 | Services web | CRUD & status | basic | 1.5 & 1.6 |
+|  |  | S5 | Services web | JSON | persistence | 1.7 |
+| 41 | 07-11/10 | S6 | Services web | Refactor & les services | services | 1.8 & 1.9 |
+| | | S7 | IHM | Applications "old school", composant React & gestion des assets | old-school & components |  |
+| 42 | 14-18/10 | S8 | IHM | Applications "old school", composant React & gestion des assets | components | 2.1 & 2.2 |
+|  | | S9 | IHM | Les modules | collections | 2.3 |
+| 43 | 21-25/10 | S10 | IHM | Les collections de composants | collections | 2.4 & 2.4b |
+|  | | S11 | IHM | Destructuring & composants stateful | start-state | 2.5 & 2.6 & 2.6b |
+| 44 | 28/10-1/11 congé |  |  |  |  |  |
+| 45 | 04-08/11 | S12 | IHM | Etat plus avancé & les formulaires & collections | medium-state | 2.7|
+|  |  | S13 | IHM | Etat plus avancé & les formulaires & collections (& Material UI) | medium-state (& ui-library) | (2.8 & 2.9) |
+| 46 | 11-15/11 (11/11 congé) | S14 | IHM | Routage des écrans | routing | 2.10 |
+| 47 | 18-22/11 | S15 | IHM | Routage & gestion de l'état | routing-state | 2.11 & 2.12 |
+|  |  | S16 | IHM | Fetch & promesses & useEffect | fetch-no-proxy | 2.13 & 2.13.b |
+| 48 | 25-29/11 | S17 | IHM | Evénements temporels & async-await | async-await | 2.14 & 2.14b |
+|  |  | S18 | IHM | Les fonctions asynchrone & le proxy | async-await & proxy | 2.15 & 2.15b |
+| 49 | 02-06/12 | S19 | Sécurisation (API) | CORS & autorisation d'origines & sécurisation d'une API | cors & auths | 3.1 (début) |
+|  |  | S20 | Sécurisation (API) | Sécurisation d'une API | (cookies) | 3.1 (suite & 3.2) |
+| 50 | 09-13/12/12 | S21 | Sécurisation (IHM) | Browser storage, authentification & opérations protégées par JWT | session-jwt | 3.3 & 3.4 (début) |
+|  |  | S22 | Sécurisation (IHM) | Authentification & opérations protégées par JWT (& cookies) | session-jwt (& cookies) | 3.4 (suite) & 3.4b |
+| 51 | 16-20/12 | S23 | Toutes | Simulation d'examen |  |  |
+|  |  | S24 | Toutes | Correction par les pairs & questions / réponses |  |  |
+
+<br/>
+
+# <InternalPageTitle> Qu'est-ce qu'il est attendu des étudiants Vinci ? </InternalPageTitle>
+
+## Introduction
+
+Il est important que vous puissiez vous situer par rapport à l'investissement attendu de votre part dans le cadre de ce cours, tant en terme de charge de travail qu'en terme d'actions à réaliser.
+
+## Charge globale
+
+En terme de charge globale, même si le cours est constitué de 48h de cours en présentiel, nous attendons de votre part environ tout autant **de travail en distanciel pour une réussite en première session**. Le cours demande donc ~100h de travail au total.
+
+Selon le système de crédits ECTS et le ETCS's User Guide [[R.62]](/references/#r62), la charge de travail étudiante attendue est d'environ 25h-30h par crédit ECTS. Cette charge varie selon le pays de l'UE, cela fait environ 125h-150h pour un cours de 5 ECTS ; sachez qu'en Belgique, on s'attend plutôt à 30h de travail par crédit ECTS... Bien sûr, cela est une charge de travail typique, elle variera en fonction de chaque individu.
+
+## Actions attendues de votre part (pour chaque séance de cours)
+
+### Activité pédagogique n°1 (Ac1) - Vérifier compréhension en groupe (~15 min en présentiel)
+
+- Lors du début de la séance de cours, nous écoutons chaque question sur la matière précédente et toute la classe participe, dans la mesure du possible, pour apporter une réponse. Nous souhaitons que vous participiez activement à ces échanges, cela enrichira l'expérience de tous !
+- Des questions vous seront posées afin de s'assurer de la bonne compréhension des concepts. N'hésitez pas à répondre. En fonction des échanges, si nécessaire, des explications, illustrations et présentations vous seront offertes quand approprié.
+
+### Activité pédagogique n°2 (Ac2) - Tutoriels & exercices en autonomie (~105 min en présentiel, 60 min en distanciel max)
+
+- Vous pratiquez en classe les concepts via les tutoriels et les exercices proposés. Vous terminez vos exercices en distanciel si nécessaire.
+- Vous êtes encouragés à poser vos questions ou à demander de l'aide en cas de difficultés sur un exercice.
+- Veuillez offrir un temps raisonnable pour créer, ou tenter de créer, votre propre implémentation d'un exercice, sans regarder la solution ; n'hésitez pas à consulter, par la suite, la solution.
+- Si vous éprouvez de la difficulté, vous pouvez choisir de réaliser un exercice en utilisant les conseils donnés.
+- Si vous souhaitez approfondir ou élargir votre apprentissage, vous pouvez le faire en implémentant les challenges proposés.
+
+# <InternalPageTitle> Modalités d'évaluation pour les étudiants Vinci </InternalPageTitle>
+
+Le seuil de réussite pour le cours est fixé à une note de 10 sur 20 ; il est possible de le réussir sans avoir atteint toutes les compétences.
+
+## Examen de 1ère session
+
+Cette évaluation certificative principale concerne 100% des points du cours. C'est un examen se déroulant en janvier. L'évaluation se présente sous forme d'une production de code en réponse à un énoncé couvrant les compétences essentielles du cours : C1, C2 & C3. Ce sont les critères 1 & 2 définis au Tableau ci-dessous, ainsi que leurs poids associés, qui permettent de déterminer les points de l'examen. Un rapport d'évaluation vous est envoyé lors de la publication des points vous offrant un feedback sur votre examen.
+
+## Examen de 2ème session
+
+Le déroulement de l'évaluation certificative en deuxième session est la même qu'en première session.
+
+## Compétences et critères d'évaluation
+
+|Compétence|Critères d'évaluation & indicateurs|Poids|
+|---|---|---|
+| **C1 : Créer des services web** incluant **C3 : Sécurisation de SPA**| **1. Qualité du service web produit** <br/><i>Indicateurs : fonctionnel, respect des consignes</i>|35%|
+| **C2 : Créer des IHM pour SPA** incluant **C3 : Sécurisation de SPA**| **2. Qualité de l’IHM produite** <br/><i>Indicateurs : fonctionnel, respect des consignes</i>|65%|
+
+
+
