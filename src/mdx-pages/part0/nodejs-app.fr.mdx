@@ -173,6 +173,25 @@ console.log(dacia.getDescription());
 
 Exécutez le script à l'aide de `npx ts-node ./index` pour voir le résultat.
 
+Si votre application ne s'exécute pas correctement et affiche un message du type : `To load an ES module, set "type": "module" in the package.json`, c'est que votre transpilateur TS n'a pas correctement transpilé le code en JS. Il tente de générer un module ES6, au lieu de générer du code CommonJS (format d'une application Node.js). Pour résoudre ce problème, veuillez ajouter un fichier `tsconfig.json` à la racine de votre projet contenant :
+  
+  ```json
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "outDir": "./build/",
+    "module": "commonjs",
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true
+  }
+}
+  ```
+
 Voilà, c'est une simple application Node.js en TS qui affiche deux messages dans le terminal.
 
 # <InternalPageTitle> Introduction aux packages Node.js & npm </InternalPageTitle>
