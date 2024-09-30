@@ -721,7 +721,7 @@ GET {{baseUrl}}/drinks
 Est-ce que cela fonctionne bien ?  Avez vous bien démarré votre API ?  
 Vous devriez obtenir le même résultat que si vous accédiez à votre API à l'aide du browser.
 
-Au sein de **`drinks.http`**, veuillez ajouter ces deux requêtes pour la lecture d'une seule boission ou pour la lecture de toutes les boissons en les filtrant selon le budget maximum :
+Au sein de **`drinks.http`**, veuillez ajouter ces deux requêtes pour la lecture d'une seule boisson ou pour la lecture de toutes les boissons en les filtrant selon le budget maximum :
 ```http
 ### Read a single drink
 GET {{baseUrl}}/drinks/3
@@ -1051,12 +1051,12 @@ router.patch("/:id", (req, res) => {
 Au sein de **`drinks.http`**, veuillez ajouter cette requête pour modifier la boisson possédant l'identifiant "5" :
 
 ```http
-### Update the pizza identified by 6
-PATCH {{baseUrl}}/pizzas/6
+### Update the drink identified by 5
+PATCH {{baseUrl}}/drink/5
 Content-Type: application/json
 
 {
-    "title":"Magic Green 2"
+    "title":"Citronnade"
 }
 ```
 
