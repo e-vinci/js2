@@ -54,7 +54,7 @@ Veuillez créer un nouveau projet **`/tutorials/back/api/services`** sur base d'
 En cas de souci, vous pouvez télécharger le code du tutoriel précédent ici : [persistence](https://github.com/e-vinci/ts-demos/tree/main/back/api/persistence).
 
 Nous allons commencer par créer le **service** offrant les opérations sur les boissons.   
-Veuillez créer le fichier **`/services/drinks.js`**.  
+Veuillez créer le fichier **`/services/drinks.ts`**.  
 Au sein de ce fichier, veuillez ajouter le code s'occupant des opérations sur les ressources de type "drinks" :
 
 ```ts numbered
@@ -195,7 +195,7 @@ export {
 };
 ```
 
-Maintenant, nous allons mettre à jour le router **`/routes/drinks.js`** afin de faire les appels aux fonctions offertes par le modèle :
+Maintenant, nous allons mettre à jour le router **`/routes/drinks.ts`** afin de faire les appels aux fonctions offertes par le modèle :
 
 ```ts numbered
 import { Router } from "express";
@@ -297,7 +297,7 @@ export default router;
 Lancer votre API soit via le debugger, soit via la commande **`npm run dev`**.  
 Veuillez ensuite tester que les opérations sur les boissons fonctionnent bien en exécutant les requêtes HTTP déjà présentes dans le répertoire **`REST Client`** du boilerplate.
 
-Maintenant, nous allons aussi mettre à jour l'architecture pour traiter des ressources de type "pizzas". Veuillez créer un fichier **`/services/pizzas.js`** :
+Maintenant, nous allons aussi mettre à jour l'architecture pour traiter des ressources de type "pizzas". Veuillez créer un fichier **`/services/pizzas.ts`** :
 
 ```ts numbered
 // Create the pizzas service based on the drinks.ts service
@@ -393,7 +393,7 @@ function updatePizza(
 export { readAllPizzas, readPizzaById, createPizza, deletePizza, updatePizza };
 ```
 
-Et le router **`/routes/pizzas.js`** doit aussi être mis à jour :
+Et le router **`/routes/pizzas.ts`** doit aussi être mis à jour :
 
 ```ts numbered
 import { Router } from "express";
@@ -506,7 +506,7 @@ Vous allez faire un nouveau refactor de la RESTful API de **myMovies**, afin de 
 Veuillez repartir du code de la solution de votre [Exercice 1.7](../json/#exercice_1_7_persistance_des_donnees).  
 Le code de votre application doit se trouver dans votre repo git dans **`/exercises/1.8`**. 
 
-Veuillez faire un refactor de votre API gérant les films afin que tout ce qui traite des opérations sur les ressources soit fait au sein du service **`/services/films.js`**.
+Veuillez faire un refactor de votre API gérant les films afin que tout ce qui traite des opérations sur les ressources soit fait au sein du service **`/services/films.ts`**.
 
 Veuillez tester que votre API fonctionne toujours aussi bien après le refactoring.
 
