@@ -216,11 +216,11 @@ En cas de souci, vous pouvez télécharger le code du tutoriel précédent ici :
 
 Plutôt que de lire le menu des boissons à partir d'un array d'objets, on souhaite lire ce menu grâce au contenu d'un fichier contenant du JSON. 
 
-Veuillez commencer par mettre à jour le router de boissons pour faire un **`Rename Symbol`** de la variable **`drinks`** en **`defaultDrinks`** : pour ce faire, vous pouvez cliquer sur la variable **`drinks`** et appuyer sur **`F2`** (équivalent de clic droit sur la variable, **`Rename Symbol`** ) dans le fichier **`/routes/drinks.js`**.
+Veuillez commencer par mettre à jour le router de boissons pour faire un **`Rename Symbol`** de la variable **`drinks`** en **`defaultDrinks`** : pour ce faire, vous pouvez cliquer sur la variable **`drinks`** et appuyer sur **`F2`** (équivalent de clic droit sur la variable, **`Rename Symbol`** ) dans le fichier **`/routes/drinks.ts`**.
 
 Ensuite, nous prévoyons que le chemin du futur fichier contenant les boissons sera **`/data/drinks.json`**. 
 
-Voici ce que donnerait l'opération de lecture de toutes les boissons si le chemin et nom complet du fichier JSON était donné dans la constante **`jsonDbPath`**. Veuillez mettre à jour votre fichier **`/routes/drinks.js`** :
+Voici ce que donnerait l'opération de lecture de toutes les boissons si le chemin et nom complet du fichier JSON était donné dans la constante **`jsonDbPath`**. Veuillez mettre à jour votre fichier **`/routes/drinks.ts`** :
 
 ```ts numbered highlighting="2-4,9,12,15"
 // Code existant ...
@@ -285,7 +285,7 @@ function createPotentialLastDirectory(filePath: string) {
 
 La fonction **`createPotentialLastDirectory`** permet de créer le répertoire qui contiendra le fichier JSON si celui-ci n'existe pas. Par exemple, le répertoire **`/data`** sera créé si le fichier **`/data/drinks.json`** doit être créé et que **`/data`** n'existe pas.
 
-Il n'est pas intéressant de retenir par coeur le code donné dans **`/utils/json.js`**. Par contre, il est important que vous compreniez celui-ci, ce qu'il fait.
+Il n'est pas intéressant de retenir par coeur le code donné dans **`/utils/json.ts`**. Par contre, il est important que vous compreniez celui-ci, ce qu'il fait.
 
 A présent, nous allons convertir le code du router de "drinks" pour rendre les données persistantes.  
 Voici ce que nous devons faire pour les opérations de :
@@ -295,7 +295,7 @@ Voici ce que nous devons faire pour les opérations de :
   - mise à jour de l'array soit en ajoutant un nouvel objet (une boisson), soit en modifiant un objet existant, soit en supprimant un objet.
   - réécriture complète du fichier JSON contenant la liste des boissons sur base de l'array de boissons qui a précédemment été mis à jour via la méthode **`serialize`**.
 
-Veuillez mettre à jour le code du router **`/router/drinks.js`** afin de gérer la persistance selon la stratégie définie ci-dessus, les modifications étant surlignées (on a repris les modifications associées à la lecture de toutes les boissons même si nous l'avions déjà vu précédemment) :
+Veuillez mettre à jour le code du router **`/router/drinks.ts`** afin de gérer la persistance selon la stratégie définie ci-dessus, les modifications étant surlignées (on a repris les modifications associées à la lecture de toutes les boissons même si nous l'avions déjà vu précédemment) :
 
 ```ts numbered highlighting="2,4-5,53,67,98,113,119,125,131,168"
 import { Router } from "express";
