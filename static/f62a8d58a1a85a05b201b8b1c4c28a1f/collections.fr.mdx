@@ -15,6 +15,7 @@ description: "Les modules et collections en React"
   <InternalPageMenuItem> Les collections de composants </InternalPageMenuItem>
   <InternalPageMenuItem> L'attribut "key" </InternalPageMenuItem>
   <InternalPageMenuItem> Exercice 2.3 : Les modules & collection </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 2.3b : Encore une collection </InternalPageMenuItem>
   <InternalPageMenuItem> Passer du TSX comme enfant : props.children </InternalPageMenuItem>
   <InternalPageMenuItem> Exercice 2.4 : Utilisation de props.children & css </InternalPageMenuItem> 
   <InternalPageMenuItem> Exercice 2.4b : Encore des composants </InternalPageMenuItem>
@@ -293,6 +294,55 @@ De plus, vous devez appliquer les conventions vues dans le cours : chaque compos
 - Pour définir comme type un array d'un certain type en TS, il suffit d'ajouter des crochets `[]` à la suite du type. Par exemple, pour un array de `Movie` : `movies: Movie[];`
 
 Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.3`**.
+
+# <InternalPageTitle> Exercice 2.3b : Encore une collection </InternalPageTitle>
+
+Veuillez créer un nouveau projet dans le dossier `/exercises/2.3b` dans votre git repo.
+
+Nous avons reçu une application mal structurée où tout le code se trouve dans le composant `App` :
+```tsx
+const App = () => {
+  const title = "Welcome to My App";
+  const name1 = "Alice";
+  const age1 = 25;
+  const name2 = "Bob";
+  const age2 = 30;
+  const name3 = "Charlie";
+  const age3 = 35;
+  const footerText = "© 2023 My App";
+
+  return (
+    <div>
+      <h1>{title}</h1>
+      <div>
+        <h2>{name1}</h2>
+        <p>Age: {age1}</p>
+      </div>
+      <div>
+        <h2>{name2}</h2>
+        <p>Age: {age2}</p>
+      </div>
+      <div>
+        <h2>{name3}</h2>
+        <p>Age: {age3}</p>
+      </div>
+      <footer>{footerText}</footer>
+    </div>
+  );
+};
+
+export default App;
+```
+
+Dans votre nouveau projet, vous allez maintenant commencer par copier / coller le code donné et voir que l'application fonctionne. Vous allez maintenant faire un refactor de cette application afin d'avoir un code propre et bien structuré.
+
+Veuillez identifier les parties du code qui peuvent être transformées en composants : Le titre de la page, les cartes utilisateur et le pied de page.
+
+Veuillez créer des fichiers pour chaque composant, importer les composants dans `App` et les utiliser.
+
+Veuillez aussi restructurer les données utilisées pour les cartes utilisateur en un tableau d'objets.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.3b`**.
 
 # <InternalPageTitle> Passer du TSX comme enfant : props.children </InternalPageTitle>
 
