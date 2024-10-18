@@ -54,7 +54,9 @@ Ensuite, créez trois nouveaux modules & dossiers :
 - `/src/components/Main/index.tsx`: dans ce module, ajouter le code du composant `Main` qui se trouve dans le composant `App` et n'oubliez pas d'exporter `Main`.
 - `/src/components/Footer/index.tsx`: dans ce module, ajouter le code du composant `Footer` qui se trouve dans le composant `App` et oubliez pas d'exporter `Footer`.
 
-Maintenant, mettez à jour le composant `App` afin de supprimer la définition des composants exportés (`Header`, `Main` & `Footer`).
+Maintenant, mettez à jour le composant `App` afin de supprimer la définition des composants exportés (`Header`, `Main` & `Footer`). 
+
+Pensez également à modifier le fichier `/src/main.tsx` pour mettre à jour le chemin de `App` lors de l'import (`import App from './components/App/index.tsx'`).
 
 Veuillez vérifier que votre application fonctionne correctement.
 
