@@ -1,0 +1,2 @@
+"use strict";(self.webpackChunkmyjscourse=self.webpackChunkmyjscourse||[]).push([[9190],{3373:function(e,s,t){t.r(s);var a=t(6540),l=t(2662),c=t(5938),n=t(9460);s.default=()=>a.createElement(l.A,null,a.createElement(c.A,{className:"pb-3"},a.createElement(n.A,null,a.createElement("h3",{className:""},"Page de test"))))}}]);
+//# sourceMappingURL=component---src-pages-test-fr-js-ec1c0ad4818f5ab2fc97.js.map
