@@ -514,4 +514,21 @@ Veuillez créer trois éléments de votre nouveau composant React dans le compos
 
 N'oubliez pas d'appliquer les conventions vues dans le cours : chaque composant React doit se trouver dans son propre module,...
 
+🤝 Tips :
+- Pour faire de l'affichage conditionnel en React, vous pouvez utiliser un `ternary operator` ou un `if` dans le JSX. 
+- Par exemple, pour ajouter une classe CSS conditionnellement, vous pouvez utiliser une expression ternaire : 
+```tsx
+return ( <div className={isOnline ? "online" : "offline"}>
+  {isOnline ? "En ligne" : "Hors ligne"}
+</div> );
+```
+- Avec un `if`, vous pourriez faire la même chose, mais c'est plus long, il faut deux blocs `return` : 
+```tsx
+if (isOnline) {
+  return <div className="online">En ligne</div>;
+} else {
+  return <div className="offline">Hors ligne</div>;
+}
+```
+
 Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.4b`**.
