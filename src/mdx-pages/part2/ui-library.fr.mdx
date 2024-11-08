@@ -32,7 +32,7 @@ Toute la documentation de cette librairie est disponible : https://mui.com/mater
 
 ## Installation de Material UI
 
-Pour ce tutoriel, veuillez créer une copie du tutoriel `medium-state`, si nécessaire voici le code du tutoriel [medium-state](https://github.com/e-vinci/ts-demos/tree/main/front/medium-state), et l'appeler `ui-library`. Changez le nom du projet dans `package.json`.
+Pour ce tutoriel, veuillez créer une copie de la solution de l'exercice `2.8`, si nécessaire voici le code de [ex2.8](https://github.com/e-vinci/ts-exercises/tree/main/ex2.8), et l'appeler `ui-library`. Changez le nom du projet dans `package.json`.
 
 Commencez par installer les librairies de bases nécessaires : 
 ```sh
@@ -316,8 +316,11 @@ const nextPizzaId = (pizzas: Pizza[]) => {
 
 export default Main;
 ```
+Il n'y a pas de composants `MUI` non rencontrés précédemment. Il n'y a plus de CSS.
 
-Il n'y a pas de composants `MUI` non rencontrés précédemment. Il n'y a plus de CSS. Voici le nouveau type `Drink` qui doit être ajouté à `/src/types.ts` :
+A ce stade-ci, il est normal qu'il y ait toujours des erreurs dans votre application. Nous allons les corriger en changeant plusieurs composants.
+
+ Voici le nouveau type `Drink` qui doit être ajouté à `/src/types.ts` :
 ```ts numbered highlighting="9-14,16"
 interface Pizza {
   id: number;
