@@ -52,7 +52,9 @@ Il est de bonne pratique de normaliser tous les composants HTML en faisant appel
 
 Veuillez mettre à jour `/src/main.tsx` ainsi :
 
-```tsx highlighting="2,8"
+```tsx highlighting="4,10"
+import React from "react";
+import ReactDOM from "react-dom/client";
 import "@fontsource/roboto/700.css";
 import CssBaseline from "@mui/material/CssBaseline";
 import App from "./components/App";
