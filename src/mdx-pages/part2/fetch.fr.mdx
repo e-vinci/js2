@@ -447,7 +447,7 @@ Content-Type: application/json
 
 Ici, c'est le JS/TS à rajouter dans la fonction **`addPizza`** de **`App`** qui doit, permettre de récupérer les données de la pizza à créer et faire un **`fetch`** de l'opération de création offerte par l'API.
 
-Pour arriver à nos fins, veuillez mettre à jour la fonction `addPizza` dans `Main` :
+Pour arriver à nos fins, veuillez mettre à jour la fonction `addPizza` dans `App` :
 
 ```tsx numbered highlighting="2-23"
 const addPizza = async (newPizza: NewPizza) => {
@@ -475,8 +475,6 @@ const addPizza = async (newPizza: NewPizza) => {
     }
   };
 }
-
-export default AddPizzaPage;
 ```
 
 Pour la nouveauté et le **`fetch`** :

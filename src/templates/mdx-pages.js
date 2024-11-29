@@ -31,6 +31,7 @@ import {
   PathViewer,
   PathViewerItem,
 } from '../components/path-viewer/path-viewer.js';
+import DownloadGitFolder from '../components/download-git-folder-link/DownloadGitFolder.js';
 
 const shortcodes = {
   Link,
@@ -54,6 +55,7 @@ const shortcodes = {
   InternalPageTitle,
   PathViewer,
   PathViewerItem,
+  DownloadGitFolder,
 };
 
 export default function PageTemplate({ data: { mdx, allImages }, children }) {
