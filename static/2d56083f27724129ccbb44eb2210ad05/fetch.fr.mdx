@@ -1,0 +1,759 @@
+---
+title: "Requêtes & promises"
+description: "SPA, les requêtes et les promises en React"
+---
+
+# g) Les requêtes & promises
+
+<InternalPageMenu>
+  <PathViewer>
+    <PathViewerItem to="/"> web2course </PathViewerItem>
+    <PathViewerItem to="/part2"> Partie 2 </PathViewerItem>
+    <PathViewerItem selected> g) Les requêtes & promises </PathViewerItem>
+  </PathViewer>
+  <InternalPageMenuItem> Fetch de données </InternalPageMenuItem>
+  <InternalPageMenuItem> useEffect </InternalPageMenuItem>
+  <InternalPageMenuItem> Les "promises" & fetch </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 2.13 : Premier fetch online </InternalPageMenuItem> 
+  <InternalPageMenuItem> Exercice 2.13b : Un autre fetch online </InternalPageMenuItem> 
+  <InternalPageMenuItem> Gestion d'événements associés au temps </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 2.14 : Gestion d'événement temporel </InternalPageMenuItem>
+  <InternalPageMenuItem> async / await </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 2.14b : async / await périodique  </InternalPageMenuItem>
+  <InternalPageMenuItem> Opération asynchrone d'écriture d'une ressource </InternalPageMenuItem>
+  <InternalPageMenuItem> Création de fonctions asynchrones renvoyant une promesse </InternalPageMenuItem>
+    <InternalPageMenuItem> Single Origin Policy & CORS </InternalPageMenuItem>
+  <InternalPageMenuItem> Simulation d'une même origine via un proxy </InternalPageMenuItem>
+  <InternalPageMenuItem> Exercice 2.15 : Proxy & async / await </InternalPageMenuItem> 
+  <InternalPageMenuItem> Exercice 2.15b : async / await : effacer une ressource </InternalPageMenuItem>
+
+</InternalPageMenu>
+
+# <InternalPageTitle> Fetch de données </InternalPageTitle>
+
+La méthode **`fetch`** permet de faire des requêtes HTTP d'un browser vers des API.
+
+Cette méthode est asynchrone, c'est-à-dire quelle n'est pas bloquante, elle renvoie des promesses de résultats via des objets **`Promise`**. Dans un premier temps, nous allons de manière intuitive découvrir la programmation asynchrone. Nous verrons plus en détails par la suite ce type de programmation à l'aide de **promises** (les promesses).
+
+Si un jour vous avez besoin d'en savoir plus sur la méthode **`fetch`**, n'hésitez pas à consulter la [documentation MDN](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) [[R.61]](/references/#r61).
+
+Pour ce tutoriel, veuillez créer une copie du tutoriel `routing-state`, si nécessaire voici le code du tutoriel [routing-state](https://github.com/e-vinci/ts-demos/tree/main/front/routing-state), et l'appeler `fetch-no-proxy`. Changez le nom du projet dans `package.json`.
+
+Actuellement, les **`pizzas`** du menu sont "hardcodées" dans `App`.  
+
+Nous souhaitons changer ça : afin de récupérer une liste de pizzas, l'IHM doit faire une requête **`fetch`** à notre RESTful API développée dans la partie [Refactoring à l'aide de services](../../part1/refactoring/) :
+[services](https://github.com/e-vinci/js-demos/tree/main/back/api/services).
+
+Nous n'allons donc plus utiliser REST Client mais une fonction offerte par le browser pour faire l'équivalent de cette requête :
+
+```http
+### Read all pizzas with File variable
+GET {{baseUrl}}/pizzas
+```
+
+Veuillez mettre à jour `App` en supprimant l'array **`pizzas`** et en rajoutant la requête `fetch` : 
+```tsx numbered highlighting="1,5-18"
+const App = () => {
+  const [actionToBePerformed, setActionToBePerformed] = useState(false);
+  const [pizzas, setPizzas] = useState<Pizza[]>([]);
+
+  useEffect(() => {
+    fetch("http://localhost:3000/pizzas")
+      .then((response) => {
+        if (!response.ok)
+          throw new Error(
+            `fetch error : ${response.status} : ${response.statusText}`
+          );
+        return response.json();
+      })
+      .then((pizzas) => setPizzas(pizzas))
+      .catch((err) => {
+        console.error("HomePage::error: ", err);
+      });
+  }, []);
+
+  // Reste du code inchangé
+```
+
+Malheureusement, cela ne fonctionne pas, nous avons cette erreur : `Access to fetch at 'http://localhost:3000/pizzas' from origin 'http://localhost:5173' has been blocked by CORS policy: No 'Access-Control-Allow-Origin' header is present on the requested resource. If an opaque response serves your needs, set the request's mode to 'no-cors' to fetch the resource with CORS disabled.`.
+
+Nous allons apprendre à résoudre cette erreur dans la partie qui suit, car celle-ci dépend de la façon dont l'API a été configurée. A ce stade-ci, pour voir l'application fonctionner, veuillez :
+- Stopper la RESTful API ;
+- Télécharger, et désarchiver cette API : <LinkFile name="api-json-server.zip" target="_blank" download> RESTful API offerte grâce à json-server </LinkFile>
+- Lancer l'API téléchargée : 
+  - Ouvrir un terminal dans son répertoire.
+  - Installation des packages : **`npm i`**
+  - Exécution de l'API : **`npm start`**
+- Faire un refresh au niveau de votre browser. 
+
+Le menu des pizzas devrait s'afficher 🎉.  
+Le code va être expliqué dans la suite du tutoriel.
+
+Si nécessaire, vous pouvez trouver le code associé à ce tutoriel ici : [fetch-no-proxy](https://github.com/e-vinci/ts-demos/tree/main/front/fetch-no-proxy).
+
+# <InternalPageTitle> useEffect </InternalPageTitle>
+
+Mais à quoi sert `useEffect` dans un composant React ?
+
+`useEffect` est un hook de React qui permet d'exécuter des effets secondaires dans nos composants fonctionnels. Les effets secondaires peuvent inclure des opérations telles que la récupération de données depuis une API, la manipulation directe du DOM, la configuration de timers, etc.
+
+Le code à l'intérieur de `useEffect` est une fonction qui sera exécutée après que le composant soit rendu.
+
+Le tableau vide `[]` en second argument signifie que cet effet ne s'exécutera qu'une seule fois, après le premier rendu du composant :
+
+```tsx highlighting="5-7"
+const App = () => {
+  const [actionToBePerformed, setActionToBePerformed] = useState(false);
+  const [pizzas, setPizzas] = useState<Pizza[]>([]);
+
+  useEffect(() => {
+   // Code de la fonction
+  }, []);
+  // ...
+```
+
+Si vous aviez mis des variables d'état dans ce tableau, l'effet se serait exécuté à chaque fois que ces variables auraient changé.
+
+Un exemple est donné dans le composant `AudioPlayer` du tutoriel : 
+```ts
+const AudioPlayer = ({
+  sound,
+  actionToBePerformed,
+  clearActionToBePerformed,
+}: AudioPlayerProps) => {
+  const [isPlaying, setIsPlaying] = useState(false);
+  const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const audioElement = audioRef.current;
+
+    if (audioElement && actionToBePerformed) {
+      console.log("actionToBePerformed", actionToBePerformed);
+      if (audioElement.paused) audioElement.play();
+      else audioElement.pause();
+      clearActionToBePerformed();
+    }
+  }, [actionToBePerformed]);
+```
+
+La fonction a l'intérieur de `useEffect` ne sera appelée que si la valeur de `actionToBePerformed` change.
+
+En résumé, pour les fetch de données, si on souhaite le faire qu'une seule fois, au tout premier rendu du composant, alors il faut utiliser `useEffect` avec un `[]` en deuxième paramètre.
+
+La suite va expliquer les fondements de la programmation asynchrone en JS/TS.
+
+# <InternalPageTitle> Les "promises" & fetch </InternalPageTitle>
+
+La méthode **`fetch`** renvoie une **`Promise`**, qui est un objet représentant un état intermédiaire d'une opération. Le code des callbacks s'exécute quand la tâche asynchrone est finie avec succès ou si la tâche échoue.
+
+Les états d'une promesse sont les suivants :
+
+- **pending** : état initial,
+- **fulfilled** : l'opération asynchrone a été terminée avec succès ; par exemple la requête **`fetch()`** a obtenu un flux de données avec la RESTful API,
+- **rejected** : l'opération asynchrone a échouée ; par exemple la requête **`fetch`** est mal construite.
+
+Pour récupérer le résultat d'une méthode asynchrone, on va faire appel :
+- **`.then( callback )`** : ce morceau de code permet de chaîner des traitements asynchrones. Par exemple, à la fin du premier traitement asynchrone associé au **`fetch()`**, on appelle
+
+```ts numbered highlighting="2-8"
+fetch("http://localhost:3000/pizzas")
+      .then((response) => {
+        if (!response.ok)
+          throw new Error(
+            `fetch error : ${response.status} : ${response.statusText}`
+          );
+        return response.json();
+      })
+      .then((pizzas) => setPizzas(pizzas))
+      .catch((err) => {
+        console.error("HomePage::error: ", err);
+      });
+```
+
+La **callback** sera appelée et recevra comme paramètre un objet de type **`Response`** : cet objet ne contient pas encore le contenu du body de la réponse. En fait, **`Response.body`** est un flux de données (un stream), il faudra donc faire appel à un traitement asynchrone pour obtenir le contenu du body sous forme d'un objet JS.  
+C'est ce qui est fait en renvoyant **`return response.json();`** : la fonction **`json()`** renvoie une promesse, c'est à dire qu'une fois le traitement terminé, nous pourrons chaîner celui-ci via un autre **`.then()`**.
+C'est ainsi que nous chaînons, une fois le **`body`** disponible, l'appel d'une deuxième **callback** qui s'occupe de mettre à jour la variable d'état `pizza`. Cette deuxième **callback** recevra en paramètre le body de la réponse sous forme d'un objet JS :
+
+```ts numbered highlighting="9"
+fetch("http://localhost:3000/pizzas")
+      .then((response) => {
+        if (!response.ok)
+          throw new Error(
+            `fetch error : ${response.status} : ${response.statusText}`
+          );
+        return response.json();
+      })
+      .then((pizzas) => setPizzas(pizzas))
+      .catch((err) => {
+        console.error("HomePage::error: ", err);
+      });
+```
+
+**`.catch( callback )`** : ce morceau de code permet d'exécuter une **callback** lorsque la tâche asynchrone associée à la promesse échoue. Dans le code, on voit que l'on affiche juste un message dans la console :
+
+```js numbered highlighting="10-12"
+fetch("http://localhost:3000/pizzas")
+      .then((response) => {
+        if (!response.ok)
+          throw new Error(
+            `fetch error : ${response.status} : ${response.statusText}`
+          );
+        return response.json();
+      })
+      .then((pizzas) => setPizzas(pizzas))
+      .catch((err) => {
+        console.error("HomePage::error: ", err);
+      });
+```
+
+**`.finally( callback )`** : si l'on souhaite exécuter une callback quelque soit le résultat de la promesse, en cas de succès ou d'échec.
+
+⚡ Pour le chaînage des traitements via plusieurs callback appelées au sein de **`.then()`**, cela n'est possible que s'il y a un **`return`** dans les callback.
+
+En effet, si une callback dans la gestion de promesses retourne :
+
+- **Une valeur** : la promesse retournée par **`then`** est résolue avec la valeur.
+- **Pas de valeur** : la promesse retournée par **`then`** est résolue avec **`undefined`**.
+- **Une autre promesse "pending"**: la promesse retournée par **`then`** est résolue/rejetée à la suite de la résolution/rejet de la promesse retournée par la **callback**.
+
+Pour info, autrefois, pour la programmation asynchrone en JS, nous utilisions simplement les callbacks, des fonctions que l'on passait en argument d'autres fonctions. Le code pouvait facilement devenir illisible et donc difficilement maintenable.
+
+
+# <InternalPageTitle> Exercice 2.13 : Premier fetch online </InternalPageTitle>
+
+Nous souhaitons consommer une API qui nous permette d'afficher des blagues.  
+Nous avons trouvé une restful API qui permet très facilement de générer de manière aléatoire des **`jokes`** : [JokeAPI](https://v2.jokeapi.dev/).
+
+Cette API est très simple d'utilisation. D'ailleurs, la page du site [JokeAPI](https://v2.jokeapi.dev/) vous donne un exemple fonctionnel de comment récupérer des blagues simples dans l'onglet **`Try it out here`**. Pour cela, désélectionnez **`twopart`** et vous obtenez l'URL pour faire vos requêtes en dessous du formulaire.
+
+Veuillez créer un nouveau projet en utilisant les technos Vite + React + TS + SWC nommé `/exercises/2.13-14` dans votre repo git.
+
+Dans votre application, veuillez afficher une **`joke`** après l'avoir récupérée de **`JokeAPI`**, en donnant ces 2 informations :
+- la catégorie associée à la **`joke`** ;
+- le texte associé à la **`joke`**.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.13`**.
+
+# <InternalPageTitle> Exercice 2.13b : Un autre fetch online </InternalPageTitle>
+
+Nous avons trouvé une restful API qui permet très facilement de générer de manière aléatoire des photos de chiens : [Dog API](https://dog.ceo/dog-api/).
+
+Cette API est très simple d'utilisation. D'ailleurs, la page du site [Dog API](https://dog.ceo/dog-api/) vous donne un exemple fonctionnel de comment récupérer aléatoirement une photo de chien.
+
+Veuillez créer un nouveau projet en utilisant les technos Vite + React + TS + SWC nommé `/exercises/2.13b` dans votre repo git.
+
+Dans votre application, veuillez afficher 3 photos aléatoires de chiens. Veuillez ajouter un bouton qui permette de rafraîchir les photos avec 3 nouvelles photos aléatoires.
+
+Comme contrainte d'implémentation, vous devez créer un composant **`RandomDog`** et l'appeler 3 fois dans votre composant principal. 
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.13b`**.
+
+#### 🤝 Tips
+- Comment forcer le composant `App` à faire un rerender de ses enfants ?  
+  Vous pouvez utiliser un état qui sera modifié à chaque fois que vous cliquez sur le bouton de rafraîchissement des photos de chiens.  
+  Cela forcera le composant `App` à faire un rerender de ses enfants.
+- Pensez à faire en sorte, pour que le rerender des enfants fonctionne, qu'une nouvelle clé soit générée pour chaque enfant (`RandomDog`). Si aucune clé n'est générée, React ne fera pas de rerender des enfants, car il considère que les enfants n'ont pas changé ; )
+
+# <InternalPageTitle> Gestion d'événements associés au temps  </InternalPageTitle>
+
+## Gestion d'un timer
+**`setTimeout(f,t)`** permet l'exécution d'une callback **`f`** à l'expiration d'un timer, après **`t`** ms.
+
+**`clearTimeout()`** permet de stopper l'exécution d'une callback qui a été appelée via **`setTimeout()`**.
+
+Cet exemple montre comment mettre en place un minuteur qui met à jour un état après 3 secondes :
+```tsx numbered highlighting="8-10,13"
+import { useState, useEffect } from 'react';
+
+const TimerComponent = () => {
+  const [message, setMessage] = useState('Attendez 3 secondes...');
+
+  useEffect(() => {
+    // Définir un timer de 3 secondes
+    const timer = setTimeout(() => {
+      setMessage('3 secondes se sont écoulées!');
+    }, 3000);
+
+    // Nettoyage du timer pour éviter des fuites de mémoire si le composant est démonté avant que le timer se déclenche
+    return () => clearTimeout(timer);
+  }, []); // Le tableau vide [] signifie que cet effet s'exécute une seule fois lors du montage
+
+  return (
+    <div>
+      <p>{message}</p>
+    </div>
+  );
+};
+
+export default TimerComponent;
+```
+
+Ici nous apprenons un nouveau concept associé à `useEffect` : la **fonction de nettoyage**. Une fonction de nettoyage, au sein de `useEffect`, est une fonction qui sera appelée lors de la destruction d'un composant (par exemple lorsque l'on passe d'une page à une autre, la page sera "détruite"). La fonction de nettoyage est spécifiée dans le `return` de `useEffect`.
+
+Ci-dessus, la fonction de nettoyage `clearTimeout(timer)` est retournée par `useEffect` pour s'assurer que le timer est nettoyé si le composant est démonté avant que le timer ne se déclenche. Cela sera très utile à mettre en place lorsqu'une action est associée à une page uniquement.
+
+## Gestion d'intervalles de temps & actions répétées
+
+**`setInterval(f,t)`** permet l'exécution d'une callback **`f`** tous les **`t`** ms.
+
+**`clearInterval()`** permet de stopper les appels à la callback qui ont été programmés via **`setInterval()`**.
+
+Cet exemple montre comment mettre en place un intervalle qui met à jour un compteur toutes les secondes. :
+```tsx numbered highlighting="8-10,13"
+import { useState, useEffect } from 'react';
+
+const CounterComponent = () => {
+  const [count, setCount] = useState(0);
+
+  useEffect(() => {
+    // Définir un intervalle qui incrémente le compteur toutes les secondes
+    const interval = setInterval(() => {
+      setCount(prevCount => prevCount + 1);
+    }, 1000);
+
+    // Nettoyage de l'intervalle pour éviter des fuites de mémoire si le composant est démonté
+    return () => clearInterval(interval);
+  }, []); // Le tableau vide [] signifie que cet effet s'exécute une seule fois lors du montage
+
+  return (
+    <div>
+      <p>Compteur: {count}</p>
+    </div>
+  );
+};
+
+export default CounterComponent;
+```
+
+# <InternalPageTitle> Exercice 2.14 : Gestion d'événement temporel </InternalPageTitle>
+
+Veuillez continuer l'exercice précédent nommé `/exercises/2.13-14` afin d'afficher une nouvelle blague toute les 10 secondes.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.14`**.
+
+# <InternalPageTitle> async / await </InternalPageTitle>
+
+## Introduction
+
+Plutôt que d'utiliser des **`.then()`** pour chaîner des traitements asynchrones, il est possible de simplifier la syntaxe des promesses à l'aide de **`async`** et **`await`**.
+
+On va donc écrire du code d'une manière équivalente à ce qui serait fait en programmation synchrone, tout en bénéficiant des effets de la programmation asynchrone.
+
+## async / await : les bases
+
+Pour ce nouveau tutoriel, nous allons refactorer l'IHM pour améliorer le code associé aux appels asynchrones aux API.
+
+Pour ce tutoriel, veuillez créer une copie du tutoriel `fetch-no-proxy`, si nécessaire voici le code du tutoriel [fetch-no-proxy](https://github.com/e-vinci/ts-demos/tree/main/front/fetch-no-proxy), et l'appeler `async-await`. Changez le nom du projet dans `package.json`.
+
+Nous allons donc refactorer le code où est fait le `fetch`, c'est à dire `App` :
+
+```tsx numbered highlighting="6,9-22"
+const App = () => {
+  const [actionToBePerformed, setActionToBePerformed] = useState(false);
+  const [pizzas, setPizzas] = useState<Pizza[]>([]);
+
+  useEffect(() => {
+    fetchPizzas();
+  }, []);
+
+  const fetchPizzas = async () => {
+    try {
+      const response = await fetch("http://localhost:3000/pizzas");
+
+      if (!response.ok)
+        throw new Error(
+          `fetch error : ${response.status} : ${response.statusText}`
+        );
+
+      const pizzas = await response.json();
+      setPizzas(pizzas);
+    } catch (err) {
+      console.error("HomePage::error: ", err);
+    }
+  };
+```
+
+Pour tester ce code, il ne faut pas oublier de démarrer la RESTful API auparavant, la même qu'au tutoriel précédent (téléchargez, et désarchivez cette API : <LinkFile name="api-json-server.zip" target="_blank" download> RESTful API offerte grâce à json-server </LinkFile> & exécutez la).
+
+Voici quelques caractéristiques importantes de **`async`** / **`await`** :
+- **`await`** est utilisé pour chaîner une tâche asynchrone (sur une fonction renvoyant une promesse) et ne peut se faire qu'au sein d'une fonction taguée par **`async`** ; c'est donc le remplaçant du **`.then(callback)`**.  
+  ⚡ Attention, il est donc important qu'au niveau de la fonction **`arrow`**, à la ligne 1 du code donné ci-dessus, on indique le **`async`** !  
+  ⚡ Dans le code donné ci-dessus, il est aussi très important de ne pas oublier les **`await`**. N'hésitez pas à faire le test en enlevant le **`await`** de **`const pizzas = await response.json();`**.  
+- Toute fonction "taguée" par **`async`** renvoie automatiquement une promesse ; cela signifie dans le code ci-dessus que la fonction **`fetchPizzas`** est elle même asynchrone.  
+- On utilise des blocs **`try`** / **`catch`** pour gérer les erreur ; c'est donc le remplaçant du **`.catch(callback)`**.
+
+💭 Il est à parier, et n'hésitez pas à trouver un moyen de vous en rendre compte visuellement, que le footer s'affiche avant le menu !
+
+💭 Pourquoi ne pas avoir mis directement un await dans le `useEffect`, sans créer la fonction `fetchPizza` ? On aurait pu tenter quelque chose du genre :
+```ts
+useEffect(async () => {
+    try {
+      const response = await fetch("http://localhost:3000/pizzas");
+
+      if (!response.ok)
+        throw new Error(
+          `fetch error : ${response.status} : ${response.statusText}`
+        );
+
+      const pizzas = await response.json();
+      setPizzas(pizzas);
+    } catch (err) {
+      console.error("HomePage::error: ", err);
+    }
+  }, []);
+```
+
+Cela n'est pas possible car `useEffect`, via TS et le linter, ne permet pas d'avoir une fonction asynchrone en paramètre ! Ainsi, si l'on souhaite lancer une action asynchrone, nous devons faire preuve d'ingénuité : il faut créer une fonction, et l'appeler au sein de la callback de `useEffect` ; )
+
+# <InternalPageTitle> Exercice 2.14b : async / await périodique </InternalPageTitle>
+
+Veuillez créer un nouveau projet nommé `/exercises/2.14b` dans votre repo git, sur base d'un copier / coller de `/exercises/2.13b`.
+
+Nous allons faire un refactor de l'application permettant d'afficher 3 photos aléatoires de chiens.
+
+Dans un premier temps, veuillez faire un refactor du **`fetch`** en utilisant **`async`** / **`await`**.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.14b-refactor`**.
+
+Ensuite, veuillez rafraîchir automatiquement les photos de chiens toutes les 5 secondes. Vous devez retirer le bouton de rafraîchissement des photos de chiens.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.14b`**.
+
+#### Challenge
+
+Il vous reste du temps ? Vous êtes extrêmement motivé ?  
+Veuillez faire en sorte que lorsque les utilisateurs passent leur souris sur une photo de chien, la photo reste affichée (il n'y a pas de fetch de nouvelles photos pour ce **`RandomDog`**). Lorsque la souris quitte la photo, le comportement initial est rétabli, on recommence à afficher des photos de chiens aléatoires toutes les 5 secondes.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.14b+`**.
+
+
+# <InternalPageTitle> Opération asynchrone d'écriture d'une ressource </InternalPageTitle>
+
+A présent, nous souhaiterions que notre IHM puisse créer une ressource au sein de la RESTful API. Dans un premier temps, nous allons mettre à jour le frontend en acceptant que n'importe quel utilisateur puisse créer une pizza et l'ajouter au menu de la pizzeria.  
+Bien entendu, cela est temporaire. Nous verrons plus tard comment sécuriser cette opération, en autorisant un admin seulement à réaliser l'ajout d'une pizza au menu.
+
+Nous allons maintenant ajouter l'interaction avec l'API au sein de **`AddPizzaPage`**.
+Lorsque nous soumettons le formulaire, nous voulons faire une requête de création de pizza à la RESTful API, c'est donc une requête de type **`POST /pizzas`** qui doit être l'équivalent de ce que nous faisions avec REST Client. Pour rappel, nous faisions une requête de ce genre :
+```http
+### Create a pizza
+POST {{baseUrl}}/pizzas
+Content-Type: application/json
+
+{
+    "title":"Magic Green",
+    "content":"Epinards, Brocolis, Olives vertes, Basilic"
+}
+```
+
+Ici, c'est le JS/TS à rajouter dans la fonction **`addPizza`** de **`App`** qui doit, permettre de récupérer les données de la pizza à créer et faire un **`fetch`** de l'opération de création offerte par l'API.
+
+Pour arriver à nos fins, veuillez mettre à jour la fonction `addPizza` dans `App` :
+
+```tsx numbered highlighting="2-23"
+const addPizza = async (newPizza: NewPizza) => {
+    try {
+      const options = {
+        method: "POST",
+        body: JSON.stringify(newPizza),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const response = await fetch("http://localhost:3000/pizzas", options); // fetch retourne une "promise" => on attend la réponse
+
+      if (!response.ok)
+        throw new Error(
+          `fetch error : ${response.status} : ${response.statusText}`
+        );
+
+      const createdPizza = await response.json(); // json() retourne une "promise" => on attend les données
+
+      setPizzas([...pizzas, createdPizza]);
+    } catch (err) {
+      console.error("AddPizzaPage::error: ", err);
+    }
+  };
+}
+```
+
+Pour la nouveauté et le **`fetch`** :
+- Pour faire une requête de type **`POST`**, tout comme pour les requêtes de type **`DELETE`**, **`PATCH`**, **`UPDATE`**..., il faut l'indiquer à la méthode **`fetch`**.  
+Cela est indiqué dans un objet que nous appelons généralement **`options`** qui doit contenir la propriété **`method`**.
+- Lorsque l'on doit envoyer des données dans le **`body`** d'une requête, alors il faut le faire au sein de la propriété **`body`**. Ici, nous souhaitons envoyer un objet contenant les propriétés **`title`** et **`content`** au format JSON. Nous devons donc utiliser la méthode **`JSON.stringify`** qui permet de créer une représentation JSON d'un objet JS/TS. 
+- Il est très important de spécifier le type de la représentation de l'objet qui devrait être utilisé par l'API et qui se trouve dans le body de la requête. Cela est fait via un **`header`** et la propriété **`Content-Type`** (**`'Content-Type': 'application/json',`**).  
+⚡ Si vous oubliez cela, l'API ne pourra pas parser les données au format JSON vers des objets JS/TS et donc les opérations d'écriture de ressources échoueront !
+
+Veuillez vérifier que tout fonctionne correctement ; )
+
+💭 Comment vérifier que les données persistent bien dans notre API après avoir soumis une nouvelle pizza ?
+
+Faites un refresh de votre page... Vous pouvez même stopper votre frontend et le redémarrer (mais pas votre API). La nouvelle pizza devrait toujours être affichée. Pour rappel, quand les données étaient traitée dans un tableau en mémoire vive via notre frontend, lors d'un refresh, on perdait ces données.
+
+## Quelques mots sur le type en TypeScript
+
+N'avez-vous pas été surpris que lorsque nous avons mis à jour `addPizza`, en la rendant asynchrone à l'aide du mot clé `async`, nous n'ayons pas du changer le type de `addPizza` au sein du type `PizzeriaContext` ?
+
+Pour garder notre typage propre, nous vous recommandons de mettre à jour le retour de `addPizza` dans `/src/types.ts` :
+```ts
+interface PizzeriaContext {
+  pizzas: Pizza[];
+  setPizzas: (pizzas: Pizza[]) => void;
+  actionToBePerformed: boolean;
+  setActionToBePerformed: (actionToBePerformed: boolean) => void;
+  clearActionToBePerformed: () => void;
+  drinks: Drink[];
+  addPizza: (newPizza: NewPizza) => Promise<void>;
+}
+```
+
+C'est une `Promise` qui est retournée par la fonction `addPizza`.
+
+# <InternalPageTitle> Création de fonctions asynchrones renvoyant une promesse </InternalPageTitle>
+
+A l'aide d'**`async`** / **`await`**, il est très simple de créer des fonctions asynchrones qui renvoient une promesse.
+
+Nous l'avons déjà fait dans ce tutoriel. Imaginons que nous souhaitons créer une fonction asynchrone qui renvoie toutes les pizzas qui sont offertes par l'opération de lecture des pizzas de la RESTful API.
+
+Voici comment nous écririons ce code :
+
+```ts
+async function getAllPizzas() {
+    try {
+      const response = await fetch("http://localhost:3000/pizzas");
+
+      if (!response.ok)
+        throw new Error(
+          `fetch error : ${response.status} : ${response.statusText}`
+        );
+
+      const pizzas = await response.json();
+
+      return pizzas;
+    } catch (err) {
+      console.error("getAllPizzas::error: ", err);
+      throw err;
+    }
+  }
+```
+
+Cette fonction **`getAllPizzas`** ne renvoie pas un array de pizzas, mais une **`Promise`** !  
+Si la promesse :
+- résout avec succès, alors c'est bien un array de pizzas qui sera renvoyé par cette fonction.
+- échoue, c'est une exception qui sera renvoyée.  
+Pour que cela fonctionne, vous devez donc faire en sorte, dans vos fonctions asynchrones, de faire un **`throw`** d'une erreur en cas d'échec du traitement asynchrone.
+
+Comment utiliser ce code au sein de `App`?  
+Voici comment le code pourrait être mis à jour pour utiliser la fonction asynchrone `getAllPizzas` au sein de `App` :
+
+```tsx highlighting="1,5"
+const App = () => {
+  const [actionToBePerformed, setActionToBePerformed] = useState(false);
+  const [pizzas, setPizzas] = useState<Pizza[]>([]);
+
+  useEffect(() => {
+    fetchPizzas();
+  }, []);
+
+  const fetchPizzas = async () => {
+    try {
+      const pizzas = await getAllPizzas();
+      setPizzas(pizzas);
+    } catch (err) {
+      console.error("HomePage::error: ", err);
+    }
+  };
+```
+
+Si nécessaire, vous pouvez trouver le code associé à ce tutoriel ici : [async-await](https://github.com/e-vinci/ts-demos/tree/main/front/async-await).
+
+
+# <InternalPageTitle> Single Origin Policy & CORS </InternalPageTitle>
+
+La **Single Origin Policy** (**SOP**) sont des règles appliquées par le browser afin :
+- de restreindre les interactions entre un document ou script chargé par une origine avec une ressource d'une autre origine ;
+- d'isoler des documents ou scripts malicieux, afin de réduire le risque des attaques.
+
+Deux URL ont une même **origine** si ces caractéristiques sont les mêmes :
+
+- **protocole** ;
+- **port** ;
+- **host** ; l'URL pointe vers le même appareil connecté à internet ou à un réseau local.
+
+Il est possible de relaxer la sécurité via des **Cross Origin Resource Sharing** (**CORS**).  
+**CORS** est un mécanisme qui utilise des headers HTTP pour indiquer aux browsers qu'ils peuvent autoriser les accès à des ressources d'origines différentes.
+
+Cela signifie qu'une application web qui utilise une API ne peut le faire que si les ressources demandées à l'API proviennent d'une même origine, à moins que la réponse de l'API inclut les bonnes **CORS** (via des header HTTP).
+
+Si l'on autorise trop d'origines, voici un exemple classique d'attaque :
+
+<ScrollableImage name="cors-issue.png" minWidth="500px" maxWidth="700px" />
+
+Imaginez qu'un site d'une banque ne soit pas sécurisé avec des techniques modernes. Ce site utiliserait une IHM (**`https://my-bank.com`**), qui, via un formulaire, permettrait de faire un versement, sous réserve d'envoyer un cookie qui contiendrait une variable de session (simple mécanisme de sécurité) lors d'une requête à l'API de la banque.
+
+Maintenant, prenons le cas d'un utilisateur qui adore jouer sur le web, un gamer en puissance. Il joue à un jeu de penguins, mais soudainement, il est redirigé vers un site malicieux (**`https://malicious.com`**), qui lui offre un nouveau jeu avec des dinosaures. Ce site malicieux, en arrière plan, pourrait faire une requête vers la même API utilisée par **`https://my-bank.com`**.  
+Comme c'est le même browser utilisé par notre gamer, tant pour faire ses virements, que pour jouer, toute requête faite vers **`https://api.my-bank.com`** enverra d'office les cookies existants et associés au domaine **`api.my-bank.com`**.
+Les résultats peuvent être dramatiques : l'attaquant à la capacité de faire des versements jusqu'à vider le compte de notre pauvre gamer.
+
+Bien sûr, grâce à la **SOP** appliquée par nos browser, par défaut, dès que le site malicieux communique avec l'API de la banque, celui-ci bloque l'accès aux ressources de l'API car l'origine du site malicieux est différente de l'origine de l'API.
+
+Les **CORS** permettent de relâcher la sécurité, afin notamment, dans le scénario évoqué, d'autoriser l'origine **`https://my-bank.com`** à accéder à l'origine **`https://api.my-bank.com`**. En effet, c'est ce que le site de la banque souhaite.  
+Par contre, si la banque possède des développeurs nuls au niveau sécurité et que ceux-ci autorisent toutes les origines à interroger l'API, là, nous pourrions arriver au hacking décrit ci-dessus.
+
+Dans ce cours, nous allons voir comment nous pouvons communiquer entre un frontend et une API fonctionnant sous deux origines différentes, à l'aide de deux techniques différentes :
+- **`proxy`** : le frontend communique avec un serveur qui lui est associé, et ce serveur communique avec l'API. Le serveur 'proxy' est donc un intermédiaire entre le frontend et l'API. Nous allons voir cela dans la suite.
+- **`CORS`** : l'API autorise explicitement le frontend à communiquer avec elle. Cela sera vu plus tard, de manière optionnelle, dans la partie 3 de ce cours.
+
+
+# <InternalPageTitle> Simulation d'une même origine via un proxy </InternalPageTitle>
+
+Il est possible de mettre en place un proxy au niveau du frontend afin de faire croire au browser que l'API et le frontend ont la même origine.
+
+Veuillez démarrer l'API qui n'autorise aucune autre origine : [services](https://github.com/e-vinci/ts-demos/tree/main/back/api/services)).
+
+Nous allons mettre en place un mécanisme au niveau du frontend pour faire passer toutes les requêtes à destination de l'API par un proxy ; le proxy aura la même origine que le serveur de fichiers statiques ayant offert le frontend.
+
+Pour ce tutoriel, veuillez créer une copie du tutoriel `async-await`, si nécessaire voici le code du tutoriel [async-await](https://github.com/e-vinci/ts-demos/tree/main/front/async-await), et l'appeler `fetch-proxy`. Changez le nom du projet dans `package.json`.
+
+Le menu des pizzas ne s'affiche pas et nous avons le problème déjà rencontré (`...has been blocked by CORS policy`).
+
+
+Voici le workflow que nous allons appliquer à notre site gérant la pizzeria :
+- Lors du premier appel de notre browser au serveur de développement de Vite : on récupère notre SPA, c'est à dire `index.html` & tous les assets associés.
+- A chaque fetch, une requête est faite au proxy sur la même origine que le serveur de développement qui a offert les fichiers associés à la SPA.
+- Le proxy s'occupe de transférer la requête HTTP à l'API, puis de renvoyer la réponse au browser.
+- Ainsi, pour le browser, il n'y a qu'une seule origine : )
+
+Le serveur de développement de `Vite` met à disposition un proxy. Pour utiliser ce proxy, vous devez configurer `Vite`. Veuillez mettre à jour le fichier `vite.config.ts` :
+
+```ts numbered highlighting="12-20"
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react-swc";
+import checker from "vite-plugin-checker";
+
+export default defineConfig({
+  plugins: [
+    react(),
+    checker({
+      typescript: true,
+    }),
+  ],
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:3000",
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
+});
+```
+
+Cela signifie qu'à chaque fois qu'une requête sera faite sur **`/api`** (on reste sur la même origine que le serveur de fichiers statiques : **`5173`** est le port par défaut d'une application `Vite`), celle-ci sera redirigée vers le port **`3000`**, le port de l'API.
+Le `rewrite` permet de ne pas reprendre **`/api`** dans l'URL de la redirection :
+**`GET /api/pizzas`** devient **`GET http://localhost:3000/pizzas`**.
+
+Pour rappel, pour ajouter les problèmes de linter dans le browser ainsi que dans le terminal, après la transpilation/compilation, vous pouvez utiliser le plugin **`vite-plugin-checker`** (lignes 8 à 10 ci-dessus, et ligne 3 pour l'import).
+Pour cela, il ne faut pas oublier d'installer le plugin :
+```bash
+npm i vite-plugin-checker -D
+```
+
+
+Il nous reste à mettre à jour les `fetch` au sein de `App` :
+
+```ts numbered highlighting="3,29"
+async function getAllPizzas() {
+    try {
+      const response = await fetch("/api/pizzas");
+
+      if (!response.ok)
+        throw new Error(
+          `fetch error : ${response.status} : ${response.statusText}`
+        );
+
+      const pizzas = await response.json();
+
+      return pizzas;
+    } catch (err) {
+      console.error("getAllPizzas::error: ", err);
+      throw err;
+    }
+  }
+
+  const addPizza = async (newPizza: NewPizza) => {
+    try {
+      const options = {
+        method: "POST",
+        body: JSON.stringify(newPizza),
+        headers: {
+          "Content-Type": "application/json",
+        },
+      };
+
+      const response = await fetch("/api/pizzas", options); // fetch retourne une "promise" => on attend la réponse
+
+      if (!response.ok)
+        throw new Error(
+          `fetch error : ${response.status} : ${response.statusText}`
+        );
+
+      const createdPizza = await response.json(); // json() retourne une "promise" => on attend les données
+
+      setPizzas([...pizzas, createdPizza]);
+    } catch (err) {
+      console.error("AddPizzaPage::error: ", err);
+    }
+  };
+```
+
+A ce stade-ci, tout devrait fonctionner : le menu des pizzas est affiché suite à l'appel à notre RESTful API ne relaxant pas la sécurité !
+
+🍬 Voici quelques infos non capitales pour ce cours-ci :
+
+- Il existe une multitude de proxy pour un environnement de développement : **`Vite development server`** et son proxy, **`VS Code proxy`**, proxy léger de **`Node`** directement configurable via **`package.json`** (**`"proxy": "http://localhost:3000",`**), ...
+- Il existe par exemple un proxy complet sous Node : **`http-proxy-middleware`**.
+- Pour la production, lorsque vous déployez une application web sur le cloud, il faudra trouver les instructions de votre provider pour voir comment configurer le proxy.  
+Par exemple, pour configurer un **static file server** et son **proxy** sous **heroku** (provider de services d'hébergements sur le cloud), il faut configurer le fichier **`/static.json`**.
+
+Si nécessaire, vous pouvez trouver le code associé à ce tutoriel ici : [fetch-proxy](https://github.com/e-vinci/ts-demos/tree/main/front/fetch-proxy).
+
+# <InternalPageTitle> Exercice 2.15 : Proxy & async / await </InternalPageTitle>
+
+Veuillez partir d'une copie de l'exercice (`/exercises/2.10-11-12`) pour créer un nouveau projet nommé `exercises/2.15` afin de compléter l'application `myMovies`.
+
+Nous souhaitons maintenant que toutes les données de films soient fournies par une API que vous avez développées lors des premières semaines de cours. Cette API se trouve normalement dans votre repo git, dans le dossier `/exercises/1.8`. Pensez à démarrer cette API.  
+Pour la page présentant les cinémas, vous pouvez continuer à utiliser les données en dur. Pour toutes les autres pages, vous devez utiliser l'API de films.
+
+NB : Si vous n'avez pas réalisé l'exercice de création d'une API de films, vous pouvez utiliser l'API de films fournie ici : https://github.com/e-vinci/ts-exercises/tree/main/ex1.8
+
+A l'aide d'un proxy, et de async / await, veuillez consommer votre API de films afin :
+- de lire tous les films offerts par votre API et les afficher dans votre frontend ;
+- de créer des films. Une fois un film créé, vous devez faire un appel à votre API pour récupérer tous les films et les afficher dans votre frontend.
+
+💭 Une fois un film ajouté, pourquoi faire un appel à l'API afin d'obtenir tous les films et les afficher ? Pourquoi ne pas se satisfaire de simplement considérer tous les films comme étant le résultat du fetch précédent l'ajout en y ajoutant le film renvoyé par l'API lors de l'opération d'ajout ?
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.15`**.
+
+# <InternalPageTitle> Exercice 2.15b : async / await : effacer une ressource </InternalPageTitle>
+
+Veuillez partir d'une copie de l'exercice (`/exercises/2.15`) pour créer un nouveau projet nommé `exercises/2.15b` afin de compléter l'application `myMovies`.
+
+Dans la page affichant les films favoris, nous souhaitons offrir la possibilité d'effacer un film. Pour ce faire, veuillez ajouter un bouton pour chaque film favori, qui, lorsqu'il est cliqué, efface le film de la liste des films favoris.
+
+Attention, pour effacer un film, il faut faire une requête de type **`DELETE`** à l'API ; )
+
+De même, lorsque dans la HomePage l'utilisateur a sélectionné un film, la page affichant ce film doit afficher un bouton pour effacer le film.
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.15b`**.
+
+#### 🍬 Challenge
+Pensez à ajouter une icône de poubelle pour chaque film favori, afin de rendre l'interface plus intuitive (et plus jolie) ; )
+
+Ainsi, vous pouvez retirer le bouton **`Delete`** et le remplacer par une icône de poubelle.
+
+#### Tips
+- N'hésitez pas à utiliser ce site qui offre des icônes sans qu'aucune installation ne soit nécessaire : https://heroicons.com/
+
+Une fois tout fonctionnel, veuillez faire un commit avec le message suivant : **`new:ex2.15b+`**.
