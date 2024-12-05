@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import Dropdow from './dropdown.js';
 import { StaticImage } from 'gatsby-plugin-image';
 import { useMsal, useIsAuthenticated } from '@azure/msal-react';
@@ -37,6 +37,23 @@ const Menu = ({ siteMetadata, navbarExtraStyles }) => {
   const node = useRef();
 
   const [collapsed, setCollapsed] = useState(false);
+
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    return localStorage.getItem('theme') === 'dark' ||
+      (!localStorage.getItem('theme') &&
+        window.matchMedia('(prefers-color-scheme: dark)').matches);
+  });
+
+  const handleToggleTheme = () => {
+    const newMode = !isDarkMode;
+    setIsDarkMode(newMode);
+    document.body.classList.toggle('dark-mode', newMode);
+    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+  };
+
+  useEffect(() => {
+    document.body.classList.toggle('dark-mode', isDarkMode);
+  }, [isDarkMode]);
 
   return (
     <nav className={`navbar ${navbarExtraStyles ? navbarExtraStyles : ''}`}>
@@ -98,6 +115,35 @@ const Menu = ({ siteMetadata, navbarExtraStyles }) => {
           )}
         </ul>
       </div>
+      <button
+        onClick={handleToggleTheme}
+        style={{
+          padding: '10px 20px',
+          fontSize: '13px',
+          cursor: 'pointer',
+          background: isDarkMode ? '#ededed' : '#121212',
+          color: isDarkMode ? '#000' : '#fff',
+          borderColor: isDarkMode ? '#ddd' : '#333',
+          border: 'none',
+          borderRadius: '10px',
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          margin: '10px',
+          transition: 'background 0.3s, color 0.3s, border-color 0.3s',
+        }}
+        aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+      >
+        {isDarkMode ? (
+          <span role="img" aria-label="Sun" style={{ fontSize: '24px' }}>
+            Light Mode 🌞
+          </span>
+        ) : (
+          <span role="img" aria-label="Moon" style={{ fontSize: '24px' }}>
+            Dark Mode 🌚
+          </span>
+        )}
+      </button>
     </nav>
   );
 };
