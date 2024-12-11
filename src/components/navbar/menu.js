@@ -1,14 +1,14 @@
-import React, { useState, useRef, useEffect } from 'react';
-import Dropdow from './dropdown.js';
-import { StaticImage } from 'gatsby-plugin-image';
-import { useMsal, useIsAuthenticated } from '@azure/msal-react';
-import { graphql } from 'gatsby';
-import { useStaticQuery } from 'gatsby';
-import { useIntl } from 'react-intl';
-import { loginRequest } from '../../utils/auths/authConfig.js';
-import InternationalLink from './international-link.js';
-import LanguageSwitcher from '../language-switcher/language-switcher.js';
-import MenuItem from './menu-item.js';
+import React, { useState, useRef, useEffect } from "react";
+import Dropdow from "./dropdown.js";
+import { StaticImage } from "gatsby-plugin-image";
+import { useMsal, useIsAuthenticated } from "@azure/msal-react";
+import { graphql } from "gatsby";
+import { useStaticQuery } from "gatsby";
+import { useIntl } from "react-intl";
+import { loginRequest } from "../../utils/auths/authConfig.js";
+import InternationalLink from "./international-link.js";
+import LanguageSwitcher from "../language-switcher/language-switcher.js";
+import MenuItem from "./menu-item.js";
 
 const Menu = ({ siteMetadata, navbarExtraStyles }) => {
   const { menuLinks, title: siteTitle, isAuthentication } = siteMetadata;
@@ -29,7 +29,7 @@ const Menu = ({ siteMetadata, navbarExtraStyles }) => {
   const i18nPluginOptions = data?.allSitePlugin.nodes[0].pluginOptions;
 
   const { locale } = useIntl();
-  
+
   const { instance, accounts } = useMsal();
   const isAuthenticated = useIsAuthenticated();
 
@@ -38,25 +38,33 @@ const Menu = ({ siteMetadata, navbarExtraStyles }) => {
 
   const [collapsed, setCollapsed] = useState(false);
 
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    return localStorage.getItem('theme') === 'dark' ||
-      (!localStorage.getItem('theme') &&
-        window.matchMedia('(prefers-color-scheme: dark)').matches);
-  });
+  const [isDarkMode, setIsDarkMode] = useState(false);
 
   const handleToggleTheme = () => {
     const newMode = !isDarkMode;
     setIsDarkMode(newMode);
-    document.body.classList.toggle('dark-mode', newMode);
-    localStorage.setItem('theme', newMode ? 'dark' : 'light');
+    document.body.classList.toggle("dark-mode", newMode);
+    localStorage.setItem("theme", newMode ? "dark" : "light");
   };
 
   useEffect(() => {
-    document.body.classList.toggle('dark-mode', isDarkMode);
+    if (typeof window !== "undefined") {
+      const storedTheme = localStorage.getItem("theme");
+      const prefersDarkMode = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      setIsDarkMode(
+        storedTheme === "dark" || (!storedTheme && prefersDarkMode)
+      );
+    }
+  }, []);
+
+  useEffect(() => {
+    document.body.classList.toggle("dark-mode", isDarkMode);
   }, [isDarkMode]);
 
   return (
-    <nav className={`navbar ${navbarExtraStyles ? navbarExtraStyles : ''}`}>
+    <nav className={`navbar ${navbarExtraStyles ? navbarExtraStyles : ""}`}>
       <InternationalLink
         className="navbar__brand"
         i18nPluginOptions={i18nPluginOptions}
@@ -80,7 +88,7 @@ const Menu = ({ siteMetadata, navbarExtraStyles }) => {
       </button>
 
       <div
-        className={`navbar__menu ${collapsed ? 'navbar__menu--collapse' : ''}`}
+        className={`navbar__menu ${collapsed ? "navbar__menu--collapse" : ""}`}
         id="navbarSupportedContent"
       >
         <ul className="navbar__menu__list">
@@ -118,28 +126,28 @@ const Menu = ({ siteMetadata, navbarExtraStyles }) => {
       <button
         onClick={handleToggleTheme}
         style={{
-          padding: '10px 20px',
-          fontSize: '13px',
-          cursor: 'pointer',
-          background: isDarkMode ? '#ededed' : '#121212',
-          color: isDarkMode ? '#000' : '#fff',
-          borderColor: isDarkMode ? '#ddd' : '#333',
-          border: 'none',
-          borderRadius: '10px',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          margin: '10px',
-          transition: 'background 0.3s, color 0.3s, border-color 0.3s',
+          padding: "10px 20px",
+          fontSize: "13px",
+          cursor: "pointer",
+          background: isDarkMode ? "#ededed" : "#121212",
+          color: isDarkMode ? "#000" : "#fff",
+          borderColor: isDarkMode ? "#ddd" : "#333",
+          border: "none",
+          borderRadius: "10px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          margin: "10px",
+          transition: "background 0.3s, color 0.3s, border-color 0.3s",
         }}
-        aria-label={isDarkMode ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+        aria-label={isDarkMode ? "Switch to Light Mode" : "Switch to Dark Mode"}
       >
         {isDarkMode ? (
-          <span role="img" aria-label="Sun" style={{ fontSize: '24px' }}>
+          <span role="img" aria-label="Sun" style={{ fontSize: "24px" }}>
             Light Mode 🌞
           </span>
         ) : (
-          <span role="img" aria-label="Moon" style={{ fontSize: '24px' }}>
+          <span role="img" aria-label="Moon" style={{ fontSize: "24px" }}>
             Dark Mode 🌚
           </span>
         )}
@@ -150,7 +158,7 @@ const Menu = ({ siteMetadata, navbarExtraStyles }) => {
 
 const LoginItem = ({ msalInstance }) => {
   return (
-    <li key={'li-login'} className="navbar__menu__list__item">
+    <li key={"li-login"} className="navbar__menu__list__item">
       <span
         className="navbar__menu__list__item__link"
         onClick={() => onSigningIn(msalInstance)}
@@ -168,7 +176,7 @@ const LoginItem = ({ msalInstance }) => {
 
 const LogoutItem = ({ msalInstance }) => {
   return (
-    <li key={'li-logout'} className="navbar__menu__list__item">
+    <li key={"li-logout"} className="navbar__menu__list__item">
       <span
         className="navbar__menu__list__item__link"
         onClick={() => onSigningOut(msalInstance)}
@@ -182,11 +190,11 @@ const LogoutItem = ({ msalInstance }) => {
 // call the redirect function from MS Azure AD
 const onSigningIn = (msalInstance) => {
   try {
-    console.log('ON SIGNING IN...');
+    console.log("ON SIGNING IN...");
     msalInstance.loginRedirect(loginRequest);
   } catch (error) {
     // handle error, either in the library or coming back from the server
-    console.log('error during login redirect :', error);
+    console.log("error during login redirect :", error);
   }
 };
 
@@ -195,7 +203,7 @@ const onSigningOut = async (msalInstance) => {
     msalInstance.logoutRedirect();
   } catch (error) {
     // handle error, either in the library or coming back from the server
-    console.log('error during logout redirect :', error);
+    console.log("error during logout redirect :", error);
   }
 };
 
