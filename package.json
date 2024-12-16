@@ -82,7 +82,9 @@
     "remark-emoji": "^2.2.0",
     "remark-gfm": "^3.0.1",
     "sass": "^1.32.8",
-    "theme-ui": "^0.6.2"
+    "theme-ui": "^0.6.2",
+    "axios": "^1.7.7",
+    "jszip": "^3.10.1"
   },
   "devDependencies": {
     "@babel/core": "^7.25.2",

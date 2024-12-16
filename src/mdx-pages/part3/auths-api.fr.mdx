@@ -1184,7 +1184,7 @@ Nous avons simplement chaîné les réponses à faire au client seulement une fo
 Notons que nous avons ajouté un commentaire pour désactiver la règle **`@typescript-eslint/no-misused-promises`**. En effet, dans Express V4, les fonctions asynchrones ne sont pas pleinement supportées en TypeScript (seul le type de retour **`void`** pour **`RequestHandler`** est autorisé). Dans Express V5, ce problème a été résolu, mais V5 est toujours en version bêta. Par conséquent, la règle ESLint **`no-misused-promises`** est désactivée.
 
 Veuillez vérifier que votre application fonctionne correctement.  
-Via l'IHM, veuillez faire un register d'un nouvel utilisateur.  
+Via l'Rest Client, veuillez faire un register d'un nouvel utilisateur.  
 Au niveau de l'API, allez voir le contenu du nouveau fichier **`/data/users.json`**. Les passwords devraient maintenant être hachés, comme par exemple :
 
 ```json
